@@ -65,20 +65,22 @@ export function Header() {
             </Button>
           </NavbarItem>
           <NavbarItem>
-            <Button
-              isIconOnly
-              aria-label="Abrir carrinho"
-              variant="light"
-              onPress={() => setIsCartOpen(true)}
-              className="relative"
-            >
-              <ShoppingCartIcon className="h-6 w-6 text-slate-900" />
+            <div className="relative">
+              <Button
+                isIconOnly
+                aria-label="Abrir carrinho"
+                variant="light"
+                onPress={() => setIsCartOpen(true)}
+                className="overflow-visible"
+              >
+                <ShoppingCartIcon className="h-6 w-6 text-slate-900" />
+              </Button>
               {totalItems > 0 && (
-                <span className="absolute -right-2 -top-2 flex h-5 w-5 items-center justify-center rounded-full bg-brand-600 text-xs font-semibold text-white">
-                  {totalItems}
+                <span className="absolute -right-1 -top-1 flex min-w-[1.25rem] items-center justify-center rounded-full bg-brand-600 px-1 text-xs font-semibold text-white">
+                  {totalItems > 99 ? "99+" : totalItems}
                 </span>
               )}
-            </Button>
+            </div>
           </NavbarItem>
         </NavbarContent>
       </Navbar>

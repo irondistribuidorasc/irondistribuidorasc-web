@@ -1,14 +1,13 @@
-"use client";
-
 import { PedidoWizard } from "@/src/components/pedido/PedidoWizard";
-import { Skeleton } from "@heroui/react";
+import { LoadingSkeleton } from "@/src/components/ui/LoadingSkeleton";
+import type { Metadata } from "next";
 import { Suspense } from "react";
 
-// export const metadata = {
-//   title: "Fazer pedido de peças | IRON DISTRIBUIDORA SC",
-//   description:
-//     "Monte seu pedido de peças de celular por tipo e marca, finalize diretamente pelo WhatsApp da IRON DISTRIBUIDORA SC.",
-// };
+export const metadata: Metadata = {
+  title: "Fazer pedido de peças | IRON DISTRIBUIDORA SC",
+  description:
+    "Monte seu pedido de peças de celular por tipo e marca, finalize diretamente pelo WhatsApp da IRON DISTRIBUIDORA SC.",
+};
 
 export default function PedidoPage() {
   return (
@@ -25,15 +24,7 @@ export default function PedidoPage() {
           pedido via WhatsApp.
         </p>
       </div>
-      <Suspense
-        fallback={
-          <div className="space-y-4">
-            <Skeleton className="h-10 w-full rounded-lg" />
-            <Skeleton className="h-32 w-full rounded-xl" />
-            <Skeleton className="h-48 w-full rounded-xl" />
-          </div>
-        }
-      >
+      <Suspense fallback={<LoadingSkeleton />}>
         <PedidoWizard />
       </Suspense>
     </div>

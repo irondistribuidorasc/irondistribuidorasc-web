@@ -21,17 +21,18 @@ export function Header() {
   return (
     <>
       <Navbar className="border-b border-slate-200 bg-white/70 backdrop-blur">
-        <NavbarBrand className="gap-3">
-          <Link href="/" className="flex items-center gap-3">
+        <NavbarBrand className="flex-shrink-0 gap-2 min-w-0">
+          <Link href="/" className="flex items-center gap-2 min-w-0">
             <Image
               src="/logo-iron.png"
               alt="IRON DISTRIBUIDORA SC"
               width={48}
               height={48}
-              className="h-10 w-10 rounded-full object-cover"
+              className="h-8 w-8 flex-shrink-0 rounded-full object-cover sm:h-10 sm:w-10"
             />
-            <span className="text-base font-semibold text-slate-900 md:text-lg">
-              IRON DISTRIBUIDORA SC
+            <span className="truncate text-xs font-semibold text-slate-900 sm:text-sm md:text-base lg:text-lg">
+              <span className="hidden sm:inline">IRON DISTRIBUIDORA SC</span>
+              <span className="sm:hidden">IRON DISTRIB.</span>
             </span>
           </Link>
         </NavbarBrand>
@@ -53,14 +54,26 @@ export function Header() {
             </Link>
           </NavbarItem>
         </NavbarContent>
-        <NavbarContent justify="end" className="gap-3">
+        <NavbarContent justify="end" className="gap-1 sm:gap-2 md:gap-3">
           <NavbarItem className="md:hidden">
-            <Button as={Link} href="/pedido" variant="light" size="sm">
+            <Button
+              as={Link}
+              href="/pedido"
+              variant="light"
+              size="sm"
+              className="min-w-fit px-2 text-xs"
+            >
               Pedido
             </Button>
           </NavbarItem>
           <NavbarItem className="md:hidden">
-            <Button as={Link} href="/garantia" variant="light" size="sm">
+            <Button
+              as={Link}
+              href="/garantia"
+              variant="light"
+              size="sm"
+              className="min-w-fit px-2 text-xs"
+            >
               Garantia
             </Button>
           </NavbarItem>

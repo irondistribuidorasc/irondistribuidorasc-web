@@ -108,7 +108,7 @@ export default function RootLayout({
     <html lang="pt-BR">
       <body className={`${inter.className} bg-white text-slate-900`}>
         <Providers>
-          <div className="flex min-h-screen flex-col">
+          <div className="flex min-h-screen flex-col overflow-x-hidden">
             <Header />
             <main className="flex-1 bg-white">{children}</main>
             <Footer />

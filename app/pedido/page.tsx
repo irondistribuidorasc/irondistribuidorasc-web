@@ -16,10 +16,10 @@ export default function PedidoPage() {
         <p className="text-xs uppercase tracking-[0.3em] text-brand-600">
           Pedido online
         </p>
-        <h1 className="text-3xl font-semibold text-slate-900 md:text-4xl">
+        <h1 className="text-3xl font-semibold text-slate-900 dark:text-slate-100 md:text-4xl">
           Faça seu pedido de peças
         </h1>
-        <p className="text-sm text-slate-500">
+        <p className="text-sm text-slate-500 dark:text-slate-400">
           Siga os passos para selecionar peças, revisar o carrinho e finalizar o
           pedido via WhatsApp.
         </p>

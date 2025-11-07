@@ -88,9 +88,9 @@ export function GarantiaWizard() {
     <div className="space-y-8">
       <Stepper steps={steps} currentStep={activeStep} />
 
-      <Card className="border border-slate-200">
+      <Card className="border border-slate-200 dark:border-slate-800">
         <CardHeader>
-          <p className="text-base font-semibold text-slate-900">{steps[activeStep]}</p>
+          <p className="text-base font-semibold text-slate-900 dark:text-slate-100">{steps[activeStep]}</p>
         </CardHeader>
         <Divider />
         <CardBody className="space-y-6">
@@ -150,7 +150,7 @@ export function GarantiaWizard() {
           )}
 
           {activeStep === 3 && (
-            <div className="space-y-4 text-sm text-slate-600">
+            <div className="space-y-4 text-sm text-slate-600 dark:text-slate-400">
               <p>
                 Nossa política de trocas garante análise em até 5 dias úteis após recebimento da peça. O envio de fotos ajuda a acelerar o processo.
               </p>
@@ -165,25 +165,25 @@ export function GarantiaWizard() {
 
           {activeStep === 4 && (
             <div className="space-y-6">
-              <Card className="border border-slate-200">
+              <Card className="border border-slate-200 dark:border-slate-800">
                 <CardHeader>
-                  <p className="text-base font-semibold text-slate-900">Revise os dados</p>
+                  <p className="text-base font-semibold text-slate-900 dark:text-slate-100">Revise os dados</p>
                 </CardHeader>
                 <Divider />
-                <CardBody className="space-y-3 text-sm text-slate-600">
+                <CardBody className="space-y-3 text-sm text-slate-600 dark:text-slate-400">
                   <p>
-                    <span className="font-semibold text-slate-800">Tipo de solicitação:</span> {requestType}
+                    <span className="font-semibold text-slate-800 dark:text-slate-200">Tipo de solicitação:</span> {requestType}
                   </p>
                   <p>
-                    <span className="font-semibold text-slate-800">Item:</span> {selectedItemsLabel}
+                    <span className="font-semibold text-slate-800 dark:text-slate-200">Item:</span> {selectedItemsLabel}
                   </p>
                   <p>
-                    <span className="font-semibold text-slate-800">Modelo:</span> {model || "-"}
+                    <span className="font-semibold text-slate-800 dark:text-slate-200">Modelo:</span> {model || "-"}
                   </p>
                   <p>
-                    <span className="font-semibold text-slate-800">Descrição:</span> {description || "-"}
+                    <span className="font-semibold text-slate-800 dark:text-slate-200">Descrição:</span> {description || "-"}
                   </p>
-                  <p className="text-xs text-slate-500">
+                  <p className="text-xs text-slate-500 dark:text-slate-400">
                     Ao enviar, abriremos o WhatsApp da IRON DISTRIBUIDORA SC com todos os detalhes preenchidos.
                   </p>
                 </CardBody>

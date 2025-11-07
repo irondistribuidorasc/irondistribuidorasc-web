@@ -51,13 +51,13 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
           <>
             <DrawerHeader className="flex flex-col items-start gap-1">
               <p className="text-lg font-semibold">Carrinho de pedidos</p>
-              <p className="text-sm text-slate-500">
+              <p className="text-sm text-slate-500 dark:text-slate-400">
                 Revise os itens antes de finalizar via WhatsApp.
               </p>
             </DrawerHeader>
             <DrawerBody className="space-y-4">
               {!hasItems ? (
-                <p className="text-sm text-slate-500">
+                <p className="text-sm text-slate-500 dark:text-slate-400">
                   Seu carrinho está vazio. Adicione produtos para criar o
                   pedido.
                 </p>
@@ -66,9 +66,9 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                   {items.map(({ product, quantity }) => (
                     <li
                       key={product.id}
-                      className="flex gap-4 rounded-lg border border-slate-200 p-4"
+                      className="flex gap-4 rounded-lg border border-slate-200 p-4 dark:border-slate-800"
                     >
-                      <div className="relative h-16 w-16 overflow-hidden rounded bg-slate-100">
+                      <div className="relative h-16 w-16 overflow-hidden rounded bg-slate-100 dark:bg-slate-800">
                         <Image
                           src={product.imageUrl || "/logo-iron.png"}
                           alt={product.name}
@@ -78,10 +78,10 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                       </div>
                       <div className="flex flex-1 flex-col gap-2">
                         <div>
-                          <p className="text-sm font-semibold text-slate-900">
+                          <p className="text-sm font-semibold text-slate-900 dark:text-slate-100">
                             {product.name}
                           </p>
-                          <p className="text-xs text-slate-500">
+                          <p className="text-xs text-slate-500 dark:text-slate-400">
                             {product.brand} · {product.model.toUpperCase()}
                           </p>
                         </div>

@@ -103,15 +103,15 @@ export function PedidoWizard() {
                 onPress={() => handleSelectCategory(category.key)}
                 className={
                   selectedCategory === category.key
-                    ? "border border-brand-500 bg-brand-50"
-                    : "border border-slate-200"
+                    ? "border border-brand-500 bg-brand-50 dark:bg-brand-600/20"
+                    : "border border-slate-200 dark:border-slate-800"
                 }
               >
                 <CardBody className="space-y-2">
-                  <p className="text-base font-semibold text-slate-900">
+                  <p className="text-base font-semibold text-slate-900 dark:text-slate-100">
                     {category.label}
                   </p>
-                  <p className="text-sm text-slate-500">
+                  <p className="text-sm text-slate-500 dark:text-slate-400">
                     {category.description}
                   </p>
                 </CardBody>
@@ -138,9 +138,9 @@ export function PedidoWizard() {
         return (
           <div className="space-y-3">
             {filteredProducts.length === 0 ? (
-              <Card className="border border-dashed border-slate-300 bg-slate-50">
+              <Card className="border border-dashed border-slate-300 bg-slate-50 dark:border-slate-700 dark:bg-slate-900/70">
                 <CardBody>
-                  <p className="text-sm text-slate-500">
+                  <p className="text-sm text-slate-500 dark:text-slate-400">
                     Nenhum produto cadastrado para esta combinação ainda. Entre
                     em contato pelo WhatsApp.
                   </p>
@@ -160,16 +160,16 @@ export function PedidoWizard() {
       case 3:
         return (
           <div className="space-y-6">
-            <Card className="border border-slate-200">
+            <Card className="border border-slate-200 dark:border-slate-800">
               <CardHeader className="flex items-center justify-between">
-                <p className="text-base font-semibold text-slate-900">
+                <p className="text-base font-semibold text-slate-900 dark:text-slate-100">
                   Itens adicionados ({totalItems})
                 </p>
               </CardHeader>
               <Divider />
               <CardBody className="space-y-4">
                 {items.length === 0 ? (
-                  <p className="text-sm text-slate-500">
+                  <p className="text-sm text-slate-500 dark:text-slate-400">
                     Seu carrinho está vazio. Volte e adicione produtos antes de
                     finalizar.
                   </p>
@@ -178,13 +178,13 @@ export function PedidoWizard() {
                     {items.map(({ product, quantity }) => (
                       <li
                         key={product.id}
-                        className="flex flex-col gap-3 rounded-lg border border-slate-200 p-4 sm:flex-row sm:items-center sm:justify-between"
+                        className="flex flex-col gap-3 rounded-lg border border-slate-200 p-4 dark:border-slate-800 sm:flex-row sm:items-center sm:justify-between"
                       >
                         <div>
-                          <p className="text-sm font-semibold text-slate-900">
+                          <p className="text-sm font-semibold text-slate-900 dark:text-slate-100">
                             {product.name}
                           </p>
-                          <p className="text-xs text-slate-500">
+                          <p className="text-xs text-slate-500 dark:text-slate-400">
                             {product.brand} · {product.model.toUpperCase()}
                           </p>
                         </div>
@@ -230,9 +230,9 @@ export function PedidoWizard() {
               </CardBody>
             </Card>
 
-            <Card className="border border-slate-200">
+            <Card className="border border-slate-200 dark:border-slate-800">
               <CardHeader>
-                <p className="text-base font-semibold text-slate-900">
+                <p className="text-base font-semibold text-slate-900 dark:text-slate-100">
                   Dados do cliente
                 </p>
               </CardHeader>
@@ -307,9 +307,9 @@ export function PedidoWizard() {
     <div className="space-y-8">
       <Stepper steps={steps} currentStep={activeStep} />
 
-      <Card className="border border-slate-200">
+      <Card className="border border-slate-200 dark:border-slate-800">
         <CardHeader>
-          <p className="text-base font-semibold text-slate-900">
+          <p className="text-base font-semibold text-slate-900 dark:text-slate-100">
             {steps[activeStep]}
           </p>
         </CardHeader>
@@ -351,13 +351,13 @@ function ProductItem({ product, onAdd }: ProductItemProps) {
     : undefined;
 
   return (
-    <Card className="border border-slate-200">
+    <Card className="border border-slate-200 dark:border-slate-800">
       <CardBody className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
         <div className="space-y-1">
-          <p className="text-base font-semibold text-slate-900">
+          <p className="text-base font-semibold text-slate-900 dark:text-slate-100">
             {product.name}
           </p>
-          <p className="text-sm text-slate-500">
+          <p className="text-sm text-slate-500 dark:text-slate-400">
             {product.brand} · {product.model.toUpperCase()}
           </p>
         </div>

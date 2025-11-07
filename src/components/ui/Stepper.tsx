@@ -32,8 +32,8 @@ export function Stepper({ steps, currentStep, className }: StepperProps) {
                   isCompleted
                     ? "border-brand-600 bg-brand-600 text-white"
                     : isCurrent
-                      ? "border-brand-600 bg-white text-brand-600"
-                      : "border-slate-300 bg-white text-slate-400"
+                      ? "border-brand-600 bg-white text-brand-600 dark:bg-slate-900"
+                      : "border-slate-300 bg-white text-slate-400 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-500"
                 )}
               >
                 {isCompleted ? (
@@ -46,7 +46,7 @@ export function Stepper({ steps, currentStep, className }: StepperProps) {
                 <div
                   className={clsx(
                     "mt-2 h-8 w-0.5 md:h-0.5 md:w-8",
-                    isCompleted ? "bg-brand-600" : "bg-slate-300"
+                    isCompleted ? "bg-brand-600" : "bg-slate-300 dark:bg-slate-700"
                   )}
                 />
               )}
@@ -55,13 +55,17 @@ export function Stepper({ steps, currentStep, className }: StepperProps) {
               <p
                 className={clsx(
                   "text-sm font-semibold",
-                  isCurrent ? "text-brand-600" : isCompleted ? "text-slate-900" : "text-slate-400"
+                  isCurrent
+                    ? "text-brand-600"
+                    : isCompleted
+                      ? "text-slate-900 dark:text-slate-100"
+                      : "text-slate-400 dark:text-slate-500"
                 )}
               >
                 {stepTitle}
               </p>
               {stepDescription && (
-                <p className="mt-1 text-xs text-slate-500">{stepDescription}</p>
+                <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">{stepDescription}</p>
               )}
             </div>
           </div>

@@ -2,6 +2,7 @@ import type { Config } from "tailwindcss";
 import { heroui } from "@heroui/theme";
 
 const config: Config = {
+  darkMode: "class",
   content: [
     "./app/**/*.{js,ts,jsx,tsx,mdx}",
     "./components/**/*.{js,ts,jsx,tsx,mdx}",
@@ -33,4 +34,3 @@ const config: Config = {
 };
 
 export default config;
-

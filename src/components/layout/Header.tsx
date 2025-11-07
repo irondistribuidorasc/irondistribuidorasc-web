@@ -1,6 +1,7 @@
 "use client";
 
 import { CartDrawer } from "@/src/components/cart/CartDrawer";
+import { ThemeToggle } from "@/src/components/ui/ThemeToggle";
 import { useCart } from "@/src/contexts/CartContext";
 import { ShoppingCartIcon } from "@heroicons/react/24/outline";
 import {
@@ -20,7 +21,7 @@ export function Header() {
 
   return (
     <>
-      <Navbar className="border-b border-slate-200 bg-white/70 backdrop-blur">
+      <Navbar className="border-b border-slate-200 bg-white/70 backdrop-blur dark:border-slate-800 dark:bg-slate-900/70">
         <NavbarBrand className="flex-shrink-0 gap-2 min-w-0">
           <Link href="/" className="flex items-center gap-2 min-w-0">
             <Image
@@ -30,7 +31,7 @@ export function Header() {
               height={48}
               className="h-8 w-8 flex-shrink-0 rounded-full object-cover sm:h-10 sm:w-10"
             />
-            <span className="truncate text-xs font-semibold text-slate-900 sm:text-sm md:text-base lg:text-lg">
+            <span className="truncate text-xs font-semibold text-slate-900 dark:text-slate-100 sm:text-sm md:text-base lg:text-lg">
               <span className="hidden sm:inline">IRON DISTRIBUIDORA SC</span>
               <span className="sm:hidden">IRON DISTRIB.</span>
             </span>
@@ -40,7 +41,7 @@ export function Header() {
           <NavbarItem>
             <Link
               href="/pedido"
-              className="text-sm font-medium text-slate-700 transition hover:text-brand-600"
+              className="text-sm font-medium text-slate-700 transition hover:text-brand-600 dark:text-slate-300 dark:hover:text-brand-400"
             >
               Fazer pedido
             </Link>
@@ -48,13 +49,16 @@ export function Header() {
           <NavbarItem>
             <Link
               href="/garantia"
-              className="text-sm font-medium text-slate-700 transition hover:text-brand-600"
+              className="text-sm font-medium text-slate-700 transition hover:text-brand-600 dark:text-slate-300 dark:hover:text-brand-400"
             >
               Garantia
             </Link>
           </NavbarItem>
         </NavbarContent>
         <NavbarContent justify="end" className="gap-1 sm:gap-2 md:gap-3">
+          <NavbarItem>
+            <ThemeToggle />
+          </NavbarItem>
           <NavbarItem className="md:hidden">
             <Button
               as={Link}
@@ -86,7 +90,7 @@ export function Header() {
                 onPress={() => setIsCartOpen(true)}
                 className="overflow-visible"
               >
-                <ShoppingCartIcon className="h-6 w-6 text-slate-900" />
+                <ShoppingCartIcon className="h-6 w-6 text-slate-900 dark:text-slate-100" />
               </Button>
               {totalItems > 0 && (
                 <span className="absolute -right-1 -top-1 flex min-w-[1.25rem] items-center justify-center rounded-full bg-brand-600 px-1 text-xs font-semibold text-white">

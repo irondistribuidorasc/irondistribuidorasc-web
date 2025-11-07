@@ -105,12 +105,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="pt-BR">
-      <body className={`${inter.className} bg-white text-slate-900`}>
+    <html lang="pt-BR" suppressHydrationWarning>
+      <body className={`${inter.className}`}>
         <Providers>
           <div className="flex min-h-screen flex-col overflow-x-hidden">
             <Header />
-            <main className="flex-1 bg-white">{children}</main>
+            <main className="flex-1">{children}</main>
             <Footer />
           </div>
         </Providers>

@@ -93,14 +93,14 @@ export function Header() {
           </NavbarItem>
           <NavbarItem>
             <Link
-              href="/pedido"
+              href="/carrinho"
               className={`text-sm font-medium transition ${
-                pathname === "/pedido"
+                pathname === "/carrinho"
                   ? "text-brand-600 dark:text-brand-400"
                   : "text-slate-700 hover:text-brand-600 dark:text-slate-300 dark:hover:text-brand-400"
               }`}
             >
-              Fazer pedido
+              Carrinho
             </Link>
           </NavbarItem>
           <NavbarItem>
@@ -136,14 +136,14 @@ export function Header() {
           <NavbarItem className="md:hidden">
             <Button
               as={Link}
-              href="/pedido"
+              href="/carrinho"
               variant="light"
               size="sm"
               className={`min-w-fit px-2 text-xs ${
-                pathname === "/pedido" ? "text-brand-600 dark:text-brand-400" : ""
+                pathname === "/carrinho" ? "text-brand-600 dark:text-brand-400" : ""
               }`}
             >
-              Pedido
+              Carrinho
             </Button>
           </NavbarItem>
           <NavbarItem className="md:hidden">

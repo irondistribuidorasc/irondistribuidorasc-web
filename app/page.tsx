@@ -35,7 +35,7 @@ export default function HomePage() {
             <div className="flex flex-col gap-3 sm:flex-row sm:justify-center md:justify-start">
               <Button
                 as={Link}
-                href="/pedido"
+                href="/produtos"
                 size="lg"
                 color="danger"
                 className="bg-brand-600 hover:bg-brand-700 !text-white"

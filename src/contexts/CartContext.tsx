@@ -8,6 +8,7 @@ import {
   useEffect,
   useMemo,
   useReducer,
+  useRef,
 } from "react";
 import { useSession } from "next-auth/react";
 
@@ -132,9 +133,16 @@ type CartProviderProps = Readonly<{
 export function CartProvider({ children }: CartProviderProps) {
   const [state, dispatch] = useReducer(cartReducer, initialState);
   const { data: session } = useSession();
+  const hasAutoFilledRef = useRef(false);
 
   useEffect(() => {
-    if (!session?.user) return;
+    if (!session?.user) {
+      hasAutoFilledRef.current = false;
+      return;
+    }
+
+    // Preencher apenas uma vez, na primeira carga com sessão ativa
+    if (hasAutoFilledRef.current) return;
 
     const sessionData: Partial<CustomerDetails> = {
       name: session.user.name ?? "",
@@ -160,6 +168,7 @@ export function CartProvider({ children }: CartProviderProps) {
 
     if (Object.keys(updates).length > 0) {
       dispatch({ type: "UPDATE_CUSTOMER", updates });
+      hasAutoFilledRef.current = true;
     }
   }, [session?.user, state.customer]);
 

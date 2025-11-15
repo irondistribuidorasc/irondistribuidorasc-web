@@ -7,6 +7,7 @@ import { Pagination } from "@/src/components/produtos/Pagination";
 import { useProductFilters } from "@/src/hooks/useProductFilters";
 import mockProductsRaw from "@/src/data/mockProducts.json";
 import { validateProducts } from "@/src/lib/validateProducts";
+import Link from "next/link";
 
 // Validação do JSON importado
 const allProducts = validateProducts(mockProductsRaw);
@@ -41,12 +42,12 @@ export default function ProdutosPage() {
           <nav className="mb-4 flex text-sm" aria-label="Breadcrumb">
             <ol className="flex items-center space-x-2">
               <li>
-                <a
+                <Link
                   href="/"
                   className="text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200"
                 >
                   Início
-                </a>
+                </Link>
               </li>
               <li>
                 <svg

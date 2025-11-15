@@ -1,7 +1,6 @@
 "use client";
 
 import { useCart } from "@/src/contexts/CartContext";
-import { buildOrderWhatsAppMessage, getWhatsAppUrl } from "@/src/lib/whatsapp";
 import { MinusIcon, PlusIcon, TrashIcon } from "@heroicons/react/24/outline";
 import {
   Button,
@@ -14,34 +13,24 @@ import {
   DrawerProps,
 } from "@heroui/react";
 import Image from "next/image";
-import { useState } from "react";
+import { useRouter } from "next/navigation";
 
 type CartDrawerProps = Pick<DrawerProps, "isOpen" | "onClose">;
 
 export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
-  const { items, customer, removeItem, updateQuantity, clearCart } = useCart();
-  const [showHelper, setShowHelper] = useState(false);
+  const { items, removeItem, updateQuantity, clearCart } = useCart();
+  const router = useRouter();
 
   const hasItems = items.length > 0;
-  const isCustomerInfoValid = Boolean(
-    customer.name.trim() && customer.city.trim() && customer.state.trim()
-  );
 
   const handleClose = () => {
-    setShowHelper(false);
     onClose?.();
   };
 
-  const handleFinalize = () => {
+  const handleGoToCheckout = () => {
     if (!hasItems) return;
-    if (!isCustomerInfoValid) {
-      setShowHelper(true);
-      return;
-    }
-
-    const message = buildOrderWhatsAppMessage(items, customer);
-    const url = getWhatsAppUrl(message);
-    window.open(url, "_blank", "noopener,noreferrer");
+    router.push("/carrinho");
+    handleClose();
   };
 
   return (
@@ -149,20 +138,14 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                   fullWidth
                   color="danger"
                   className="bg-brand-600 text-white"
-                  onPress={handleFinalize}
+                  onPress={handleGoToCheckout}
                   isDisabled={!hasItems}
                 >
-                  Finalizar pedido no WhatsApp
+                  Ir para o carrinho
                 </Button>
               </div>
-              {showHelper && !isCustomerInfoValid && (
-                <p className="w-full text-center text-xs text-slate-500">
-                  Complete os dados do cliente na etapa &quot;Resumo&quot; do
-                  pedido para liberar o envio.
-                </p>
-              )}
               <Button variant="light" onPress={handleClose} fullWidth>
-                Fechar
+                Continuar comprando
               </Button>
             </DrawerFooter>
           </>

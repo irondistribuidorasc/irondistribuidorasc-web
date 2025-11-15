@@ -16,6 +16,10 @@ export type Product = {
   imageUrl: string;
   inStock: boolean;
   restockDate?: string;
+  price: number;
+  description?: string;
+  tags?: string[];
+  popularity?: number;
 };
 
 export const brandOptions: Array<{ key: Brand; label: Brand }> = [
@@ -63,6 +67,8 @@ export const products: Product[] = [
     model: "A02",
     imageUrl: "/logo-iron.png",
     inStock: true,
+    price: 89.90,
+    popularity: 75,
   },
   {
     id: "display-samsung-a03",
@@ -73,6 +79,8 @@ export const products: Product[] = [
     model: "A03",
     imageUrl: "/logo-iron.png",
     inStock: true,
+    price: 95.50,
+    popularity: 80,
   },
   {
     id: "display-samsung-a10",
@@ -84,6 +92,8 @@ export const products: Product[] = [
     imageUrl: "/logo-iron.png",
     inStock: false,
     restockDate: "2025-11-10",
+    price: 110.00,
+    popularity: 60,
   },
   {
     id: "display-xiaomi-redmi12",
@@ -94,6 +104,8 @@ export const products: Product[] = [
     model: "Redmi 12",
     imageUrl: "/logo-iron.png",
     inStock: true,
+    price: 125.00,
+    popularity: 85,
   },
   {
     id: "battery-samsung-a02",
@@ -104,6 +116,8 @@ export const products: Product[] = [
     model: "A02",
     imageUrl: "/logo-iron.png",
     inStock: true,
+    price: 45.00,
+    popularity: 70,
   },
   {
     id: "battery-motorola-g22",
@@ -115,6 +129,8 @@ export const products: Product[] = [
     imageUrl: "/logo-iron.png",
     inStock: false,
     restockDate: "2025-12-01",
+    price: 52.00,
+    popularity: 55,
   },
   {
     id: "charging-samsung-a13",
@@ -125,6 +141,8 @@ export const products: Product[] = [
     model: "A13",
     imageUrl: "/logo-iron.png",
     inStock: true,
+    price: 38.50,
+    popularity: 65,
   },
   {
     id: "charging-xiaomi-redmi9",
@@ -135,6 +153,8 @@ export const products: Product[] = [
     model: "Redmi 9",
     imageUrl: "/logo-iron.png",
     inStock: true,
+    price: 42.00,
+    popularity: 70,
   },
   {
     id: "backcover-samsung-a32",
@@ -146,6 +166,8 @@ export const products: Product[] = [
     imageUrl: "/logo-iron.png",
     inStock: false,
     restockDate: "2025-11-20",
+    price: 68.00,
+    popularity: 50,
   },
   {
     id: "backcover-iphone-11",
@@ -156,6 +178,8 @@ export const products: Product[] = [
     model: "iPhone 11",
     imageUrl: "/logo-iron.png",
     inStock: true,
+    price: 180.00,
+    popularity: 90,
   },
   {
     id: "display-iphone-12",
@@ -166,6 +190,8 @@ export const products: Product[] = [
     model: "iPhone 12",
     imageUrl: "/logo-iron.png",
     inStock: true,
+    price: 650.00,
+    popularity: 95,
   },
   {
     id: "battery-lg-k62",
@@ -176,6 +202,8 @@ export const products: Product[] = [
     model: "K62",
     imageUrl: "/logo-iron.png",
     inStock: true,
+    price: 48.00,
+    popularity: 40,
   },
 ];
 

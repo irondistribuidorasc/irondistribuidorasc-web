@@ -14,12 +14,14 @@ import {
 } from "@heroui/react";
 import Image from "next/image";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useState } from "react";
 
 export function Header() {
   const { totalItems } = useCart();
   const [isCartOpen, setIsCartOpen] = useState(false);
   const { status, data: session } = useSession();
+  const pathname = usePathname();
   const isLoadingSession = status === "loading";
   const isAuthenticated = status === "authenticated";
 
@@ -79,8 +81,24 @@ export function Header() {
         <NavbarContent justify="center" className="hidden gap-6 md:flex">
           <NavbarItem>
             <Link
+              href="/produtos"
+              className={`text-sm font-medium transition ${
+                pathname === "/produtos"
+                  ? "text-brand-600 dark:text-brand-400"
+                  : "text-slate-700 hover:text-brand-600 dark:text-slate-300 dark:hover:text-brand-400"
+              }`}
+            >
+              Produtos
+            </Link>
+          </NavbarItem>
+          <NavbarItem>
+            <Link
               href="/pedido"
-              className="text-sm font-medium text-slate-700 transition hover:text-brand-600 dark:text-slate-300 dark:hover:text-brand-400"
+              className={`text-sm font-medium transition ${
+                pathname === "/pedido"
+                  ? "text-brand-600 dark:text-brand-400"
+                  : "text-slate-700 hover:text-brand-600 dark:text-slate-300 dark:hover:text-brand-400"
+              }`}
             >
               Fazer pedido
             </Link>
@@ -88,7 +106,11 @@ export function Header() {
           <NavbarItem>
             <Link
               href="/garantia"
-              className="text-sm font-medium text-slate-700 transition hover:text-brand-600 dark:text-slate-300 dark:hover:text-brand-400"
+              className={`text-sm font-medium transition ${
+                pathname === "/garantia"
+                  ? "text-brand-600 dark:text-brand-400"
+                  : "text-slate-700 hover:text-brand-600 dark:text-slate-300 dark:hover:text-brand-400"
+              }`}
             >
               Garantia
             </Link>
@@ -101,10 +123,25 @@ export function Header() {
           <NavbarItem className="md:hidden">
             <Button
               as={Link}
+              href="/produtos"
+              variant="light"
+              size="sm"
+              className={`min-w-fit px-2 text-xs ${
+                pathname === "/produtos" ? "text-brand-600 dark:text-brand-400" : ""
+              }`}
+            >
+              Produtos
+            </Button>
+          </NavbarItem>
+          <NavbarItem className="md:hidden">
+            <Button
+              as={Link}
               href="/pedido"
               variant="light"
               size="sm"
-              className="min-w-fit px-2 text-xs"
+              className={`min-w-fit px-2 text-xs ${
+                pathname === "/pedido" ? "text-brand-600 dark:text-brand-400" : ""
+              }`}
             >
               Pedido
             </Button>
@@ -115,7 +152,9 @@ export function Header() {
               href="/garantia"
               variant="light"
               size="sm"
-              className="min-w-fit px-2 text-xs"
+              className={`min-w-fit px-2 text-xs ${
+                pathname === "/garantia" ? "text-brand-600 dark:text-brand-400" : ""
+              }`}
             >
               Garantia
             </Button>

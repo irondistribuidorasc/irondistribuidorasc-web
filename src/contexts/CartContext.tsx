@@ -1,7 +1,15 @@
 "use client";
 
 import type { Product } from "@/src/data/products";
-import { createContext, useContext, useMemo, useReducer } from "react";
+import {
+  createContext,
+  type ReactNode,
+  useContext,
+  useEffect,
+  useMemo,
+  useReducer,
+} from "react";
+import { useSession } from "next-auth/react";
 
 export type CartItem = {
   product: Product;
@@ -10,8 +18,13 @@ export type CartItem = {
 
 export type CustomerDetails = {
   name: string;
+  phone: string;
+  docNumber: string;
+  addressLine1: string;
+  addressLine2: string;
   city: string;
   state: string;
+  postalCode: string;
   notes: string;
 };
 
@@ -44,8 +57,13 @@ const initialState: CartState = {
   items: [],
   customer: {
     name: "",
+    phone: "",
+    docNumber: "",
+    addressLine1: "",
+    addressLine2: "",
     city: "",
     state: "",
+    postalCode: "",
     notes: "",
   },
 };
@@ -107,12 +125,43 @@ function cartReducer(state: CartState, action: CartAction): CartState {
   }
 }
 
-type CartProviderProps = {
-  children: React.ReactNode;
-};
+type CartProviderProps = Readonly<{
+  children: ReactNode;
+}>;
 
 export function CartProvider({ children }: CartProviderProps) {
   const [state, dispatch] = useReducer(cartReducer, initialState);
+  const { data: session } = useSession();
+
+  useEffect(() => {
+    if (!session?.user) return;
+
+    const sessionData: Partial<CustomerDetails> = {
+      name: session.user.name ?? "",
+      phone: session.user.phone ?? "",
+      docNumber: session.user.docNumber ?? "",
+      addressLine1: session.user.addressLine1 ?? "",
+      addressLine2: session.user.addressLine2 ?? "",
+      city: session.user.city ?? "",
+      state: session.user.state ?? "",
+      postalCode: session.user.postalCode ?? "",
+    };
+
+    const updates: Partial<CustomerDetails> = {};
+
+    for (const [key, value] of Object.entries(sessionData) as [
+      keyof CustomerDetails,
+      string | undefined,
+    ][]) {
+      if (!state.customer[key] && value) {
+        updates[key] = value;
+      }
+    }
+
+    if (Object.keys(updates).length > 0) {
+      dispatch({ type: "UPDATE_CUSTOMER", updates });
+    }
+  }, [session?.user, state.customer]);
 
   const value = useMemo<CartContextValue>(() => {
     const totalItems = state.items.reduce(

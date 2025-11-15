@@ -4,6 +4,7 @@ import { CartDrawer } from "@/src/components/cart/CartDrawer";
 import { ThemeToggle } from "@/src/components/ui/ThemeToggle";
 import { useCart } from "@/src/contexts/CartContext";
 import { ShoppingCartIcon } from "@heroicons/react/24/outline";
+import { useSession, signOut } from "next-auth/react";
 import {
   Button,
   Navbar,
@@ -18,6 +19,44 @@ import { useState } from "react";
 export function Header() {
   const { totalItems } = useCart();
   const [isCartOpen, setIsCartOpen] = useState(false);
+  const { status, data: session } = useSession();
+  const isLoadingSession = status === "loading";
+  const isAuthenticated = status === "authenticated";
+
+  const renderAuthButton = () => {
+    if (isLoadingSession) {
+      return (
+        <Button variant="light" size="sm" className="min-w-fit" isDisabled>
+          Carregando...
+        </Button>
+      );
+    }
+
+    if (isAuthenticated) {
+      return (
+        <Button
+          variant="bordered"
+          size="sm"
+          className="min-w-fit"
+          onPress={() => signOut({ callbackUrl: "/" })}
+        >
+          Sair
+        </Button>
+      );
+    }
+
+    return (
+      <Button
+        as={Link}
+        href="/login"
+        color="danger"
+        size="sm"
+        className="bg-brand-600 text-white"
+      >
+        Entrar
+      </Button>
+    );
+  };
 
   return (
     <>
@@ -81,6 +120,12 @@ export function Header() {
               Garantia
             </Button>
           </NavbarItem>
+          {isAuthenticated && (
+            <NavbarItem className="hidden text-xs text-slate-600 dark:text-slate-300 sm:flex sm:text-sm">
+              {`Bem-vindo, ${session?.user?.name || session?.user?.email || "cliente"}`}
+            </NavbarItem>
+          )}
+          <NavbarItem>{renderAuthButton()}</NavbarItem>
           <NavbarItem>
             <div className="relative">
               <Button

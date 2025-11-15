@@ -23,7 +23,8 @@ import {
   SelectItem,
   Textarea,
 } from "@heroui/react";
-import { useMemo, useState } from "react";
+import { useSession } from "next-auth/react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 const steps = ["Tipo de peça", "Marca", "Produtos", "Resumo"];
 
@@ -46,6 +47,14 @@ export function PedidoWizard() {
     removeItem,
     updateCustomer,
   } = useCart();
+  const { data: session } = useSession();
+  const [profileSyncStatus, setProfileSyncStatus] = useState<
+    "idle" | "saving" | "saved" | "error"
+  >("idle");
+  const lastSyncedPayloadRef = useRef<string>("");
+  const resetStatusTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(
+    null
+  );
 
   const filteredProducts = useMemo(() => {
     if (!selectedBrand || !selectedCategory) return [];
@@ -79,8 +88,79 @@ export function PedidoWizard() {
 
   const handleCustomerChange =
     (field: keyof CustomerDetails) => (value: string) => {
-      updateCustomer({ [field]: value });
+      const nextValue =
+        field === "state" ? value.toUpperCase().slice(0, 2) : value;
+      updateCustomer({ [field]: nextValue });
     };
+
+  useEffect(() => {
+    if (!session?.user) {
+      lastSyncedPayloadRef.current = "";
+      return;
+    }
+
+    const profilePayload = {
+      name: customer.name,
+      phone: customer.phone,
+      docNumber: customer.docNumber,
+      addressLine1: customer.addressLine1,
+      addressLine2: customer.addressLine2,
+      city: customer.city,
+      state: customer.state.toUpperCase(),
+      postalCode: customer.postalCode,
+    };
+
+    if (!Object.values(profilePayload).some(Boolean)) {
+      return;
+    }
+
+    const payloadString = JSON.stringify(profilePayload);
+    if (payloadString === lastSyncedPayloadRef.current) {
+      return;
+    }
+
+    let isMounted = true;
+    const controller = new AbortController();
+    const debounceId = setTimeout(async () => {
+      setProfileSyncStatus("saving");
+      try {
+        const response = await fetch("/api/profile", {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: payloadString,
+          signal: controller.signal,
+        });
+
+        if (!response.ok) {
+          throw new Error("Failed to sync profile");
+        }
+
+        if (!isMounted) {
+          return;
+        }
+
+        lastSyncedPayloadRef.current = payloadString;
+        setProfileSyncStatus("saved");
+        if (resetStatusTimeoutRef.current) {
+          clearTimeout(resetStatusTimeoutRef.current);
+        }
+        resetStatusTimeoutRef.current = setTimeout(() => {
+          setProfileSyncStatus("idle");
+        }, 2000);
+      } catch (error) {
+        if (!isMounted || controller.signal.aborted) {
+          return;
+        }
+        setProfileSyncStatus("error");
+      }
+    }, 800);
+
+    return () => {
+      isMounted = false;
+      controller.abort();
+      clearTimeout(debounceId);
+    };
+  }, [customer, session?.user]);
 
   const handleFinalize = () => {
     setShowErrors(true);
@@ -249,6 +329,50 @@ export function PedidoWizard() {
                       ? "Informe o nome do responsável."
                       : undefined
                   }
+                  autoComplete="name"
+                  onKeyDown={(e) => {
+                    if (e.key === " ") {
+                      e.nativeEvent.stopPropagation();
+                    }
+                  }}
+                />
+                <Input
+                  label="Telefone para contato"
+                  placeholder="(48) 9 9999-9999"
+                  value={customer.phone}
+                  onValueChange={handleCustomerChange("phone")}
+                  autoComplete="tel"
+                />
+                <Input
+                  label="Documento (CPF/CNPJ)"
+                  placeholder="000.000.000-00"
+                  value={customer.docNumber}
+                  onValueChange={handleCustomerChange("docNumber")}
+                  autoComplete="off"
+                />
+                <Input
+                  label="Endereço"
+                  placeholder="Rua, número"
+                  value={customer.addressLine1}
+                  onValueChange={handleCustomerChange("addressLine1")}
+                  autoComplete="street-address"
+                  onKeyDown={(e) => {
+                    if (e.key === " ") {
+                      e.nativeEvent.stopPropagation();
+                    }
+                  }}
+                />
+                <Input
+                  label="Complemento"
+                  placeholder="Sala, bloco, ponto de referência"
+                  value={customer.addressLine2}
+                  onValueChange={handleCustomerChange("addressLine2")}
+                  autoComplete="address-line2"
+                  onKeyDown={(e) => {
+                    if (e.key === " ") {
+                      e.nativeEvent.stopPropagation();
+                    }
+                  }}
                 />
                 <Input
                   label="Cidade"
@@ -261,6 +385,12 @@ export function PedidoWizard() {
                       ? "Informe a cidade."
                       : undefined
                   }
+                  autoComplete="address-level2"
+                  onKeyDown={(e) => {
+                    if (e.key === " ") {
+                      e.nativeEvent.stopPropagation();
+                    }
+                  }}
                 />
                 <Input
                   label="Estado (UF)"
@@ -274,6 +404,14 @@ export function PedidoWizard() {
                       : undefined
                   }
                   maxLength={2}
+                  autoComplete="address-level1"
+                />
+                <Input
+                  label="CEP"
+                  placeholder="88000-000"
+                  value={customer.postalCode}
+                  onValueChange={handleCustomerChange("postalCode")}
+                  autoComplete="postal-code"
                 />
                 <Textarea
                   label="Observações"
@@ -282,7 +420,24 @@ export function PedidoWizard() {
                   onValueChange={handleCustomerChange("notes")}
                   minRows={3}
                   className="md:col-span-2"
+                  onKeyDown={(e) => {
+                    if (e.key === " ") {
+                      e.nativeEvent.stopPropagation();
+                    }
+                  }}
                 />
+                {session?.user && (
+                  <p className="md:col-span-2 text-xs text-slate-500">
+                    {profileSyncStatus === "saving" &&
+                      "Salvando dados na sua conta..."}
+                    {profileSyncStatus === "saved" &&
+                      "Dados sincronizados para futuros pedidos."}
+                    {profileSyncStatus === "error" &&
+                      "Não conseguimos salvar automaticamente. Tente novamente em instantes."}
+                    {profileSyncStatus === "idle" &&
+                      "Campos preenchidos aqui ficam salvos para os próximos pedidos."}
+                  </p>
+                )}
               </CardBody>
             </Card>
 

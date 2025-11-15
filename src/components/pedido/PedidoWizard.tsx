@@ -147,7 +147,7 @@ export function PedidoWizard() {
         resetStatusTimeoutRef.current = setTimeout(() => {
           setProfileSyncStatus("idle");
         }, 2000);
-      } catch (error) {
+      } catch {
         if (!isMounted || controller.signal.aborted) {
           return;
         }

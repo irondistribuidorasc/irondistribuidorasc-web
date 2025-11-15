@@ -115,7 +115,7 @@ function LoginPageContent() {
       }
 
       redirectAfterAuth(result?.url);
-    } catch (error) {
+    } catch {
       // Erro capturado no cliente - mensagem genérica para o usuário
       setRegisterError("Não foi possível completar o cadastro.");
     } finally {

@@ -9,7 +9,7 @@ import Link from "next/link";
 export default function HomePage() {
   return (
     <div className="relative overflow-hidden">
-      <section className="bg-gradient-to-b from-brand-50 to-white dark:from-slate-900 dark:to-slate-950">
+      <section className="bg-white dark:bg-slate-900">
         <div className="mx-auto flex w-full max-w-6xl flex-col gap-10 px-4 py-16 md:flex-row md:items-center md:py-20">
           <div className="flex-1 space-y-6 text-center md:text-left">
             <div className="flex flex-col items-center gap-4 md:items-start">

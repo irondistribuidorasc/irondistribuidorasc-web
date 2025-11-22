@@ -13,6 +13,8 @@ import { db } from "@/src/lib/prisma";
 import { isValidEmail, normalizeEmail } from "@/src/lib/validation";
 
 type AuthUser = NextAuthUser & {
+  role?: string;
+  approved?: boolean;
   phone?: string | null;
   docNumber?: string | null;
   addressLine1?: string | null;
@@ -24,6 +26,8 @@ type AuthUser = NextAuthUser & {
 
 type SessionUser = DefaultSession["user"] & {
   id: string;
+  role?: string;
+  approved?: boolean;
   phone?: string | null;
   docNumber?: string | null;
   addressLine1?: string | null;
@@ -83,6 +87,8 @@ export const authOptions: NextAuthOptions = {
           name: user.name,
           email: user.email,
           image: user.image,
+          role: user.role,
+          approved: user.approved,
           phone: user.phone,
           docNumber: user.docNumber,
           addressLine1: user.addressLine1,
@@ -102,6 +108,8 @@ export const authOptions: NextAuthOptions = {
       const authUser = user as AuthUser | undefined;
       if (authUser) {
         token.id = authUser.id;
+        token.role = authUser.role ?? token.role ?? "USER";
+        token.approved = authUser.approved ?? token.approved ?? false;
         token.phone = authUser.phone ?? token.phone ?? null;
         token.docNumber = authUser.docNumber ?? token.docNumber ?? null;
         token.addressLine1 = authUser.addressLine1 ?? token.addressLine1 ?? null;
@@ -116,6 +124,8 @@ export const authOptions: NextAuthOptions = {
       if (session.user) {
         const sessionUser = session.user as SessionUser;
         sessionUser.id = token.id ?? sessionUser.id;
+        sessionUser.role = token.role ?? "USER";
+        sessionUser.approved = token.approved ?? false;
         sessionUser.phone = token.phone ?? null;
         sessionUser.docNumber = token.docNumber ?? null;
         sessionUser.addressLine1 = token.addressLine1 ?? null;

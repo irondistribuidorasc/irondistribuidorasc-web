@@ -125,7 +125,7 @@ function LoginPageContent() {
 
   if (isAuthenticated) {
     return (
-      <section className="flex min-h-[calc(100vh-120px)] items-center justify-center bg-gradient-to-b from-brand-50 to-white px-4 py-16 dark:from-slate-900 dark:to-slate-950">
+      <section className="flex min-h-[calc(100vh-120px)] items-center justify-center bg-white px-4 py-16 dark:bg-slate-900">
         <Card className="w-full max-w-md border border-slate-200 dark:border-slate-800">
           <CardBody className="space-y-6 text-center">
             <div className="space-y-2">
@@ -163,7 +163,7 @@ function LoginPageContent() {
   }
 
   return (
-    <section className="flex min-h-[calc(100vh-120px)] items-center justify-center bg-gradient-to-b from-brand-50 to-white px-4 py-16 dark:from-slate-900 dark:to-slate-950">
+    <section className="flex min-h-[calc(100vh-120px)] items-center justify-center bg-white px-4 py-16 dark:bg-slate-900">
       <Card className="w-full max-w-xl border border-slate-200 shadow-xl dark:border-slate-800 dark:bg-slate-900">
         <CardBody className="space-y-8">
           <div className="space-y-3 text-center">

@@ -14,6 +14,7 @@ interface MobileMenuProps {
   userEmail?: string | null;
   isAuthenticated: boolean;
   currentPath: string;
+  userRole?: string | null;
   triggerRef?: React.RefObject<HTMLButtonElement | null>;
 }
 
@@ -27,6 +28,7 @@ export function MobileMenu({
   userEmail,
   isAuthenticated,
   currentPath,
+  userRole,
   triggerRef,
 }: MobileMenuProps) {
   const firstLinkRef = useRef<HTMLAnchorElement>(null);
@@ -147,6 +149,7 @@ export function MobileMenu({
     { href: "/produtos", label: "Produtos" },
     { href: "/carrinho", label: "Carrinho" },
     { href: "/garantia", label: "Garantia" },
+    ...(userRole === "ADMIN" ? [{ href: "/admin", label: "Administração" }] : []),
   ];
 
   const handleLinkClick = () => {
@@ -261,7 +264,7 @@ export function MobileMenu({
                     className="w-full"
                     onPress={handleLinkClick}
                   >
-                    Entrar
+                    Área do Cliente
                   </Button>
                 )}
               </div>

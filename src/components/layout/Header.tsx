@@ -16,7 +16,7 @@ import {
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 
 export function Header() {
   const { totalItems } = useCart();
@@ -62,7 +62,7 @@ export function Header() {
         color="danger"
         size="sm"
       >
-        Entrar
+        Área do Cliente
       </Button>
     );
   };
@@ -122,6 +122,20 @@ export function Header() {
               Garantia
             </Link>
           </NavbarItem>
+          {session?.user?.role === "ADMIN" && (
+            <NavbarItem>
+              <Link
+                href="/admin"
+                className={`text-sm font-medium transition ${
+                  pathname === "/admin"
+                    ? "text-brand-600 dark:text-brand-400"
+                    : "text-slate-700 hover:text-brand-600 dark:text-slate-300 dark:hover:text-brand-400"
+                }`}
+              >
+                Administração
+              </Link>
+            </NavbarItem>
+          )}
         </NavbarContent>
         <NavbarContent justify="end" className="gap-1 sm:gap-2 md:gap-3">
           {/* Hamburger button - mobile only */}
@@ -180,6 +194,7 @@ export function Header() {
         userEmail={session?.user?.email}
         isAuthenticated={isAuthenticated}
         currentPath={pathname}
+        userRole={session?.user?.role}
         triggerRef={hamburgerButtonRef}
       />
     </>

@@ -12,6 +12,7 @@ import {
   DrawerHeader,
   DrawerProps,
 } from "@heroui/react";
+import { useSession } from "next-auth/react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 
@@ -19,9 +20,12 @@ type CartDrawerProps = Pick<DrawerProps, "isOpen" | "onClose">;
 
 export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
   const { items, removeItem, updateQuantity, clearCart } = useCart();
+  const { data: session } = useSession();
   const router = useRouter();
 
   const hasItems = items.length > 0;
+  const isAuthenticated = !!session?.user;
+  const isApproved = session?.user?.approved === true;
 
   const handleClose = () => {
     onClose?.();
@@ -29,6 +33,21 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
 
   const handleGoToCheckout = () => {
     if (!hasItems) return;
+
+    // Verificar autenticação
+    if (!isAuthenticated) {
+      router.push("/login?callbackUrl=/carrinho");
+      handleClose();
+      return;
+    }
+
+    // Verificar aprovação da conta
+    if (!isApproved) {
+      router.push("/conta-pendente");
+      handleClose();
+      return;
+    }
+
     router.push("/carrinho");
     handleClose();
   };

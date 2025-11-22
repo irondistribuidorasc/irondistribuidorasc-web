@@ -3,7 +3,9 @@
 import { useCart } from "@/src/contexts/CartContext";
 import type { Product } from "@/src/data/products";
 import { formatPrice, formatRestockDate } from "@/src/lib/productUtils";
+import { useSession } from "next-auth/react";
 import Image from "next/image";
+import Link from "next/link";
 import { useState, useEffect, useRef } from "react";
 
 type ProductCardProps = {
@@ -14,8 +16,13 @@ const FEEDBACK_DURATION_MS = 600;
 
 export function ProductCard({ product }: ProductCardProps) {
   const { addItem } = useCart();
+  const { data: session } = useSession();
   const [isAdding, setIsAdding] = useState(false);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  const isAuthenticated = !!session?.user;
+  const isApproved = session?.user?.approved === true;
+  const canViewPrices = isAuthenticated && isApproved;
 
   // Cleanup do timeout ao desmontar
   useEffect(() => {
@@ -79,10 +86,26 @@ export function ProductCard({ product }: ProductCardProps) {
           </span>
         </div>
 
-        {/* Preço */}
-        <p className="mt-auto text-lg font-bold text-brand-600 dark:text-brand-400">
-          {formatPrice(product.price)}
-        </p>
+        {/* Preço ou Badge de Login/Aprovação */}
+        {canViewPrices ? (
+          <p className="mt-auto text-lg font-bold text-brand-600 dark:text-brand-400">
+            {formatPrice(product.price)}
+          </p>
+        ) : isAuthenticated && !isApproved ? (
+          <Link
+            href="/conta-pendente"
+            className="mt-auto inline-block rounded-md bg-yellow-100 px-3 py-2 text-center text-sm font-medium text-yellow-800 transition-colors hover:bg-yellow-200 dark:bg-yellow-900/30 dark:text-yellow-400 dark:hover:bg-yellow-900/50"
+          >
+            Aguardando aprovação
+          </Link>
+        ) : (
+          <Link
+            href="/login?callbackUrl=/produtos"
+            className="mt-auto inline-block rounded-md bg-brand-100 px-3 py-2 text-center text-sm font-medium text-brand-700 transition-colors hover:bg-brand-200 dark:bg-brand-900/30 dark:text-brand-400 dark:hover:bg-brand-900/50"
+          >
+            Disponível na área de clientes
+          </Link>
+        )}
 
         {/* Data de reestoque se fora de estoque */}
         {!product.inStock && product.restockDate && (
@@ -112,4 +135,3 @@ export function ProductCard({ product }: ProductCardProps) {
     </article>
   );
 }
-

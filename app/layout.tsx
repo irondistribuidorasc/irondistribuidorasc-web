@@ -104,8 +104,36 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    name: "IRON DISTRIBUIDORA SC",
+    url: "https://irondistribuidorasc.com.br",
+    logo: "https://irondistribuidorasc.com.br/logo-iron.png",
+    description:
+      "Distribuidora de peças para celular com garantia de 1 ano. Atendemos Itapema, Tijucas, Porto Belo e São João Batista.",
+    telephone: "+55-48-99114-7117",
+    areaServed: [
+      { "@type": "City", name: "Itapema" },
+      { "@type": "City", name: "Tijucas" },
+      { "@type": "City", name: "Porto Belo" },
+      { "@type": "City", name: "São João Batista" },
+    ],
+    address: {
+      "@type": "PostalAddress",
+      addressRegion: "SC",
+      addressCountry: "BR",
+    },
+  };
+
   return (
     <html lang="pt-BR" suppressHydrationWarning>
+      <head>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
+      </head>
       <body className={`${inter.className}`}>
         <Providers>
           <div className="flex min-h-screen flex-col overflow-x-hidden">

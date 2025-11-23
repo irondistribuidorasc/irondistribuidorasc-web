@@ -12,6 +12,11 @@ import {
   NavbarBrand,
   NavbarContent,
   NavbarItem,
+  Dropdown,
+  DropdownTrigger,
+  DropdownMenu,
+  DropdownItem,
+  Avatar,
 } from "@heroui/react";
 import Image from "next/image";
 import Link from "next/link";
@@ -32,26 +37,43 @@ export function Header() {
     return session?.user?.name || session?.user?.email || "cliente";
   };
 
-  const renderAuthButton = () => {
+  const renderUserMenu = () => {
     if (isLoadingSession) {
       return (
-        <Button variant="light" size="sm" className="min-w-fit" isDisabled>
-          Carregando...
-        </Button>
+        <div className="h-8 w-8 animate-pulse rounded-full bg-slate-200 dark:bg-slate-700" />
       );
     }
 
     if (isAuthenticated) {
       return (
-        <Button
-          color="danger"
-          variant="flat"
-          size="sm"
-          className="min-w-fit"
-          onPress={() => signOut({ callbackUrl: "/" })}
-        >
-          Sair
-        </Button>
+        <Dropdown placement="bottom-end">
+          <DropdownTrigger>
+            <Avatar
+              isBordered
+              as="button"
+              className="transition-transform"
+              color="danger"
+              name={getUserDisplayName()}
+              size="sm"
+              src={session?.user?.image || undefined}
+            />
+          </DropdownTrigger>
+          <DropdownMenu aria-label="Profile Actions" variant="flat">
+            <DropdownItem key="profile" className="h-14 gap-2">
+              <p className="font-semibold">Logado como</p>
+              <p className="font-semibold">{session?.user?.email}</p>
+            </DropdownItem>
+            <DropdownItem key="settings" href="/minha-conta">
+              Minha Conta
+            </DropdownItem>
+            <DropdownItem key="orders" href="/meus-pedidos">
+              Meus Pedidos
+            </DropdownItem>
+            <DropdownItem key="logout" color="danger" onPress={() => signOut({ callbackUrl: "/" })}>
+              Sair
+            </DropdownItem>
+          </DropdownMenu>
+        </Dropdown>
       );
     }
 
@@ -60,9 +82,11 @@ export function Header() {
         as={Link}
         href="/login"
         color="danger"
+        variant="flat"
         size="sm"
+        className="font-medium"
       >
-        Área do Cliente
+        Entrar
       </Button>
     );
   };
@@ -158,15 +182,10 @@ export function Header() {
             </Button>
           </NavbarItem>
 
-          <NavbarItem>
+          <NavbarItem className="flex items-center gap-2">
             <ThemeToggle />
+            {renderUserMenu()}
           </NavbarItem>
-          {isAuthenticated && (
-            <NavbarItem className="hidden text-xs text-slate-600 dark:text-slate-300 sm:flex sm:text-sm">
-              {`Bem-vindo, ${getUserDisplayName()}`}
-            </NavbarItem>
-          )}
-          <NavbarItem>{renderAuthButton()}</NavbarItem>
           <NavbarItem>
             <div className="relative">
               <Button
@@ -176,12 +195,12 @@ export function Header() {
                 onPress={() => setIsCartOpen(true)}
               >
                 <ShoppingCartIcon className="h-6 w-6 text-slate-900 dark:text-slate-100" />
-                {totalItems > 0 && (
-                  <span className="absolute right-0 top-0 flex min-h-[1.25rem] min-w-[1.25rem] -translate-y-1/4 translate-x-1/4 items-center justify-center rounded-full bg-danger px-1 text-xs font-semibold text-white">
-                    {totalItems > 99 ? "99+" : totalItems}
-                  </span>
-                )}
               </Button>
+              {totalItems > 0 && (
+                <span className="pointer-events-none absolute right-0 top-0 flex min-h-[1.25rem] min-w-[1.25rem] -translate-y-1/4 translate-x-1/4 items-center justify-center rounded-full bg-danger px-1 text-xs font-semibold text-white">
+                  {totalItems > 99 ? "99+" : totalItems}
+                </span>
+              )}
             </div>
           </NavbarItem>
         </NavbarContent>

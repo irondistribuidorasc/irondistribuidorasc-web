@@ -5,6 +5,7 @@ import { HeroUIProvider } from "@heroui/react";
 import { ReactNode } from "react";
 import { ThemeProvider } from "next-themes";
 import { SessionProvider } from "next-auth/react";
+import { Toaster } from "sonner";
 
 type ProvidersProps = {
   children: ReactNode;
@@ -21,6 +22,7 @@ export function Providers({ children }: ProvidersProps) {
       <SessionProvider>
         <HeroUIProvider>
           <CartProvider>{children}</CartProvider>
+          <Toaster richColors position="top-right" />
         </HeroUIProvider>
       </SessionProvider>
     </ThemeProvider>

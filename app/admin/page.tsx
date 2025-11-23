@@ -16,6 +16,7 @@ import {
   Tabs,
 } from "@heroui/react";
 import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
+import Link from "next/link";
 
 type User = {
   id: string;
@@ -159,13 +160,23 @@ export default function AdminPage() {
   return (
     <div className="min-h-screen bg-white px-4 py-12 dark:bg-slate-900">
       <div className="mx-auto w-full max-w-6xl">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-slate-900 dark:text-slate-100">
-            Painel Administrativo
-          </h1>
-          <p className="mt-2 text-slate-600 dark:text-slate-400">
-            Gerencie usuários e visualize o fluxo de vendas
-          </p>
+        <div className="mb-8 flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
+          <div>
+            <h1 className="text-3xl font-bold text-slate-900 dark:text-slate-100">
+              Painel Administrativo
+            </h1>
+            <p className="mt-2 text-slate-600 dark:text-slate-400">
+              Gerencie usuários e visualize o fluxo de vendas
+            </p>
+          </div>
+          <Button
+            as={Link}
+            href="/admin/products"
+            color="primary"
+            className="font-medium"
+          >
+            Gerenciar Produtos
+          </Button>
         </div>
 
         {/* Tabs de filtro */}

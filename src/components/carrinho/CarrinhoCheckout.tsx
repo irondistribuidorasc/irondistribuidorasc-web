@@ -17,6 +17,7 @@ import {
 import { useSession } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
 const PROFILE_SYNC_DEBOUNCE_MS = 800;
@@ -53,6 +54,7 @@ const VALID_STATES = new Set([
 ]);
 
 export function CarrinhoCheckout() {
+  const router = useRouter();
   const {
     items,
     totalItems,
@@ -204,13 +206,21 @@ export function CarrinhoCheckout() {
     };
   }, [customer, session?.user]);
 
+  const isApproved = session?.user?.approved === true;
+
   const handleFinalize = () => {
     setShowErrors(true);
+    
+    if (!isApproved) {
+      router.push("/conta-pendente");
+      return;
+    }
+
     if (!canFinalize) return;
 
     const message = buildOrderWhatsAppMessage(items, customer);
     const url = getWhatsAppUrl(message);
-    window.open(url, "_blank", "noopener,noreferrer");
+    globalThis.open(url, "_blank", "noopener,noreferrer");
   };
 
   const getStateErrorMessage = () => {
@@ -485,9 +495,9 @@ export function CarrinhoCheckout() {
           size="lg"
           className="bg-brand-600 text-white sm:w-auto"
           onPress={handleFinalize}
-          isDisabled={!canFinalize}
+          isDisabled={!canFinalize && isApproved}
         >
-          Finalizar pedido no WhatsApp
+          {isApproved ? "Finalizar pedido no WhatsApp" : "Aguardando aprovação"}
         </Button>
       </div>
       {showErrors && !isCustomerInfoValid && (

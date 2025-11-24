@@ -41,6 +41,9 @@ export async function PATCH(request: Request) {
       city,
       state,
       postalCode,
+      storeName,
+      storePhone,
+      tradeLicense,
     } = body as Partial<{
       name: string;
       phone: string;
@@ -50,6 +53,9 @@ export async function PATCH(request: Request) {
       city: string;
       state: string;
       postalCode: string;
+      storeName: string;
+      storePhone: string;
+      tradeLicense: string;
     }>;
 
     const normalizedPhone = normalizeOptionalString(phone);
@@ -60,6 +66,9 @@ export async function PATCH(request: Request) {
     const normalizedState = state ? normalizeOptionalString(state.toUpperCase()) : null;
     const normalizedPostalCode = normalizeOptionalString(postalCode);
     const normalizedName = name ? name.trim() : undefined;
+    const normalizedStoreName = normalizeOptionalString(storeName);
+    const normalizedStorePhone = normalizeOptionalString(storePhone);
+    const normalizedTradeLicense = normalizeOptionalString(tradeLicense);
 
     // Validação de comprimento máximo
     const maxLengthValidations = [
@@ -70,6 +79,9 @@ export async function PATCH(request: Request) {
       validateMaxLength(normalizedAddressLine2, MAX_ADDRESS_LENGTH, "Endereço linha 2"),
       validateMaxLength(normalizedCity, MAX_CITY_LENGTH, "Cidade"),
       validateMaxLength(normalizedPostalCode, MAX_POSTAL_CODE_LENGTH, "CEP"),
+      validateMaxLength(normalizedStoreName, MAX_NAME_LENGTH, "Nome da loja"),
+      validateMaxLength(normalizedStorePhone, MAX_PHONE_LENGTH, "Telefone comercial"),
+      validateMaxLength(normalizedTradeLicense, MAX_DOC_NUMBER_LENGTH, "Inscrição"),
     ];
 
     for (const validation of maxLengthValidations) {
@@ -91,6 +103,13 @@ export async function PATCH(request: Request) {
     if (normalizedDocNumber && !isValidDocNumber(normalizedDocNumber)) {
       return NextResponse.json(
         { message: "CPF/CNPJ inválido." },
+        { status: 400 }
+      );
+    }
+
+    if (normalizedStorePhone && !isValidPhone(normalizedStorePhone)) {
+      return NextResponse.json(
+        { message: "Telefone comercial inválido." },
         { status: 400 }
       );
     }
@@ -118,6 +137,9 @@ export async function PATCH(request: Request) {
       ...(normalizedCity !== undefined && { city: normalizedCity }),
       ...(normalizedState !== undefined && { state: normalizedState }),
       ...(normalizedPostalCode !== undefined && { postalCode: normalizedPostalCode }),
+      ...(normalizedStoreName !== undefined && { storeName: normalizedStoreName }),
+      ...(normalizedStorePhone !== undefined && { storePhone: normalizedStorePhone }),
+      ...(normalizedTradeLicense !== undefined && { tradeLicense: normalizedTradeLicense }),
     };
 
     if (Object.keys(data).length === 0) {
@@ -138,6 +160,9 @@ export async function PATCH(request: Request) {
         city: true,
         state: true,
         postalCode: true,
+        storeName: true,
+        storePhone: true,
+        tradeLicense: true,
       },
     });
 

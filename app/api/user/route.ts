@@ -24,6 +24,9 @@ export async function GET(request: NextRequest) {
         city: true,
         state: true,
         postalCode: true,
+        storeName: true,
+        storePhone: true,
+        tradeLicense: true,
         role: true,
         approved: true,
       },
@@ -72,6 +75,9 @@ export async function PATCH(request: NextRequest) {
       city,
       state,
       postalCode,
+      storeName,
+      storePhone,
+      tradeLicense,
     } = result.data;
 
     const updatedUser = await db.user.update({
@@ -85,6 +91,9 @@ export async function PATCH(request: NextRequest) {
         city,
         state,
         postalCode,
+        storeName,
+        storePhone,
+        tradeLicense,
       },
       select: {
         id: true,
@@ -97,6 +106,9 @@ export async function PATCH(request: NextRequest) {
         city: true,
         state: true,
         postalCode: true,
+        storeName: true,
+        storePhone: true,
+        tradeLicense: true,
       },
     });
 

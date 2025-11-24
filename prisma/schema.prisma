@@ -23,12 +23,16 @@ model User {
   city          String?
   state         String?
   postalCode    String?
+  storeName     String?
+  storePhone    String?
+  tradeLicense  String?
   role          Role      @default(USER)
   approved      Boolean   @default(false)
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
   accounts      Account[]
   sessions      Session[]
+  orders        Order[]
 }
 
 enum Role {
@@ -87,4 +91,70 @@ model Product {
   popularity  Int      @default(0)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+}
+
+model Order {
+  id          String      @id @default(cuid())
+  userId      String
+  user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  orderNumber String      @unique
+  status      OrderStatus @default(PENDING)
+  total       Float
+  paymentMethod PaymentMethod @default(OTHER)
+  
+  // Dados do cliente no momento do pedido
+  customerName     String
+  customerEmail    String
+  customerPhone    String
+  customerDocNumber String?
+  
+  // Endereco de entrega
+  addressLine1 String
+  addressLine2 String?
+  city         String
+  state        String
+  postalCode   String
+  
+  // Metadados
+  notes       String?
+  whatsappMessageSent Boolean @default(false)
+  
+  items       OrderItem[]
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  
+  @@index([userId])
+  @@index([orderNumber])
+}
+
+enum OrderStatus {
+  PENDING
+  CONFIRMED
+  PROCESSING
+  SHIPPED
+  DELIVERED
+  CANCELLED
+}
+
+enum PaymentMethod {
+  PIX
+  CREDIT_CARD
+  DEBIT_CARD
+  CASH
+  OTHER
+}
+
+model OrderItem {
+  id          String  @id @default(cuid())
+  orderId     String
+  order       Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  
+  productId   String
+  productCode String
+  productName String
+  quantity    Int
+  price       Float
+  total       Float
+  
+  @@index([orderId])
 }

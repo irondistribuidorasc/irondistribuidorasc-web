@@ -10,6 +10,9 @@ export const userProfileSchema = z.object({
   city: z.string().min(2, "Cidade inválida").optional().or(z.literal("")),
   state: z.string().length(2, "Estado deve ter 2 letras").optional().or(z.literal("")),
   postalCode: z.string().min(8, "CEP inválido").optional().or(z.literal("")),
+  storeName: z.string().min(3, "Nome da loja deve ter pelo menos 3 caracteres").optional().or(z.literal("")),
+  storePhone: z.string().min(10, "Telefone comercial inválido").optional().or(z.literal("")),
+  tradeLicense: z.string().optional().or(z.literal("")),
 });
 
 export type UserProfileSchema = z.infer<typeof userProfileSchema>;

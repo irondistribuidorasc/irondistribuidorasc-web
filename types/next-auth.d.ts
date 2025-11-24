@@ -14,6 +14,9 @@ declare module "next-auth" {
       city?: string | null;
       state?: string | null;
       postalCode?: string | null;
+      storeName?: string | null;
+      storePhone?: string | null;
+      tradeLicense?: string | null;
     };
   }
 
@@ -27,6 +30,9 @@ declare module "next-auth" {
     city?: string | null;
     state?: string | null;
     postalCode?: string | null;
+    storeName?: string | null;
+    storePhone?: string | null;
+    tradeLicense?: string | null;
   }
 }
 
@@ -42,5 +48,8 @@ declare module "next-auth/jwt" {
     city?: string | null;
     state?: string | null;
     postalCode?: string | null;
+    storeName?: string | null;
+    storePhone?: string | null;
+    tradeLicense?: string | null;
   }
 }

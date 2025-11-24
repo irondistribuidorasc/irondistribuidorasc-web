@@ -4,7 +4,6 @@ import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { Card, CardBody, Spinner } from "@heroui/react";
-import Link from "next/link";
 import {
 	ShoppingBagIcon,
 	UsersIcon,
@@ -81,26 +80,26 @@ export default function AdminDashboard() {
 
 				<div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
 					{menuItems.map((item) => (
-						<Link key={item.href} href={item.href} className="block h-full">
-							<Card
-								className="h-full border border-slate-200 transition-all hover:scale-[1.02] hover:shadow-lg dark:border-slate-800"
-								isPressable
-							>
-								<CardBody className="flex flex-col items-center p-8 text-center">
-									<div
-										className={`mb-6 flex h-16 w-16 items-center justify-center rounded-full ${item.color} text-white shadow-md`}
-									>
-										<item.icon className="h-8 w-8" />
-									</div>
-									<h2 className="mb-2 text-xl font-bold text-slate-900 dark:text-slate-100">
-										{item.title}
-									</h2>
-									<p className="text-sm text-slate-600 dark:text-slate-400">
-										{item.description}
-									</p>
-								</CardBody>
-							</Card>
-						</Link>
+						<Card
+							key={item.href}
+							className="h-full border border-slate-200 transition-all hover:scale-[1.02] hover:shadow-lg dark:border-slate-800"
+							isPressable
+							onPress={() => router.push(item.href)}
+						>
+							<CardBody className="flex flex-col items-center p-8 text-center">
+								<div
+									className={`mb-6 flex h-16 w-16 items-center justify-center rounded-full ${item.color} text-white shadow-md`}
+								>
+									<item.icon className="h-8 w-8" />
+								</div>
+								<h2 className="mb-2 text-xl font-bold text-slate-900 dark:text-slate-100">
+									{item.title}
+								</h2>
+								<p className="text-sm text-slate-600 dark:text-slate-400">
+									{item.description}
+								</p>
+							</CardBody>
+						</Card>
 					))}
 				</div>
 			</div>

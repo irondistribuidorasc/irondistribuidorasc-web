@@ -2,6 +2,7 @@ import { GarantiaWizard } from "@/src/components/garantia/GarantiaWizard";
 import { GarantiaLoadingSkeleton } from "@/src/components/ui/GarantiaLoadingSkeleton";
 import type { Metadata } from "next";
 import { Suspense } from "react";
+import { ShieldCheckIcon } from "@heroicons/react/24/outline";
 
 export const metadata: Metadata = {
   title: "Solicitar garantia ou troca | IRON DISTRIBUIDORA SC",
@@ -11,17 +12,15 @@ export const metadata: Metadata = {
 
 export default function GarantiaPage() {
   return (
-    <div className="mx-auto w-full max-w-4xl px-4 py-10">
-      <div className="mb-8 space-y-2 text-center md:text-left">
-        <p className="text-xs uppercase tracking-[0.3em] text-brand-600">
-          Garantia e troca
-        </p>
-        <h1 className="text-3xl font-semibold text-slate-900 dark:text-slate-100 md:text-4xl">
-          Solicite sua garantia
+    <div className="container mx-auto px-4 py-8">
+      <div className="mb-6">
+        <h1 className="mb-2 flex items-center gap-2 text-3xl font-bold text-slate-900 dark:text-slate-100">
+          <ShieldCheckIcon className="h-8 w-8 text-brand-600 dark:text-brand-400" />
+          Garantia e Troca
         </h1>
-        <p className="text-sm text-slate-500 dark:text-slate-400">
-          Siga os passos para detalhar o item, anexar fotos e gerar a mensagem
-          de atendimento automático no WhatsApp.
+        <p className="text-slate-600 dark:text-slate-400">
+          Solicite garantia ou devolução de produtos e gere a mensagem
+          automática para WhatsApp
         </p>
       </div>
       <Suspense fallback={<GarantiaLoadingSkeleton />}>

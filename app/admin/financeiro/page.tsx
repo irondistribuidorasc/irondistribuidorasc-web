@@ -19,7 +19,8 @@ import { formatCurrency } from "@/src/lib/utils";
 import { useSession } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useState } from "react";
-import { PrinterIcon } from "@heroicons/react/24/outline";
+import { PrinterIcon, ChevronLeftIcon } from "@heroicons/react/24/outline";
+import Link from "next/link";
 
 // ... imports ...
 
@@ -129,6 +130,15 @@ function FinancialPageContent() {
 			<div className="mx-auto w-full max-w-6xl">
 				<div className="mb-8 flex flex-col justify-between gap-4 sm:flex-row sm:items-center print:hidden">
 					<div>
+						<Button
+							as={Link}
+							href="/admin"
+							variant="light"
+							className="mb-4 -ml-4 text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 print:hidden"
+						>
+							<ChevronLeftIcon className="mr-1 h-4 w-4" />
+							Voltar para Dashboard
+						</Button>
 						<h1 className="text-3xl font-bold text-slate-900 dark:text-slate-100">
 							Controle Financeiro
 						</h1>
@@ -153,92 +163,156 @@ function FinancialPageContent() {
 					</div>
 				</div>
 
-				{/* Print Header */}
-				<div className="hidden mb-8 print:block">
-					<h1 className="text-2xl font-bold text-black">
-						Fechamento de Caixa - {format(new Date(date), "dd/MM/yyyy")}
-					</h1>
-				</div>
+				{/* Thermal Print Layout */}
+				<div className="hidden print:block print:w-[80mm] print:text-black">
+					<div className="mb-4 text-center border-b border-black pb-4">
+						<h1 className="text-xl font-bold uppercase">Iron Distribuidora</h1>
+						<p className="text-sm">Fechamento de Caixa</p>
+						<p className="text-sm">{format(new Date(date), "dd/MM/yyyy")}</p>
+					</div>
 
-				{/* Summary Cards */}
-				<div className="mb-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4 print:grid-cols-4">
-					<Card className="bg-brand-50 dark:bg-brand-900/20 print:border print:border-gray-300 print:shadow-none">
-						<CardBody>
-							<p className="text-sm font-medium text-brand-600 dark:text-brand-400">
-								Total Geral
-							</p>
-							<p className="text-2xl font-bold text-brand-700 dark:text-brand-300">
-								{formatCurrency(summary.total)}
-							</p>
-						</CardBody>
-					</Card>
-					<Card className="print:border print:border-gray-300 print:shadow-none">
-						<CardBody>
-							<p className="text-sm font-medium text-slate-500">Pix</p>
-							<p className="text-xl font-semibold text-slate-900 dark:text-slate-100">
-								{formatCurrency(summary.pix)}
-							</p>
-						</CardBody>
-					</Card>
-					<Card className="print:border print:border-gray-300 print:shadow-none">
-						<CardBody>
-							<p className="text-sm font-medium text-slate-500">Cartão</p>
-							<p className="text-xl font-semibold text-slate-900 dark:text-slate-100">
-								{formatCurrency(summary.creditCard + summary.debitCard)}
-							</p>
-							<p className="text-xs text-slate-400">
-								C: {formatCurrency(summary.creditCard)} | D:{" "}
-								{formatCurrency(summary.debitCard)}
-							</p>
-						</CardBody>
-					</Card>
-					<Card className="print:border print:border-gray-300 print:shadow-none">
-						<CardBody>
-							<p className="text-sm font-medium text-slate-500">Dinheiro</p>
-							<p className="text-xl font-semibold text-slate-900 dark:text-slate-100">
-								{formatCurrency(summary.cash)}
-							</p>
-						</CardBody>
-					</Card>
-				</div>
+					<div className="mb-4 border-b border-black pb-4">
+						<h2 className="mb-2 text-lg font-bold uppercase">Resumo</h2>
+						<div className="flex justify-between text-sm">
+							<span>Pix:</span>
+							<span>{formatCurrency(summary.pix)}</span>
+						</div>
+						<div className="flex justify-between text-sm">
+							<span>Cartão:</span>
+							<span>{formatCurrency(summary.creditCard + summary.debitCard)}</span>
+						</div>
+						<div className="flex justify-between text-xs pl-2">
+							<span>Crédito:</span>
+							<span>{formatCurrency(summary.creditCard)}</span>
+						</div>
+						<div className="flex justify-between text-xs pl-2">
+							<span>Débito:</span>
+							<span>{formatCurrency(summary.debitCard)}</span>
+						</div>
+						<div className="flex justify-between text-sm">
+							<span>Dinheiro:</span>
+							<span>{formatCurrency(summary.cash)}</span>
+						</div>
+						<div className="mt-2 flex justify-between border-t border-black pt-2 font-bold text-lg">
+							<span>TOTAL:</span>
+							<span>{formatCurrency(summary.total)}</span>
+						</div>
+					</div>
 
-				{/* Orders Table */}
-				<Card className="print:shadow-none print:border-none">
-					<CardHeader className="px-6 py-4">
-						<h2 className="text-lg font-semibold text-slate-900 dark:text-slate-100">
-							Transações do Dia
-						</h2>
-					</CardHeader>
-					<CardBody>
-						<Table
-							aria-label="Tabela de transações"
-							className="print:border print:border-gray-300"
-						>
-							<TableHeader>
-								<TableColumn>PEDIDO</TableColumn>
-								<TableColumn>CLIENTE</TableColumn>
-								<TableColumn>HORÁRIO</TableColumn>
-								<TableColumn>MÉTODO</TableColumn>
-								<TableColumn align="end">VALOR</TableColumn>
-							</TableHeader>
-							<TableBody emptyContent="Nenhuma venda registrada neste dia.">
+					<div>
+						<h2 className="mb-2 text-lg font-bold uppercase">Transações</h2>
+						<table className="w-full text-xs">
+							<thead>
+								<tr className="border-b border-black text-left">
+									<th className="pb-1">Hora</th>
+									<th className="pb-1">Ped.</th>
+									<th className="pb-1 text-right">Val.</th>
+								</tr>
+							</thead>
+							<tbody>
 								{orders.map((order) => (
-									<TableRow key={order.id}>
-										<TableCell>#{order.orderNumber}</TableCell>
-										<TableCell>{order.customerName}</TableCell>
-										<TableCell>
-											{format(new Date(order.createdAt), "HH:mm")}
-										</TableCell>
-										<TableCell>
-											{getPaymentMethodLabel(order.paymentMethod)}
-										</TableCell>
-										<TableCell>{formatCurrency(order.total)}</TableCell>
-									</TableRow>
+									<tr key={order.id} className="border-b border-gray-300 border-dashed">
+										<td className="py-1">{format(new Date(order.createdAt), "HH:mm")}</td>
+										<td className="py-1">#{order.orderNumber}</td>
+										<td className="py-1 text-right">{formatCurrency(order.total)}</td>
+									</tr>
 								))}
-							</TableBody>
-						</Table>
-					</CardBody>
-				</Card>
+								{orders.length === 0 && (
+									<tr>
+										<td colSpan={3} className="py-2 text-center italic">
+											Nenhuma venda registrada.
+										</td>
+									</tr>
+								)}
+							</tbody>
+						</table>
+					</div>
+					
+					<div className="mt-8 text-center text-xs">
+						<p>Impressão: {format(new Date(), "dd/MM/yyyy HH:mm")}</p>
+						<p>--------------------------------</p>
+					</div>
+				</div>
+
+				{/* Screen Layout (Hidden on Print) */}
+				<div className="print:hidden">
+					{/* Summary Cards */}
+					<div className="mb-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+						<Card className="bg-brand-50 dark:bg-brand-900/20">
+							<CardBody>
+								<p className="text-sm font-medium text-brand-600 dark:text-brand-400">
+									Total Geral
+								</p>
+								<p className="text-2xl font-bold text-brand-700 dark:text-brand-300">
+									{formatCurrency(summary.total)}
+								</p>
+							</CardBody>
+						</Card>
+						<Card>
+							<CardBody>
+								<p className="text-sm font-medium text-slate-500">Pix</p>
+								<p className="text-xl font-semibold text-slate-900 dark:text-slate-100">
+									{formatCurrency(summary.pix)}
+								</p>
+							</CardBody>
+						</Card>
+						<Card>
+							<CardBody>
+								<p className="text-sm font-medium text-slate-500">Cartão</p>
+								<p className="text-xl font-semibold text-slate-900 dark:text-slate-100">
+									{formatCurrency(summary.creditCard + summary.debitCard)}
+								</p>
+								<p className="text-xs text-slate-400">
+									C: {formatCurrency(summary.creditCard)} | D:{" "}
+									{formatCurrency(summary.debitCard)}
+								</p>
+							</CardBody>
+						</Card>
+						<Card>
+							<CardBody>
+								<p className="text-sm font-medium text-slate-500">Dinheiro</p>
+								<p className="text-xl font-semibold text-slate-900 dark:text-slate-100">
+									{formatCurrency(summary.cash)}
+								</p>
+							</CardBody>
+						</Card>
+					</div>
+
+					{/* Orders Table */}
+					<Card>
+						<CardHeader className="px-6 py-4">
+							<h2 className="text-lg font-semibold text-slate-900 dark:text-slate-100">
+								Transações do Dia
+							</h2>
+						</CardHeader>
+						<CardBody>
+							<Table aria-label="Tabela de transações">
+								<TableHeader>
+									<TableColumn>PEDIDO</TableColumn>
+									<TableColumn>CLIENTE</TableColumn>
+									<TableColumn>HORÁRIO</TableColumn>
+									<TableColumn>MÉTODO</TableColumn>
+									<TableColumn align="end">VALOR</TableColumn>
+								</TableHeader>
+								<TableBody emptyContent="Nenhuma venda registrada neste dia.">
+									{orders.map((order) => (
+										<TableRow key={order.id}>
+											<TableCell>#{order.orderNumber}</TableCell>
+											<TableCell>{order.customerName}</TableCell>
+											<TableCell>
+												{format(new Date(order.createdAt), "HH:mm")}
+											</TableCell>
+											<TableCell>
+												{getPaymentMethodLabel(order.paymentMethod)}
+											</TableCell>
+											<TableCell>{formatCurrency(order.total)}</TableCell>
+										</TableRow>
+									))}
+								</TableBody>
+							</Table>
+						</CardBody>
+					</Card>
+				</div>
 			</div>
 		</div>
 	);

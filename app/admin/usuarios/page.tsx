@@ -195,6 +195,9 @@ export default function AdminUsersPage() {
 					color="danger"
 					variant="bordered"
 					className="mb-6"
+					classNames={{
+						tabList: "overflow-x-auto w-full justify-start",
+					}}
 				>
 					<Tab key="pending" title="Pendentes de Aprovação" />
 					<Tab key="approved" title="Aprovados" />

@@ -41,7 +41,7 @@ export default function AdminDashboard() {
 			description: "Visualize, edite e atualize o status dos pedidos.",
 			icon: ShoppingBagIcon,
 			href: "/admin/pedidos",
-			color: "bg-blue-500",
+			color: "bg-red-500",
 		},
 		{
 			title: "Gerenciar Usuários",

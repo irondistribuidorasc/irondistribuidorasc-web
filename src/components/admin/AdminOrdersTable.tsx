@@ -33,7 +33,7 @@ export function AdminOrdersTable({
 	if (isLoading) {
 		return (
 			<div className="flex justify-center py-12">
-				<Spinner size="lg" color="primary" />
+				<Spinner size="lg" color="danger" />
 			</div>
 		);
 	}

@@ -93,7 +93,7 @@ export function Header() {
 
   return (
     <>
-      <Navbar className="border-b border-slate-200 bg-white/70 backdrop-blur dark:border-slate-800 dark:bg-slate-900/70">
+      <Navbar className="border-b border-slate-200 bg-white/70 backdrop-blur dark:border-slate-800 dark:bg-slate-900/70 print:hidden">
         <NavbarBrand className="flex-shrink-0 gap-2 min-w-0">
           <Link href="/" className="flex items-center gap-2 min-w-0">
             <Image

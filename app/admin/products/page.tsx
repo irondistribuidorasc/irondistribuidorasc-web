@@ -52,7 +52,7 @@ export default function AdminProductsPage() {
             </p>
           </div>
           <Button
-            color="primary"
+            color="danger"
             variant="flat"
             onPress={() => router.push("/admin")}
           >
@@ -66,6 +66,9 @@ export default function AdminProductsPage() {
           color="danger"
           variant="bordered"
           className="mb-6"
+          classNames={{
+            tabList: "overflow-x-auto w-full justify-start",
+          }}
         >
           <Tab key="list" title="Lista de Produtos">
             <ProductList />

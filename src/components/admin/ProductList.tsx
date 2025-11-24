@@ -167,7 +167,7 @@ export default function ProductList() {
 
 			{loading ? (
 				<div className="flex justify-center py-8">
-					<Spinner />
+					<Spinner color="danger" />
 				</div>
 			) : products.length === 0 ? (
 				<Card>
@@ -177,70 +177,132 @@ export default function ProductList() {
 				</Card>
 			) : (
 				<>
-					<Table aria-label="Lista de produtos">
-						<TableHeader>
-							<TableColumn>CÓDIGO</TableColumn>
-							<TableColumn>NOME</TableColumn>
-							<TableColumn>MARCA</TableColumn>
-							<TableColumn>PREÇO</TableColumn>
-							<TableColumn>ESTOQUE</TableColumn>
-							<TableColumn>AÇÕES</TableColumn>
-						</TableHeader>
-						<TableBody>
-							{products.map((product) => (
-								<TableRow key={product.id}>
-									<TableCell>{product.code}</TableCell>
-									<TableCell>
-										<div className="flex flex-col">
-											<span className="text-sm font-bold">{product.name}</span>
-											<span className="text-xs text-slate-500">
-												{product.model}
-											</span>
+					{/* Desktop Table View */}
+					<div className="hidden md:block">
+						<Table aria-label="Lista de produtos">
+							<TableHeader>
+								<TableColumn>CÓDIGO</TableColumn>
+								<TableColumn>NOME</TableColumn>
+								<TableColumn>MARCA</TableColumn>
+								<TableColumn>PREÇO</TableColumn>
+								<TableColumn>ESTOQUE</TableColumn>
+								<TableColumn>AÇÕES</TableColumn>
+							</TableHeader>
+							<TableBody>
+								{products.map((product) => (
+									<TableRow key={product.id}>
+										<TableCell>{product.code}</TableCell>
+										<TableCell>
+											<div className="flex flex-col">
+												<span className="text-sm font-bold">{product.name}</span>
+												<span className="text-xs text-slate-500">
+													{product.model}
+												</span>
+											</div>
+										</TableCell>
+										<TableCell>{product.brand}</TableCell>
+										<TableCell>
+											{new Intl.NumberFormat("pt-BR", {
+												style: "currency",
+												currency: "BRL",
+											}).format(product.price)}
+										</TableCell>
+										<TableCell>
+											<Chip
+												color={product.inStock ? "success" : "danger"}
+												size="sm"
+												variant="flat"
+											>
+												{product.inStock ? "Em Estoque" : "Sem Estoque"}
+											</Chip>
+										</TableCell>
+										<TableCell>
+											<div className="flex gap-2">
+												<Tooltip content="Editar">
+													<span
+														className="cursor-pointer text-lg text-default-400 active:opacity-50"
+														onClick={() => setEditingProduct(product)}
+													>
+														<PencilIcon className="h-5 w-5" />
+													</span>
+												</Tooltip>
+												<Tooltip color="danger" content="Excluir">
+													<span
+														className="cursor-pointer text-lg text-danger active:opacity-50"
+														onClick={() => handleDelete(product.id)}
+													>
+														<TrashIcon className="h-5 w-5" />
+													</span>
+												</Tooltip>
+											</div>
+										</TableCell>
+									</TableRow>
+								))}
+							</TableBody>
+						</Table>
+					</div>
+
+					{/* Mobile Card View */}
+					<div className="flex flex-col gap-4 md:hidden">
+						{products.map((product) => (
+							<Card key={product.id} className="border border-slate-200 dark:border-slate-800">
+								<CardBody className="gap-3">
+									<div className="flex items-start justify-between">
+										<div>
+											<p className="font-bold text-slate-900 dark:text-slate-100">
+												{product.name}
+											</p>
+											<p className="text-xs text-slate-500">
+												{product.code} - {product.model}
+											</p>
 										</div>
-									</TableCell>
-									<TableCell>{product.brand}</TableCell>
-									<TableCell>
-										{new Intl.NumberFormat("pt-BR", {
-											style: "currency",
-											currency: "BRL",
-										}).format(product.price)}
-									</TableCell>
-									<TableCell>
 										<Chip
 											color={product.inStock ? "success" : "danger"}
 											size="sm"
 											variant="flat"
 										>
-											{product.inStock ? "Em Estoque" : "Sem Estoque"}
+											{product.inStock ? "Estoque" : "Sem Estoque"}
 										</Chip>
-									</TableCell>
-									<TableCell>
-										<div className="flex gap-2">
-											<Tooltip content="Editar">
-												<span
-													className="cursor-pointer text-lg text-default-400 active:opacity-50"
-													onClick={() => setEditingProduct(product)}
-												>
-													<PencilIcon className="h-5 w-5" />
-												</span>
-											</Tooltip>
-											<Tooltip color="danger" content="Excluir">
-												<span
-													className="cursor-pointer text-lg text-danger active:opacity-50"
-													onClick={() => handleDelete(product.id)}
-												>
-													<TrashIcon className="h-5 w-5" />
-												</span>
-											</Tooltip>
-										</div>
-									</TableCell>
-								</TableRow>
-							))}
-						</TableBody>
-					</Table>
+									</div>
+
+									<div className="flex items-center justify-between">
+										<p className="text-sm text-slate-600 dark:text-slate-400">
+											{product.brand}
+										</p>
+										<p className="text-lg font-semibold text-slate-900 dark:text-slate-100">
+											{new Intl.NumberFormat("pt-BR", {
+												style: "currency",
+												currency: "BRL",
+											}).format(product.price)}
+										</p>
+									</div>
+
+									<div className="flex justify-end gap-4 pt-2 border-t border-slate-100 dark:border-slate-800">
+										<Button
+											size="sm"
+											variant="light"
+											startContent={<PencilIcon className="h-4 w-4" />}
+											onPress={() => setEditingProduct(product)}
+										>
+											Editar
+										</Button>
+										<Button
+											size="sm"
+											color="danger"
+											variant="light"
+											startContent={<TrashIcon className="h-4 w-4" />}
+											onPress={() => handleDelete(product.id)}
+										>
+											Excluir
+										</Button>
+									</div>
+								</CardBody>
+							</Card>
+						))}
+					</div>
 
 					{pagination.totalPages > 1 && (
-						<div className="flex justify-center">
+						<div className="flex justify-center mt-4">
 							<Pagination
 								total={pagination.totalPages}
 								page={pagination.page}

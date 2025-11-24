@@ -245,7 +245,7 @@ export default function OrderDetailsClient({ order }: OrderDetailsClientProps) {
 									href={`/admin?search=${order.customerEmail}`}
 									size="sm"
 									variant="flat"
-									color="primary"
+									color="danger"
 									className="w-full"
 								>
 									Ver Perfil do Cliente

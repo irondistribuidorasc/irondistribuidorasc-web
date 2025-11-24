@@ -153,7 +153,7 @@ export default function AdminPedidosPage() {
 					<Button
 						as={Link}
 						href="/admin"
-						color="primary"
+						color="danger"
 						variant="flat"
 						className="font-medium"
 					>
@@ -171,6 +171,9 @@ export default function AdminPedidosPage() {
 					color="danger"
 					variant="bordered"
 					className="mb-6"
+					classNames={{
+						tabList: "overflow-x-auto w-full justify-start",
+					}}
 				>
 					<Tab key="all" title="Todos" />
 					<Tab key="PENDING" title="Pendentes" />

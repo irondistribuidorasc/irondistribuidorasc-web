@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState } from "react";
@@ -33,7 +32,10 @@ interface ProductFormProps {
   onSuccess: () => void;
 }
 
-export default function ProductForm({ initialData, onSuccess }: ProductFormProps) {
+export default function ProductForm({
+  initialData,
+  onSuccess,
+}: ProductFormProps) {
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState<Product>({
     code: initialData?.code || "",
@@ -108,6 +110,11 @@ export default function ProductForm({ initialData, onSuccess }: ProductFormProps
           placeholder="Ex: DISP-SAM-A01"
           value={formData.code}
           onValueChange={(v) => handleChange("code", v)}
+          onKeyDown={(e) => {
+            if (e.key === " ") {
+              e.nativeEvent.stopPropagation();
+            }
+          }}
           isRequired
         />
         <Input
@@ -115,6 +122,11 @@ export default function ProductForm({ initialData, onSuccess }: ProductFormProps
           placeholder="Ex: Display Samsung A01"
           value={formData.name}
           onValueChange={(v) => handleChange("name", v)}
+          onKeyDown={(e) => {
+            if (e.key === " ") {
+              e.nativeEvent.stopPropagation();
+            }
+          }}
           isRequired
         />
         <Select
@@ -148,6 +160,11 @@ export default function ProductForm({ initialData, onSuccess }: ProductFormProps
           placeholder="Ex: A01"
           value={formData.model}
           onValueChange={(v) => handleChange("model", v)}
+          onKeyDown={(e) => {
+            if (e.key === " ") {
+              e.nativeEvent.stopPropagation();
+            }
+          }}
           isRequired
         />
         <Input
@@ -162,6 +179,11 @@ export default function ProductForm({ initialData, onSuccess }: ProductFormProps
               <span className="text-default-400 text-small">R$</span>
             </div>
           }
+          onKeyDown={(e) => {
+            if (e.key === " ") {
+              e.nativeEvent.stopPropagation();
+            }
+          }}
           isRequired
         />
         <Input
@@ -183,23 +205,25 @@ export default function ProductForm({ initialData, onSuccess }: ProductFormProps
         placeholder="Descrição detalhada do produto"
         value={formData.description || ""}
         onValueChange={(v) => handleChange("description", v)}
+        onKeyDown={(e) => {
+          if (e.key === " ") {
+            e.nativeEvent.stopPropagation();
+          }
+        }}
       />
 
       <div className="flex items-center gap-2">
         <Switch
           isSelected={formData.inStock}
           onValueChange={(v) => handleChange("inStock", v)}
+          color="danger"
         >
           Em Estoque
         </Switch>
       </div>
 
       <div className="flex justify-end gap-2">
-        <Button
-          color="primary"
-          type="submit"
-          isLoading={loading}
-        >
+        <Button color="danger" type="submit" isLoading={loading}>
           {initialData ? "Atualizar Produto" : "Criar Produto"}
         </Button>
       </div>

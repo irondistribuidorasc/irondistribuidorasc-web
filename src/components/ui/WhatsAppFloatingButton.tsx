@@ -11,7 +11,7 @@ type WhatsAppFloatingButtonProps = {
 };
 
 const defaultMessage =
-  "Olá! Gostaria de falar com a IRON DISTRIBUIDORA SC sobre peças para celular.";
+  "Olá! Gostaria de mais informações sobre os produtos.";
 
 export function WhatsAppFloatingButton({ className, message }: WhatsAppFloatingButtonProps) {
   const href = getWhatsAppUrl(message ?? defaultMessage);

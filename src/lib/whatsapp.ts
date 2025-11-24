@@ -1,6 +1,6 @@
 import type { CartItem } from "@/src/contexts/CartContext";
 
-const PHONE_NUMBER = "5548991147117";
+const PHONE_NUMBER = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "5500000000000";
 
 export function buildOrderWhatsAppMessage(
   items: CartItem[],
@@ -24,7 +24,7 @@ export function buildOrderWhatsAppMessage(
     `- Cidade/UF: ${city}/${state}`,
     `- Observações: ${notes}`,
   ];
-  const footer = "Enviado via site irondistribuidorasc.com.br";
+  const footer = `Enviado via site ${process.env.NEXT_PUBLIC_APP_URL || "b2b-template"}`;
 
   return [header, "Itens:", ...lines, "", ...customerBlock, "", footer]
     .filter(Boolean)
@@ -44,7 +44,7 @@ export function buildWarrantyWhatsAppMessage(payload: {
     `- Modelo do aparelho: ${payload.model}`,
     `- Descrição do problema: ${payload.description}`,
     "",
-    "Enviado via site irondistribuidorasc.com.br",
+    `Enviado via site ${process.env.NEXT_PUBLIC_APP_URL || "b2b-template"}`,
   ];
 
   return [header, ...lines].join("\n");

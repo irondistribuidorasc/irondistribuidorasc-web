@@ -7,20 +7,20 @@ import { Providers } from "./providers";
 import { Analytics } from "@vercel/analytics/next"
 const inter = Inter({ subsets: ["latin"], display: "swap" });
 
-const title = "IRON DISTRIBUIDORA SC";
+const title = process.env.NEXT_PUBLIC_APP_NAME || "B2B Template";
 const description =
-  "Distribuidora de peças para celular com garantia de 1 ano. Atendemos Itapema, Tijucas, Porto Belo e São João Batista.";
+  "Template B2B para distribuição de produtos com catálogo, carrinho e área administrativa.";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://irondistribuidorasc.com.br"),
   title,
   description,
   keywords: [
-    "peças para celular",
+    "b2b",
     "distribuidora",
     "atacado",
-    "IRON DISTRIBUIDORA SC",
-    "garantia",
+    "template",
+    "ecommerce",
   ],
   icons: {
     icon: [
@@ -88,7 +88,7 @@ export const metadata: Metadata = {
     title,
     description,
     url: "https://irondistribuidorasc.com.br",
-    siteName: "IRON DISTRIBUIDORA SC",
+    siteName: process.env.NEXT_PUBLIC_APP_NAME || "B2B Template",
     locale: "pt_BR",
     type: "website",
   },
@@ -104,35 +104,35 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const jsonLd = {
-    "@context": "https://schema.org",
-    "@type": "Organization",
-    name: "IRON DISTRIBUIDORA SC",
-    url: "https://irondistribuidorasc.com.br",
-    logo: "https://irondistribuidorasc.com.br/logo-iron.png",
-    description:
-      "Distribuidora de peças para celular com garantia de 1 ano. Atendemos Itapema, Tijucas, Porto Belo e São João Batista.",
-    telephone: "+55-48-99114-7117",
-    areaServed: [
-      { "@type": "City", name: "Itapema" },
-      { "@type": "City", name: "Tijucas" },
-      { "@type": "City", name: "Porto Belo" },
-      { "@type": "City", name: "São João Batista" },
-    ],
-    address: {
-      "@type": "PostalAddress",
-      addressRegion: "SC",
-      addressCountry: "BR",
-    },
-  };
+  // const jsonLd = {
+  //   "@context": "https://schema.org",
+  //   "@type": "Organization",
+  //   name: "IRON DISTRIBUIDORA SC",
+  //   url: "https://irondistribuidorasc.com.br",
+  //   logo: "https://irondistribuidorasc.com.br/logo-iron.png",
+  //   description:
+  //     "Distribuidora de peças para celular com garantia de 1 ano. Atendemos Itapema, Tijucas, Porto Belo e São João Batista.",
+  //   telephone: "+55-48-99114-7117",
+  //   areaServed: [
+  //     { "@type": "City", name: "Itapema" },
+  //     { "@type": "City", name: "Tijucas" },
+  //     { "@type": "City", name: "Porto Belo" },
+  //     { "@type": "City", name: "São João Batista" },
+  //   ],
+  //   address: {
+  //     "@type": "PostalAddress",
+  //     addressRegion: "SC",
+  //     addressCountry: "BR",
+  //   },
+  // };
 
   return (
     <html lang="pt-BR" suppressHydrationWarning>
       <head>
-        <script
+        {/* <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-        />
+        /> */}
       </head>
       <body className={`${inter.className}`}>
         <Providers>

@@ -1,36 +1,65 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Next.js B2B Template
+
+This is a generic B2B e-commerce template built with Next.js, Prisma, and Tailwind CSS. It is designed to be easily customizable for different businesses.
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
+
+*   Node.js
+*   pnpm (or your preferred package manager)
+*   A running PostgreSQL database instance.
+
+### Installation
+
+1.  Clone the repository.
+2.  Install dependencies:
+    ```bash
+    pnpm install
+    ```
+3.  Set up your environment variables by creating a `.env` file and adding the following:
+    ```
+    DATABASE_URL="postgresql://USER:PASSWORD@HOST:PORT/DATABASE"
+    NEXT_PUBLIC_APP_NAME="Your Company Name"
+    NEXT_PUBLIC_APP_URL="https://your-domain.com"
+    NEXT_PUBLIC_WHATSAPP_NUMBER="5500000000000"
+    ```
+4.  Apply database migrations:
+    ```bash
+    pnpm prisma migrate dev
+    ```
+5.  Seed the database (creates a default admin user: `admin@example.com` / `admin123`):
+    ```bash
+    pnpm prisma db seed
+    ```
+
+### Running the Development Server
+
+To run the application in development mode:
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
 pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Customization
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+-   **Branding**: Update `NEXT_PUBLIC_APP_NAME` in `.env`.
+-   **Colors**: Modify `tailwind.config.ts` to change the color palette.
+-   **Products**: Update `src/data/products.ts` or implement a database-driven product management system.
+-   **Logo**: Replace `/public/logo-iron.png` with your own logo.
 
-## Learn More
+## Building and Running for Production
 
-To learn more about Next.js, take a look at the following resources:
+To build the application for production:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```bash
+pnpm build
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+To run the production server:
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```bash
+pnpm start
+```

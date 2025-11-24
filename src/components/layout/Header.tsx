@@ -18,7 +18,7 @@ import {
   DropdownItem,
   Avatar,
 } from "@heroui/react";
-import Image from "next/image";
+// import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useRef, useState } from "react";
@@ -96,16 +96,16 @@ export function Header() {
       <Navbar className="border-b border-slate-200 bg-white/70 backdrop-blur dark:border-slate-800 dark:bg-slate-900/70 print:hidden">
         <NavbarBrand className="flex-shrink-0 gap-2 min-w-0">
           <Link href="/" className="flex items-center gap-2 min-w-0">
-            <Image
+            {/* <Image
               src="/logo-iron.png"
-              alt="IRON DISTRIBUIDORA SC"
+              alt="B2B Template"
               width={48}
               height={48}
               className="h-8 w-8 flex-shrink-0 rounded-full object-cover sm:h-10 sm:w-10"
-            />
+            /> */}
             <span className="truncate text-xs font-semibold text-slate-900 dark:text-slate-100 sm:text-sm md:text-base lg:text-lg">
-              <span className="hidden md:inline">IRON DISTRIBUIDORA SC</span>
-              <span className="md:hidden">IRON DISTRIB.</span>
+              <span className="hidden md:inline">{process.env.NEXT_PUBLIC_APP_NAME || "B2B Template"}</span>
+              <span className="md:hidden">B2B</span>
             </span>
           </Link>
         </NavbarBrand>

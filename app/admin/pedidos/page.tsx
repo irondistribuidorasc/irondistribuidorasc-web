@@ -150,15 +150,26 @@ export default function AdminPedidosPage() {
 							Visualize e gerencie todos os pedidos da plataforma
 						</p>
 					</div>
-					<Button
-						as={Link}
-						href="/admin"
-						color="danger"
-						variant="flat"
-						className="font-medium"
-					>
-						← Voltar ao Admin
-					</Button>
+					<div className="flex gap-3">
+						<Button
+							as={Link}
+							href="/admin/pedidos/novo"
+							color="primary"
+							className="font-medium"
+							startContent={<span className="text-xl">+</span>}
+						>
+							Novo Pedido
+						</Button>
+						<Button
+							as={Link}
+							href="/admin"
+							color="danger"
+							variant="flat"
+							className="font-medium"
+						>
+							← Voltar ao Admin
+						</Button>
+					</div>
 				</div>
 
 				{/* Status Filter Tabs */}

@@ -4,7 +4,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { Providers } from "./providers";
-import { Analytics } from "@vercel/analytics/next"
+import { Analytics } from "@vercel/analytics/next";
 const inter = Inter({ subsets: ["latin"], display: "swap" });
 
 const title = "IRON DISTRIBUIDORA SC";
@@ -15,12 +15,34 @@ export const metadata: Metadata = {
   metadataBase: new URL("https://irondistribuidorasc.com.br"),
   title,
   description,
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
+  alternates: {
+    canonical: "https://irondistribuidorasc.com.br",
+  },
   keywords: [
     "peças para celular",
     "distribuidora",
     "atacado",
     "IRON DISTRIBUIDORA SC",
     "garantia",
+    "tela iphone atacado",
+    "bateria samsung original",
+    "peças motorola",
+    "peças xiaomi",
+    "fornecedor de peças celular sc",
+    "itapema",
+    "tijucas",
+    "porto belo",
   ],
   icons: {
     icon: [
@@ -124,6 +146,18 @@ export default function RootLayout({
       addressRegion: "SC",
       addressCountry: "BR",
     },
+    priceRange: "$$",
+    openingHoursSpecification: [
+      {
+        "@type": "OpeningHoursSpecification",
+        dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+        opens: "08:00",
+        closes: "18:00",
+      },
+    ],
+    sameAs: [
+      "https://www.instagram.com/irondistribuidorasc", // Placeholder if not known
+    ],
   };
 
   return (

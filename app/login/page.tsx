@@ -3,6 +3,7 @@
 import { MIN_PASSWORD_LENGTH } from "@/src/lib/validation";
 import { Button, Card, CardBody, Input, Tab, Tabs } from "@heroui/react";
 import { signIn, signOut, useSession } from "next-auth/react";
+import Image from "next/image";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { type FormEvent, Suspense, useState } from "react";
@@ -184,6 +185,14 @@ function LoginPageContent() {
               variant="bordered"
               size="lg"
               onPress={() => signIn("google", { callbackUrl })}
+              startContent={
+                <Image
+                  src="/brands/google.svg"
+                  alt="Google"
+                  width={20}
+                  height={20}
+                />
+              }
             >
               Continuar com Google
             </Button>

@@ -6,7 +6,7 @@ import { formatPrice, formatRestockDate } from "@/src/lib/productUtils";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
-import { useState, useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
 type ProductCardProps = {
   product: Product;
@@ -57,7 +57,10 @@ export function ProductCard({ product }: ProductCardProps) {
       )}
 
       {/* Imagem do produto */}
-      <div className="relative aspect-square w-full overflow-hidden bg-slate-100 dark:bg-slate-700">
+      <Link
+        href={`/produtos/${product.id}`}
+        className="relative aspect-square w-full overflow-hidden bg-slate-100 dark:bg-slate-700"
+      >
         <Image
           src={product.imageUrl}
           alt={product.name}
@@ -65,7 +68,7 @@ export function ProductCard({ product }: ProductCardProps) {
           className="object-contain p-4 transition-transform group-hover:scale-105"
           sizes="(max-width: 768px) 50vw, 25vw"
         />
-      </div>
+      </Link>
 
       {/* Informações do produto */}
       <div className="flex flex-1 flex-col gap-2 p-4">
@@ -76,7 +79,9 @@ export function ProductCard({ product }: ProductCardProps) {
 
         {/* Nome */}
         <h3 className="line-clamp-2 text-sm font-semibold text-slate-900 dark:text-slate-100">
-          {product.name}
+          <Link href={`/produtos/${product.id}`} className="hover:underline">
+            {product.name}
+          </Link>
         </h3>
 
         {/* Marca e categoria */}
@@ -116,6 +121,7 @@ export function ProductCard({ product }: ProductCardProps) {
 
         {/* Botão adicionar ao carrinho */}
         <button
+          type="button"
           onClick={handleAddToCart}
           disabled={!product.inStock || isAdding}
           className="mt-2 w-full rounded-md bg-brand-600 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-brand-700 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:bg-slate-300 disabled:text-slate-500 dark:disabled:bg-slate-700 dark:disabled:text-slate-500"
@@ -128,8 +134,8 @@ export function ProductCard({ product }: ProductCardProps) {
           {isAdding
             ? "Adicionado!"
             : product.inStock
-              ? "Adicionar ao carrinho"
-              : "Indisponível"}
+            ? "Adicionar ao carrinho"
+            : "Indisponível"}
         </button>
       </div>
     </article>

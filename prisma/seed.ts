@@ -1,16 +1,16 @@
-
-import { PrismaClient } from '@prisma/client';
-import { products } from '../src/data/products';
+import { PrismaClient } from "@prisma/client";
+import { products } from "../src/data/products";
 
 const prisma = new PrismaClient();
 
 async function main() {
-  console.log('Seeding products...');
+  console.log("Seeding products...");
 
   for (const product of products) {
     await prisma.product.upsert({
       where: { code: product.code },
       update: {
+        id: product.id,
         name: product.name,
         brand: product.brand,
         category: product.category,
@@ -24,6 +24,7 @@ async function main() {
         popularity: product.popularity || 0,
       },
       create: {
+        id: product.id,
         code: product.code,
         name: product.name,
         brand: product.brand,
@@ -40,7 +41,7 @@ async function main() {
     });
   }
 
-  console.log('Products seeded successfully.');
+  console.log("Products seeded successfully.");
 }
 
 main()

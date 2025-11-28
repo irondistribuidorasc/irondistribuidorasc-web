@@ -1,9 +1,21 @@
 "use client";
 
+import { ProductCard } from "@/src/components/produtos/ProductCard";
+import { ClientOnly } from "@/src/components/ui/ClientOnly";
+import { ScrollAnimation } from "@/src/components/ui/ScrollAnimation";
 import { WhatsAppFloatingButton } from "@/src/components/ui/WhatsAppFloatingButton";
 import { categoryOptions, products } from "@/src/data/products";
-import { ProductCard } from "@/src/components/produtos/ProductCard";
-import { ScrollAnimation } from "@/src/components/ui/ScrollAnimation";
+import {
+  Battery50Icon,
+  BoltIcon,
+  ChatBubbleLeftRightIcon,
+  CheckBadgeIcon,
+  DevicePhoneMobileIcon,
+  MapPinIcon,
+  ShieldCheckIcon,
+  Square2StackIcon,
+  TruckIcon,
+} from "@heroicons/react/24/outline";
 import {
   Accordion,
   AccordionItem,
@@ -12,17 +24,6 @@ import {
   Card,
   CardBody,
 } from "@heroui/react";
-import {
-  ChatBubbleLeftRightIcon,
-  CheckBadgeIcon,
-  MapPinIcon,
-  ShieldCheckIcon,
-  TruckIcon,
-  DevicePhoneMobileIcon,
-  Battery50Icon,
-  BoltIcon,
-  Square2StackIcon,
-} from "@heroicons/react/24/outline";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -466,53 +467,56 @@ export default function HomePage() {
             </h2>
           </ScrollAnimation>
           <ScrollAnimation variant="fadeInUp" delay={0.2}>
-            <Accordion
-              variant="splitted"
-              className="gap-4"
-              itemClasses={{
-                base: "group bg-slate-50 dark:bg-slate-900 shadow-none hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors px-4 rounded-2xl",
-                title: "font-semibold text-slate-900 dark:text-white",
-                trigger: "py-6",
-                content: "pb-6 text-slate-600 dark:text-slate-400",
-                indicator: "text-slate-400 group-hover:text-brand-600",
-              }}
-            >
-              <AccordionItem
-                key="1"
-                aria-label="Pedido mínimo"
-                title="Qual o pedido mínimo para atacado?"
+            <ClientOnly>
+              <Accordion
+                variant="splitted"
+                className="gap-4"
+                itemClasses={{
+                  base: "group bg-slate-50 dark:bg-slate-900 shadow-none hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors px-4 rounded-2xl",
+                  title: "font-semibold text-slate-900 dark:text-white",
+                  trigger: "py-6",
+                  content: "pb-6 text-slate-600 dark:text-slate-400",
+                  indicator: "text-slate-400 group-hover:text-brand-600",
+                }}
               >
-                Trabalhamos com um pedido mínimo de R$ 300,00 para garantir os
-                preços de atacado e a viabilidade logística.
-              </AccordionItem>
-              <AccordionItem
-                key="2"
-                aria-label="Política de trocas"
-                title="Como funciona a política de trocas?"
-                subtitle="Garantia de 1 ano em todas as peças"
-              >
-                Oferecemos garantia de 1 ano contra defeitos de fabricação. A
-                troca é realizada de forma ágil, mediante análise técnica
-                simples.
-              </AccordionItem>
-              <AccordionItem
-                key="3"
-                aria-label="Formas de pagamento"
-                title="Quais as formas de pagamento aceitas?"
-              >
-                Aceitamos PIX, transferência bancária e cartão de crédito. Para
-                clientes recorrentes, oferecemos condições especiais de boleto.
-              </AccordionItem>
-              <AccordionItem
-                key="4"
-                aria-label="Cidades atendidas"
-                title="Entregam em quais cidades?"
-              >
-                Temos rota própria diária para Itapema, Tijucas, Porto Belo e
-                São João Batista. Para outras regiões, enviamos via Correios ou
-                transportadora.
-              </AccordionItem>
-            </Accordion>
+                <AccordionItem
+                  key="1"
+                  aria-label="Pedido mínimo"
+                  title="Qual o pedido mínimo para atacado?"
+                >
+                  Trabalhamos com um pedido mínimo de R$ 300,00 para garantir os
+                  preços de atacado e a viabilidade logística.
+                </AccordionItem>
+                <AccordionItem
+                  key="2"
+                  aria-label="Política de trocas"
+                  title="Como funciona a política de trocas?"
+                  subtitle="Garantia de 1 ano em todas as peças"
+                >
+                  Oferecemos garantia de 1 ano contra defeitos de fabricação. A
+                  troca é realizada de forma ágil, mediante análise técnica
+                  simples.
+                </AccordionItem>
+                <AccordionItem
+                  key="3"
+                  aria-label="Formas de pagamento"
+                  title="Quais as formas de pagamento aceitas?"
+                >
+                  Aceitamos PIX, transferência bancária e cartão de crédito.
+                  Para clientes recorrentes, oferecemos condições especiais de
+                  boleto.
+                </AccordionItem>
+                <AccordionItem
+                  key="4"
+                  aria-label="Cidades atendidas"
+                  title="Entregam em quais cidades?"
+                >
+                  Temos rota própria diária para Itapema, Tijucas, Porto Belo e
+                  São João Batista. Para outras regiões, enviamos via Correios
+                  ou transportadora.
+                </AccordionItem>
+              </Accordion>
+            </ClientOnly>
           </ScrollAnimation>
         </div>
       </section>

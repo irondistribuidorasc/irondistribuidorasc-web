@@ -1,10 +1,11 @@
-import { Footer } from "@/src/components/layout/Footer";
-import { Header } from "@/src/components/layout/Header";
+import { Analytics } from "@vercel/analytics/next";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
+import { Footer } from "@/src/components/layout/Footer";
+import { Header } from "@/src/components/layout/Header";
 import "./globals.css";
 import { Providers } from "./providers";
-import { Analytics } from "@vercel/analytics/next";
+
 const inter = Inter({ subsets: ["latin"], display: "swap" });
 
 const title = "IRON DISTRIBUIDORA SC";
@@ -25,6 +26,9 @@ export const metadata: Metadata = {
       "max-image-preview": "large",
       "max-snippet": -1,
     },
+  },
+  verification: {
+    google: "SXiK1lviE-scDll1j8nRYL84bYuoFvG10uOdTciatLw", // TODO: Replace with actual code from Google Search Console
   },
   alternates: {
     canonical: "https://irondistribuidorasc.com.br",

@@ -1,7 +1,16 @@
-
-import { db } from "@/src/lib/prisma";
 import ProductCatalog from "@/src/components/produtos/ProductCatalog";
-import type { Product, Brand, Category } from "@/src/data/products";
+import type { Brand, Category, Product } from "@/src/data/products";
+import { db } from "@/src/lib/prisma";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Catálogo de Peças | Iron Distribuidora",
+  description:
+    "Confira nosso catálogo completo de peças para celular. Telas, baterias e componentes para iPhone, Samsung, Xiaomi e Motorola com preços de atacado.",
+  alternates: {
+    canonical: "https://irondistribuidorasc.com.br/produtos",
+  },
+};
 
 // Revalidate every 60 seconds
 export const revalidate = 60;

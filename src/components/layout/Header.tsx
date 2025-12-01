@@ -1,23 +1,28 @@
 "use client";
 
+import NotificationBell from "@/src/components/admin/NotificationBell";
 import { CartDrawer } from "@/src/components/cart/CartDrawer";
 import { MobileMenu } from "@/src/components/layout/MobileMenu";
 import { ThemeToggle } from "@/src/components/ui/ThemeToggle";
 import { useCart } from "@/src/contexts/CartContext";
-import { Bars3Icon, ShoppingCartIcon, XMarkIcon } from "@heroicons/react/24/outline";
-import { useSession, signOut } from "next-auth/react";
 import {
+  Bars3Icon,
+  ShoppingCartIcon,
+  XMarkIcon,
+} from "@heroicons/react/24/outline";
+import {
+  Avatar,
   Button,
+  Dropdown,
+  DropdownItem,
+  DropdownMenu,
+  DropdownTrigger,
   Navbar,
   NavbarBrand,
   NavbarContent,
   NavbarItem,
-  Dropdown,
-  DropdownTrigger,
-  DropdownMenu,
-  DropdownItem,
-  Avatar,
 } from "@heroui/react";
+import { signOut, useSession } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -69,7 +74,11 @@ export function Header() {
             <DropdownItem key="orders" href="/meus-pedidos">
               Meus Pedidos
             </DropdownItem>
-            <DropdownItem key="logout" color="danger" onPress={() => signOut({ callbackUrl: "/" })}>
+            <DropdownItem
+              key="logout"
+              color="danger"
+              onPress={() => signOut({ callbackUrl: "/" })}
+            >
               Sair
             </DropdownItem>
           </DropdownMenu>
@@ -183,6 +192,7 @@ export function Header() {
           </NavbarItem>
 
           <NavbarItem className="flex items-center gap-2">
+            {session?.user?.role === "ADMIN" && <NotificationBell />}
             <ThemeToggle />
             {renderUserMenu()}
           </NavbarItem>

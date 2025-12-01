@@ -88,6 +88,8 @@ model Product {
   price       Float
   description String?
   tags        String[]
+  stockQuantity Int      @default(0)
+  minStockThreshold Int  @default(10)
   popularity  Int      @default(0)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt

@@ -1,8 +1,7 @@
-
-import { NextResponse } from "next/server";
-import { getServerSession } from "next-auth";
-import { db } from "@/src/lib/prisma";
 import { authOptions } from "@/src/lib/auth";
+import { db } from "@/src/lib/prisma";
+import { getServerSession } from "next-auth";
+import { NextResponse } from "next/server";
 
 export async function GET(request: Request) {
   const session = await getServerSession(authOptions);
@@ -12,14 +11,15 @@ export async function GET(request: Request) {
   }
 
   const { searchParams } = new URL(request.url);
-  const page = parseInt(searchParams.get("page") || "1");
-  const limit = parseInt(searchParams.get("limit") || "20");
+  const page = Number.parseInt(searchParams.get("page") || "1");
+  const limit = Number.parseInt(searchParams.get("limit") || "20");
   const search = searchParams.get("search") || "";
   const category = searchParams.get("category");
   const brand = searchParams.get("brand");
 
   const skip = (page - 1) * limit;
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const where: any = {};
 
   if (search) {
@@ -76,7 +76,7 @@ export async function POST(request: Request) {
 
   try {
     const body = await request.json();
-    
+
     // Basic validation
     if (!body.code || !body.name || !body.price) {
       return NextResponse.json(
@@ -93,15 +93,25 @@ export async function POST(request: Request) {
         category: body.category,
         model: body.model,
         imageUrl: body.imageUrl || "/logo-iron.png",
-        inStock: body.inStock ?? true,
-        price: parseFloat(body.price),
+
+        inStock: (body.stockQuantity || 0) > 0,
+        stockQuantity: Number.isNaN(Number(body.stockQuantity))
+          ? 0
+          : Number(body.stockQuantity),
+        minStockThreshold: Number.isNaN(Number(body.minStockThreshold))
+          ? 10
+          : Number(body.minStockThreshold),
+        price: Number.isNaN(Number(body.price)) ? 0 : Number(body.price),
         description: body.description,
         tags: body.tags || [],
-        popularity: body.popularity || 0,
+        popularity: Number.isNaN(Number(body.popularity))
+          ? 0
+          : Number(body.popularity),
       },
     });
 
     return NextResponse.json(product, { status: 201 });
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
     console.error("Error creating product:", error);
     if (error.code === "P2002") {

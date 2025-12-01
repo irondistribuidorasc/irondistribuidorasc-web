@@ -1,8 +1,7 @@
-
-import { NextResponse } from "next/server";
-import { getServerSession } from "next-auth";
-import { db } from "@/src/lib/prisma";
 import { authOptions } from "@/src/lib/auth";
+import { db } from "@/src/lib/prisma";
+import { getServerSession } from "next-auth";
+import { NextResponse } from "next/server";
 
 export async function PUT(
   request: Request,
@@ -27,22 +26,32 @@ export async function PUT(
         category: body.category,
         model: body.model,
         imageUrl: body.imageUrl,
-        inStock: body.inStock,
+
+        inStock: (body.stockQuantity ?? 0) > 0,
+        stockQuantity: Number.isNaN(Number(body.stockQuantity))
+          ? undefined
+          : Number(body.stockQuantity),
+        minStockThreshold: Number.isNaN(Number(body.minStockThreshold))
+          ? undefined
+          : Number(body.minStockThreshold),
         restockDate: body.restockDate ? new Date(body.restockDate) : null,
-        price: parseFloat(body.price),
+        price: Number.isNaN(Number(body.price))
+          ? undefined
+          : Number(body.price),
         description: body.description,
         tags: body.tags,
-        popularity: body.popularity,
+        popularity: Number.isNaN(Number(body.popularity))
+          ? undefined
+          : Number(body.popularity),
       },
     });
 
     return NextResponse.json(product);
-  } catch (error) {
+  } catch (error: unknown) {
     console.error("Error updating product:", error);
-    return NextResponse.json(
-      { error: "Failed to update product" },
-      { status: 500 }
-    );
+    const message =
+      error instanceof Error ? error.message : "Failed to update product";
+    return NextResponse.json({ error: message }, { status: 500 });
   }
 }
 

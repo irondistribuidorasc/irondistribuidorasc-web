@@ -1,18 +1,14 @@
-
 "use client";
 
+import DeleteAllProductsButton from "@/src/components/admin/DeleteAllProductsButton";
+import ProductForm from "@/src/components/admin/ProductForm";
+import ProductImport from "@/src/components/admin/ProductImport";
+import ProductList from "@/src/components/admin/ProductList";
+import StockManager from "@/src/components/admin/StockManager";
+import { Button, Spinner, Tab, Tabs } from "@heroui/react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import {
-  Button,
-  Spinner,
-  Tab,
-  Tabs,
-} from "@heroui/react";
-import ProductList from "@/src/components/admin/ProductList";
-import ProductForm from "@/src/components/admin/ProductForm";
-import ProductImport from "@/src/components/admin/ProductImport";
 
 export default function AdminProductsPage() {
   const { data: session, status } = useSession();
@@ -51,13 +47,24 @@ export default function AdminProductsPage() {
               Adicione, edite ou importe produtos em massa
             </p>
           </div>
-          <Button
-            color="danger"
-            variant="flat"
-            onPress={() => router.push("/admin")}
-          >
-            Voltar ao Painel
-          </Button>
+          <div className="flex gap-2">
+            <DeleteAllProductsButton />
+            <Button
+              color="danger"
+              variant="flat"
+              onPress={() => router.push("/admin")}
+            >
+              Voltar ao Painel
+            </Button>
+          </div>
+        </div>
+
+        <div className="mb-6">
+          {/* We could add a global alert here if we fetched products and checked stock, 
+              but ProductList/StockManager handle their own data. 
+              For a global alert, we might need to fetch data here or use a context.
+              For now, let's rely on the visual indicators in the lists. 
+          */}
         </div>
 
         <Tabs
@@ -72,6 +79,9 @@ export default function AdminProductsPage() {
         >
           <Tab key="list" title="Lista de Produtos">
             <ProductList />
+          </Tab>
+          <Tab key="stock" title="Gerenciar Estoque">
+            <StockManager />
           </Tab>
           <Tab key="add" title="Adicionar Produto">
             <ProductForm onSuccess={() => setActiveTab("list")} />

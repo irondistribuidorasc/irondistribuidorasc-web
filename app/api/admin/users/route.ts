@@ -1,6 +1,7 @@
-import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/src/lib/auth";
 import { db } from "@/src/lib/prisma";
+import { Prisma } from "@prisma/client";
+import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(request: NextRequest) {
   const session = await auth();
@@ -22,7 +23,7 @@ export async function GET(request: NextRequest) {
 
   try {
     // Construir filtro base
-    const whereConditions: any = {};
+    const whereConditions: Prisma.UserWhereInput = {};
 
     // Filtro por status
     if (status === "pending") {

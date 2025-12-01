@@ -1,8 +1,23 @@
-
-import { NextResponse } from "next/server";
-import { getServerSession } from "next-auth";
-import { db } from "@/src/lib/prisma";
 import { authOptions } from "@/src/lib/auth";
+import { db } from "@/src/lib/prisma";
+import { getServerSession } from "next-auth";
+import { NextResponse } from "next/server";
+import Papa from "papaparse";
+
+interface CsvProductRow {
+  code: string;
+  name: string;
+  price: string;
+  brand?: string;
+  category?: string;
+  model?: string;
+  imageUrl?: string;
+  stockQuantity?: string;
+  minStockThreshold?: string;
+  description?: string;
+  tags?: string;
+  popularity?: string;
+}
 
 export async function POST(request: Request) {
   const session = await getServerSession(authOptions);
@@ -20,27 +35,43 @@ export async function POST(request: Request) {
     }
 
     const text = await file.text();
-    const lines = text.split("\n");
-    const headers = lines[0].split(",").map((h) => h.trim());
+
+    const parseResult = Papa.parse(text, {
+      header: true,
+      skipEmptyLines: true,
+      transformHeader: (header) => header.trim(),
+      transform: (value) => value.trim(),
+    });
+
+    if (parseResult.errors.length > 0) {
+      console.error("CSV Parse Errors:", parseResult.errors);
+      return NextResponse.json(
+        { error: "Failed to parse CSV file", details: parseResult.errors },
+        { status: 400 }
+      );
+    }
 
     const productsToUpsert = [];
     const errors = [];
+    const data = parseResult.data as CsvProductRow[]; // Use the defined type here
 
-    // Start from index 1 to skip headers
-    for (let i = 1; i < lines.length; i++) {
-      const line = lines[i].trim();
-      if (!line) continue;
-
-      const values = line.split(",").map((v) => v.trim());
-      const productData: any = {};
-
-      headers.forEach((header, index) => {
-        productData[header] = values[index];
-      });
+    for (let i = 0; i < data.length; i++) {
+      const productData = data[i]; // productData now has type CsvProductRow
 
       // Basic validation
       if (!productData.code || !productData.name || !productData.price) {
-        errors.push(`Line ${i + 1}: Missing required fields`);
+        errors.push(
+          `Row ${i + 1}: Missing required fields (code, name, or price)`
+        );
+        continue;
+      }
+
+      const price = Number.parseFloat(productData.price);
+      if (Number.isNaN(price)) {
+        // Changed isNaN to Number.isNaN
+        errors.push(
+          `Row ${i + 1}: Invalid price for product ${productData.code}`
+        );
         continue;
       }
 
@@ -51,8 +82,10 @@ export async function POST(request: Request) {
         category: productData.category || "other",
         model: productData.model || "",
         imageUrl: productData.imageUrl || "/logo-iron.png",
-        inStock: productData.inStock === "true" || productData.inStock === "1",
-        price: parseFloat(productData.price),
+        inStock: parseInt(productData.stockQuantity || "0") > 0,
+        stockQuantity: parseInt(productData.stockQuantity || "0"),
+        minStockThreshold: parseInt(productData.minStockThreshold || "10"),
+        price: price,
         description: productData.description || "",
         tags: productData.tags ? productData.tags.split(";") : [],
         popularity: parseInt(productData.popularity || "0"),
@@ -70,7 +103,9 @@ export async function POST(request: Request) {
             category: product.category,
             model: product.model,
             imageUrl: product.imageUrl,
-            inStock: product.inStock,
+            inStock: product.stockQuantity > 0,
+            stockQuantity: product.stockQuantity,
+            minStockThreshold: product.minStockThreshold,
             price: product.price,
             description: product.description,
             tags: product.tags,

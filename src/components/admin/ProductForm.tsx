@@ -1,16 +1,10 @@
 "use client";
 
-import { useState } from "react";
-import {
-  Button,
-  Input,
-  Select,
-  SelectItem,
-  Textarea,
-  Switch,
-} from "@heroui/react";
 import { brandOptions, categoryOptions } from "@/src/data/products";
+import { Button, Input, Select, SelectItem, Textarea } from "@heroui/react";
+import { useState } from "react";
 import { toast } from "sonner";
+import ImageUpload from "./ImageUpload";
 
 type Product = {
   id?: string;
@@ -25,6 +19,8 @@ type Product = {
   description?: string;
   tags?: string[];
   popularity?: number;
+  stockQuantity?: number;
+  minStockThreshold?: number;
 };
 
 interface ProductFormProps {
@@ -49,9 +45,14 @@ export default function ProductForm({
     description: initialData?.description || "",
     tags: initialData?.tags || [],
     popularity: initialData?.popularity || 0,
+    stockQuantity: initialData?.stockQuantity || 0,
+    minStockThreshold: initialData?.minStockThreshold || 10,
   });
 
-  const handleChange = (field: keyof Product, value: any) => {
+  const handleChange = (
+    field: keyof Product,
+    value: string | number | boolean | string[]
+  ) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
@@ -65,10 +66,27 @@ export default function ProductForm({
         : "/api/admin/products";
       const method = initialData ? "PUT" : "POST";
 
+      // Sanitize data to avoid sending NaN (which becomes null in JSON)
+      const payload = {
+        ...formData,
+        price: Number.isNaN(Number(formData.price))
+          ? 0
+          : Number(formData.price),
+        popularity: Number.isNaN(Number(formData.popularity))
+          ? 0
+          : Number(formData.popularity),
+        stockQuantity: Number.isNaN(Number(formData.stockQuantity))
+          ? 0
+          : Number(formData.stockQuantity),
+        minStockThreshold: Number.isNaN(Number(formData.minStockThreshold))
+          ? 0
+          : Number(formData.minStockThreshold),
+      };
+
       const response = await fetch(url, {
         method,
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(payload),
       });
 
       if (response.ok) {
@@ -88,6 +106,8 @@ export default function ProductForm({
             description: "",
             tags: [],
             popularity: 0,
+            stockQuantity: 0,
+            minStockThreshold: 10,
           });
         }
       } else {
@@ -186,17 +206,36 @@ export default function ProductForm({
           }}
           isRequired
         />
-        <Input
-          label="URL da Imagem"
-          placeholder="/logo-iron.png"
-          value={formData.imageUrl}
-          onValueChange={(v) => handleChange("imageUrl", v)}
-        />
+        <div className="col-span-1 md:col-span-2">
+          <label className="mb-2 block text-sm font-medium text-slate-700 dark:text-slate-200">
+            Imagem do Produto
+          </label>
+          <ImageUpload
+            value={formData.imageUrl}
+            onChange={(url) => handleChange("imageUrl", url)}
+            disabled={loading}
+          />
+        </div>
         <Input
           label="Popularidade"
           type="number"
           value={formData.popularity?.toString() || "0"}
           onValueChange={(v) => handleChange("popularity", parseInt(v))}
+        />
+        <Input
+          label="Quantidade em Estoque"
+          type="number"
+          value={formData.stockQuantity?.toString() || "0"}
+          onValueChange={(v) => handleChange("stockQuantity", parseInt(v))}
+          isRequired
+        />
+        <Input
+          label="Alerta de Estoque Mínimo"
+          type="number"
+          value={formData.minStockThreshold?.toString() || "10"}
+          onValueChange={(v) => handleChange("minStockThreshold", parseInt(v))}
+          description="Avise-me quando o estoque estiver abaixo deste valor"
+          isRequired
         />
       </div>
 
@@ -211,16 +250,6 @@ export default function ProductForm({
           }
         }}
       />
-
-      <div className="flex items-center gap-2">
-        <Switch
-          isSelected={formData.inStock}
-          onValueChange={(v) => handleChange("inStock", v)}
-          color="danger"
-        >
-          Em Estoque
-        </Switch>
-      </div>
 
       <div className="flex justify-end gap-2">
         <Button color="danger" type="submit" isLoading={loading}>

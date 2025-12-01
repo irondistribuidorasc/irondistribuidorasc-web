@@ -1,11 +1,11 @@
 "use client";
 
-import { AnimatePresence, motion } from "framer-motion";
-import Link from "next/link";
-import { useEffect, useRef } from "react";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import { Button } from "@heroui/react";
+import { AnimatePresence, motion } from "framer-motion";
 import { signOut } from "next-auth/react";
+import Link from "next/link";
+import { useEffect, useRef } from "react";
 
 interface MobileMenuProps {
   isOpen: boolean;
@@ -115,12 +115,14 @@ export function MobileMenu({
 
       document.addEventListener("keydown", handleTab);
 
+      const trigger = triggerRef?.current;
+
       return () => {
         document.removeEventListener("keydown", handleTab);
-        
+
         // Restore focus to the hamburger button when menu closes
-        if (triggerRef?.current) {
-          triggerRef.current.focus();
+        if (trigger) {
+          trigger.focus();
         } else if (previousFocusRef.current) {
           previousFocusRef.current.focus();
         }
@@ -149,7 +151,9 @@ export function MobileMenu({
     { href: "/produtos", label: "Produtos" },
     { href: "/carrinho", label: "Carrinho" },
     { href: "/garantia", label: "Garantia" },
-    ...(userRole === "ADMIN" ? [{ href: "/admin", label: "Administração" }] : []),
+    ...(userRole === "ADMIN"
+      ? [{ href: "/admin", label: "Administração" }]
+      : []),
   ];
 
   const handleLinkClick = () => {
@@ -185,7 +189,6 @@ export function MobileMenu({
             id="mobile-menu"
             role="navigation"
             aria-label="Menu de navegação mobile"
-            aria-modal="true"
             variants={sidebarVariants}
             initial="closed"
             animate="open"

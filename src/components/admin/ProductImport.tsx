@@ -1,9 +1,8 @@
-
 "use client";
 
-import { useState } from "react";
-import { Button, Card, CardBody, Progress } from "@heroui/react";
 import { ArrowUpTrayIcon, DocumentTextIcon } from "@heroicons/react/24/outline";
+import { Button, Card, CardBody, Progress } from "@heroui/react";
+import { useState } from "react";
 
 export default function ProductImport() {
   const [file, setFile] = useState<File | null>(null);
@@ -39,7 +38,9 @@ export default function ProductImport() {
         setResult({ message: data.message, errors: data.errors });
         setFile(null);
         // Reset file input
-        const fileInput = document.getElementById("csv-upload") as HTMLInputElement;
+        const fileInput = document.getElementById(
+          "csv-upload"
+        ) as HTMLInputElement;
         if (fileInput) fileInput.value = "";
       } else {
         setResult({ errors: [data.error || "Falha na importação"] });
@@ -56,18 +57,22 @@ export default function ProductImport() {
     <div className="space-y-6">
       <Card className="bg-slate-50 dark:bg-slate-800/50">
         <CardBody>
-          <h3 className="mb-4 text-lg font-semibold">Instruções de Importação</h3>
+          <h3 className="mb-4 text-lg font-semibold">
+            Instruções de Importação
+          </h3>
           <p className="mb-4 text-sm text-slate-600 dark:text-slate-400">
-            Para importar produtos em massa, utilize um arquivo CSV com as seguintes colunas (a primeira linha deve conter os cabeçalhos):
+            Para importar produtos em massa, utilize um arquivo CSV com as
+            seguintes colunas (a primeira linha deve conter os cabeçalhos):
           </p>
           <div className="rounded-md bg-slate-100 p-4 font-mono text-xs text-slate-700 dark:bg-slate-900 dark:text-slate-300">
-            code,name,brand,category,model,price,inStock,imageUrl,description,tags,popularity
+            code,name,brand,category,model,price,inStock,stockQuantity,minStockThreshold,imageUrl,description,tags,popularity
           </div>
           <p className="mt-4 text-sm text-slate-600 dark:text-slate-400">
             Exemplo:
             <br />
             <span className="font-mono text-xs">
-              DISP-A01,Display A01,Samsung,display,A01,89.90,true,,Tela original,promo;novo,10
+              DISP-A01,Display A01,Samsung,display,A01,89.90,true,50,10,,Tela
+              original,promo;novo,10
             </span>
           </p>
         </CardBody>
@@ -95,7 +100,9 @@ export default function ProductImport() {
         )}
       </div>
 
-      {loading && <Progress size="sm" isIndeterminate aria-label="Enviando..." />}
+      {loading && (
+        <Progress size="sm" isIndeterminate aria-label="Enviando..." />
+      )}
 
       {result && (
         <Card

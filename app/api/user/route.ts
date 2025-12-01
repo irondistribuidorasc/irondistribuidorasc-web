@@ -1,9 +1,9 @@
-import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/src/lib/auth";
 import { db } from "@/src/lib/prisma";
 import { userProfileSchema } from "@/src/lib/schemas/user";
+import { NextRequest, NextResponse } from "next/server";
 
-export async function GET(request: NextRequest) {
+export async function GET() {
   const session = await auth();
 
   if (!session?.user?.email) {
@@ -55,7 +55,7 @@ export async function PATCH(request: NextRequest) {
 
   try {
     const body = await request.json();
-    
+
     // Validate request body
     const result = userProfileSchema.safeParse(body);
 

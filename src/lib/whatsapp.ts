@@ -11,22 +11,31 @@ export function buildOrderWhatsAppMessage(
   const state = customer.state?.trim().toUpperCase() || "-";
   const notes = customer.notes?.trim() || "-";
 
-  const header = "Olá, gostaria de fazer um pedido:";
+  const header = "\uD83D\uDC4B Olá, gostaria de fazer um pedido:";
   const lines = items.map(
     (item) =>
-      `- ${item.quantity}x ${item.product.name} (${
+      `\u25AA\uFE0F ${item.quantity}x ${item.product.name} (${
         item.product.brand
       } - ${item.product.model.toUpperCase()})`
   );
   const customerBlock = [
-    `Dados do cliente:`,
-    `- Nome: ${name}`,
-    `- Cidade/UF: ${city}/${state}`,
-    `- Observações: ${notes}`,
+    `\uD83D\uDC64 *Dados do cliente:*`,
+    `\uD83D\uDC64 Nome: ${name}`,
+    `\uD83D\uDCCD Cidade/UF: ${city}/${state}`,
+    `\uD83D\uDCDD Observações: ${notes}`,
   ];
-  const footer = "Enviado via site irondistribuidorasc.com.br";
+  const footer = "\uD83D\uDE80 Enviado via site irondistribuidorasc.com.br";
 
-  return [header, "Itens:", ...lines, "", ...customerBlock, "", footer]
+  return [
+    header,
+    "",
+    "\uD83D\uDED2 *Itens:*",
+    ...lines,
+    "",
+    ...customerBlock,
+    "",
+    footer,
+  ]
     .filter(Boolean)
     .join("\n");
 }
@@ -37,14 +46,15 @@ export function buildWarrantyWhatsAppMessage(payload: {
   model: string;
   description: string;
 }) {
-  const header = "Olá, gostaria de solicitar GARANTIA/TROCA:";
+  const header =
+    "\uD83D\uDEE0\uFE0F Olá, gostaria de solicitar GARANTIA/TROCA:";
   const lines = [
-    `- Tipo: ${payload.requestType}`,
-    `- Item: ${payload.itemType}`,
-    `- Modelo do aparelho: ${payload.model}`,
-    `- Descrição do problema: ${payload.description}`,
+    `\uD83D\uDCCB Tipo: ${payload.requestType}`,
+    `\uD83D\uDCE6 Item: ${payload.itemType}`,
+    `\uD83D\uDCF1 Modelo do aparelho: ${payload.model}`,
+    `\uD83D\uDCDD Descrição do problema: ${payload.description}`,
     "",
-    "Enviado via site irondistribuidorasc.com.br",
+    "\uD83D\uDE80 Enviado via site irondistribuidorasc.com.br",
   ];
 
   return [header, ...lines].join("\n");

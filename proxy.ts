@@ -2,7 +2,7 @@ import { withAuth } from "next-auth/middleware";
 import { NextResponse } from "next/server";
 
 export default withAuth(
-  function middleware(req) {
+  function proxy(req) {
     const token = req.nextauth.token;
     const path = req.nextUrl.pathname;
 
@@ -21,12 +21,10 @@ export default withAuth(
           new URL(`/login?callbackUrl=${callbackUrl}`, req.url)
         );
       }
-      
+
       // Verificar se conta está aprovada
       if (token.approved === false) {
-        return NextResponse.redirect(
-          new URL("/conta-pendente", req.url)
-        );
+        return NextResponse.redirect(new URL("/conta-pendente", req.url));
       }
     }
 

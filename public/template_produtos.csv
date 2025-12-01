@@ -1,0 +1,5 @@
+code,name,brand,category,model,price,inStock,stockQuantity,minStockThreshold,imageUrl,description,tags,popularity
+DISP-IPH-13,Display iPhone 13,Apple,display,iPhone 13,1200.00,true,50,10,/logo-iron.png,Tela original Apple,novo;original,100
+BATT-SAM-S21,Bateria Samsung S21,Samsung,bateria,S21,150.00,true,100,20,,Bateria original,peca;reposicao,80
+CHG-UNI-20W,Carregador Universal 20W,Generic,acessorios,Universal,45.90,true,200,30,,Carregador rápido,acessorio;carregador,50
+DISP-XIA-NOTE10,Display Xiaomi Note 10,Xiaomi,display,Note 10,350.00,false,0,5,,Tela compatível,compativel;tela,70

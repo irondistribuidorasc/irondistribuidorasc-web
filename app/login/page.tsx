@@ -233,6 +233,14 @@ function LoginPageContent() {
                     {loginError}
                   </p>
                 )}
+                <div className="flex justify-end">
+                  <Link
+                    href="/recuperar-senha"
+                    className="text-sm text-brand-600 hover:underline dark:text-brand-400"
+                  >
+                    Esqueceu a senha?
+                  </Link>
+                </div>
                 <Button
                   type="submit"
                   color="danger"

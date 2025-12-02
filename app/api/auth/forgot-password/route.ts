@@ -17,12 +17,16 @@ export async function POST(request: Request) {
     }
 
     const normalizedEmail = normalizeEmail(email);
+    console.log(`[ForgotPassword] Solicitado para: ${normalizedEmail}`);
 
     const user = await db.user.findUnique({
       where: { email: normalizedEmail },
     });
 
     if (!user) {
+      console.log(
+        `[ForgotPassword] Usuário NÃO encontrado: ${normalizedEmail}`
+      );
       // Retornamos sucesso mesmo se o usuário não existir para evitar enumeração de e-mails
       return NextResponse.json(
         {
@@ -31,6 +35,8 @@ export async function POST(request: Request) {
         { status: 200 }
       );
     }
+
+    console.log(`[ForgotPassword] Usuário encontrado. Gerando token...`);
 
     // Gerar token seguro
     const token = randomBytes(32).toString("hex");
@@ -51,7 +57,7 @@ export async function POST(request: Request) {
 
     // Verificar se a chave da API do Resend está configurada
     if (!process.env.RESEND_API_KEY) {
-      console.error("RESEND_API_KEY não configurada.");
+      console.error("[ForgotPassword] RESEND_API_KEY não configurada.");
       // Em desenvolvimento, podemos logar o link se não houver chave
       if (process.env.NODE_ENV === "development") {
         console.log(
@@ -77,6 +83,8 @@ export async function POST(request: Request) {
 
     // Enviar e-mail via Resend
     const fromEmail = process.env.EMAIL_FROM || "onboarding@resend.dev";
+    console.log(`[ForgotPassword] Enviando via Resend de: ${fromEmail}`);
+
     await resend.emails.send({
       from: `Iron Distribuidora <${fromEmail}>`,
       to: normalizedEmail,
@@ -91,6 +99,10 @@ export async function POST(request: Request) {
         </div>
       `,
     });
+
+    console.log(
+      `[ForgotPassword] E-mail enviado com sucesso para: ${normalizedEmail}`
+    );
 
     return NextResponse.json(
       { message: "Se o e-mail existir, um link de recuperação será enviado." },

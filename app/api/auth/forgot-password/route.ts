@@ -85,7 +85,7 @@ export async function POST(request: Request) {
     const fromEmail = process.env.EMAIL_FROM || "onboarding@resend.dev";
     console.log(`[ForgotPassword] Enviando via Resend de: ${fromEmail}`);
 
-    await resend.emails.send({
+    const { data, error } = await resend.emails.send({
       from: `Iron Distribuidora <${fromEmail}>`,
       to: normalizedEmail,
       subject: "Recuperação de Senha - Iron Distribuidora",
@@ -99,6 +99,16 @@ export async function POST(request: Request) {
         </div>
       `,
     });
+
+    if (error) {
+      console.error("[ForgotPassword] Erro retornado pelo Resend:", error);
+      return NextResponse.json(
+        { message: "Erro ao enviar e-mail." },
+        { status: 500 }
+      );
+    }
+
+    console.log(`[ForgotPassword] E-mail enviado com sucesso. ID: ${data?.id}`);
 
     console.log(
       `[ForgotPassword] E-mail enviado com sucesso para: ${normalizedEmail}`

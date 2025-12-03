@@ -5,6 +5,7 @@ import {
   searchProducts,
 } from "@/app/actions/search-products";
 import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
+import { useSession } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -18,6 +19,7 @@ function SearchInput() {
   const [isOpen, setIsOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
+  const { status } = useSession();
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -133,10 +135,14 @@ function SearchInput() {
                 </p>
                 <div className="flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400">
                   <span>{product.brand}</span>
-                  <span>•</span>
-                  <span className="font-medium text-brand-600 dark:text-brand-400">
-                    {formatPrice(product.price)}
-                  </span>
+                  {status === "authenticated" && (
+                    <>
+                      <span>•</span>
+                      <span className="font-medium text-brand-600 dark:text-brand-400">
+                        {formatPrice(product.price)}
+                      </span>
+                    </>
+                  )}
                 </div>
               </div>
             </Link>

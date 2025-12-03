@@ -1,6 +1,10 @@
 /** @type {import('cz-git').UserConfig} */
 module.exports = {
   extends: ["@commitlint/config-conventional"],
+  rules: {
+    "header-max-length": [2, "always", 200],
+    "subject-full-stop": [0, "never"],
+  },
   prompt: {
     alias: { fd: "docs: fix typos" },
     messages: {

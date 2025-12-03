@@ -149,7 +149,7 @@ export function MobileMenu({
   };
 
   const navigationLinks = [
-    { href: "/", label: "Home" },
+    { href: "/", label: "Início" },
     { href: "/produtos", label: "Produtos" },
     { href: "/carrinho", label: "Carrinho" },
     { href: "/garantia", label: "Garantia" },
@@ -216,6 +216,60 @@ export function MobileMenu({
               </div>
 
               {/* User info (if authenticated) */}
+              {/* Welcome Section (Unauthenticated) */}
+              {!isAuthenticated && (
+                <div className="bg-brand-50 p-4 dark:bg-brand-900/10">
+                  <div className="mb-4 flex items-center gap-3">
+                    <div className="flex h-12 w-12 items-center justify-center  dark:text-slate-400">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        strokeWidth={1.5}
+                        stroke="currentColor"
+                        className="h-8 w-8"
+                        aria-hidden="true"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          d="M17.982 18.725A7.488 7.488 0 0012 15.75a7.488 7.488 0 00-5.982 2.975m11.963 0a9 9 0 10-11.963 0m11.963 0A8.966 8.966 0 0112 21a8.966 8.966 0 01-5.982-2.275M15 9.75a3 3 0 11-6 0 3 3 0 016 0z"
+                        />
+                      </svg>
+                    </div>
+                    <div>
+                      <h3 className="font-semibold text-slate-900 dark:text-slate-100">
+                        Bem-vindo
+                      </h3>
+                      <p className="text-xs text-slate-600 dark:text-slate-400">
+                        Entre na sua conta para ver suas compras, favoritos etc.
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex gap-2">
+                    <Button
+                      as={Link}
+                      href="/login"
+                      color="primary"
+                      className="flex-1 bg-brand-600 text-white"
+                      onPress={handleLinkClick}
+                    >
+                      Entrar
+                    </Button>
+                    <Button
+                      as={Link}
+                      href="/login?tab=register"
+                      variant="bordered"
+                      className="flex-1 bg-white dark:bg-transparent"
+                      onPress={handleLinkClick}
+                    >
+                      Criar conta
+                    </Button>
+                  </div>
+                </div>
+              )}
+
+              {/* User info (Authenticated) */}
               {isAuthenticated && (
                 <div className="border-b border-slate-200 p-4 dark:border-slate-800">
                   <p className="text-sm font-medium text-slate-900 dark:text-slate-100">
@@ -290,9 +344,9 @@ export function MobileMenu({
                 </div>
               </div>
 
-              {/* Auth button */}
-              <div className="border-t border-slate-200 p-4 dark:border-slate-800">
-                {isAuthenticated ? (
+              {/* Auth button (Authenticated only) */}
+              {isAuthenticated && (
+                <div className="border-t border-slate-200 p-4 dark:border-slate-800">
                   <Button
                     color="danger"
                     variant="flat"
@@ -301,18 +355,8 @@ export function MobileMenu({
                   >
                     Sair
                   </Button>
-                ) : (
-                  <Button
-                    as={Link}
-                    href="/login"
-                    color="danger"
-                    className="w-full"
-                    onPress={handleLinkClick}
-                  >
-                    Área do Cliente
-                  </Button>
-                )}
-              </div>
+                </div>
+              )}
             </div>
           </motion.nav>
         </>

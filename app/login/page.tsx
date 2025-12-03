@@ -207,6 +207,9 @@ function LoginPageContent() {
             aria-label="Fluxo de autenticação"
             variant="bordered"
             color="danger"
+            defaultSelectedKey={
+              searchParams.get("tab") === "register" ? "register" : "login"
+            }
           >
             <Tab key="login" title="Entrar">
               <form className="space-y-4" onSubmit={handleCredentialLogin}>

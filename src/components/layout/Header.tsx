@@ -8,6 +8,7 @@ import { ThemeToggle } from "@/src/components/ui/ThemeToggle";
 import { useCart } from "@/src/contexts/CartContext";
 import {
   Bars3Icon,
+  MagnifyingGlassIcon,
   ShoppingCartIcon,
   XMarkIcon,
 } from "@heroicons/react/24/outline";
@@ -34,6 +35,7 @@ import CustomerNotificationBell from "./CustomerNotificationBell";
 export function Header() {
   const { totalItems, isCartOpen, openCart, closeCart } = useCart();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
   const hamburgerButtonRef = useRef<HTMLButtonElement>(null);
   const { status, data: session } = useSession();
   const pathname = usePathname();
@@ -130,6 +132,18 @@ export function Header() {
         </NavbarContent>
 
         <NavbarContent justify="end" className="gap-1 sm:gap-2 md:gap-3">
+          {/* Mobile Search Toggle */}
+          <NavbarItem className="md:hidden">
+            <Button
+              isIconOnly
+              variant="light"
+              aria-label={isSearchOpen ? "Fechar busca" : "Abrir busca"}
+              onPress={() => setIsSearchOpen(!isSearchOpen)}
+            >
+              <MagnifyingGlassIcon className="h-5 w-5 text-slate-900 dark:text-slate-100" />
+            </Button>
+          </NavbarItem>
+
           {/* Hamburger button - mobile only */}
           <NavbarItem className="md:hidden">
             <Button
@@ -174,6 +188,13 @@ export function Header() {
           </NavbarItem>
         </NavbarContent>
       </Navbar>
+
+      {/* Mobile Search Bar */}
+      {isSearchOpen && (
+        <div className="md:hidden w-full border-b border-slate-200 bg-white p-4 dark:border-slate-800 dark:bg-slate-900">
+          <GlobalSearch />
+        </div>
+      )}
 
       {/* Sub-header for Desktop Navigation */}
       <div className="hidden md:flex w-full border-b border-slate-200 bg-white dark:border-slate-800 dark:bg-slate-900 py-2">

@@ -1,5 +1,6 @@
 "use client";
 
+import { ThemeToggle } from "@/src/components/ui/ThemeToggle";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import { Button } from "@heroui/react";
 import { AnimatePresence, motion } from "framer-motion";
@@ -148,6 +149,7 @@ export function MobileMenu({
   };
 
   const navigationLinks = [
+    { href: "/", label: "Home" },
     { href: "/produtos", label: "Produtos" },
     { href: "/carrinho", label: "Carrinho" },
     { href: "/garantia", label: "Garantia" },
@@ -204,6 +206,7 @@ export function MobileMenu({
                   Menu
                 </h2>
                 <button
+                  type="button"
                   onClick={onClose}
                   aria-label="Fechar menu"
                   className="rounded-lg p-2 text-slate-600 transition hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-slate-800"
@@ -245,7 +248,46 @@ export function MobileMenu({
                       </Link>
                     </li>
                   ))}
+                  {isAuthenticated && (
+                    <>
+                      <li>
+                        <Link
+                          href="/minha-conta"
+                          onClick={handleLinkClick}
+                          className={`block rounded-lg px-4 py-3 text-base font-medium transition ${
+                            currentPath === "/minha-conta"
+                              ? "bg-danger-50 text-danger-600 dark:bg-danger-900/20 dark:text-danger-400"
+                              : "text-slate-700 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800"
+                          }`}
+                        >
+                          Minha Conta
+                        </Link>
+                      </li>
+                      <li>
+                        <Link
+                          href="/meus-pedidos"
+                          onClick={handleLinkClick}
+                          className={`block rounded-lg px-4 py-3 text-base font-medium transition ${
+                            currentPath === "/meus-pedidos"
+                              ? "bg-danger-50 text-danger-600 dark:bg-danger-900/20 dark:text-danger-400"
+                              : "text-slate-700 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800"
+                          }`}
+                        >
+                          Meus Pedidos
+                        </Link>
+                      </li>
+                    </>
+                  )}
                 </ul>
+
+                <div className="mt-6 border-t border-slate-200 pt-6 dark:border-slate-800">
+                  <div className="flex items-center justify-between px-4">
+                    <span className="text-sm font-medium text-slate-700 dark:text-slate-300">
+                      Tema
+                    </span>
+                    <ThemeToggle />
+                  </div>
+                </div>
               </div>
 
               {/* Auth button */}

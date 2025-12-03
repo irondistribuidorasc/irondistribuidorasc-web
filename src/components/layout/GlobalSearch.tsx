@@ -162,7 +162,7 @@ function SearchInput() {
   };
 
   return (
-    <div className="w-full max-w-lg relative" ref={containerRef}>
+    <div className="w-full md:max-w-lg relative" ref={containerRef}>
       <form onSubmit={handleSearch} className="w-full">
         <div className="relative">
           <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">

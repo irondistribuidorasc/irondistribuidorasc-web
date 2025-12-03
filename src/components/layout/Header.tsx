@@ -8,7 +8,6 @@ import { ThemeToggle } from "@/src/components/ui/ThemeToggle";
 import { useCart } from "@/src/contexts/CartContext";
 import {
   Bars3Icon,
-  MagnifyingGlassIcon,
   ShoppingCartIcon,
   XMarkIcon,
 } from "@heroicons/react/24/outline";
@@ -35,7 +34,6 @@ import CustomerNotificationBell from "./CustomerNotificationBell";
 export function Header() {
   const { totalItems, isCartOpen, openCart, closeCart } = useCart();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [isSearchOpen, setIsSearchOpen] = useState(false);
   const hamburgerButtonRef = useRef<HTMLButtonElement>(null);
   const { status, data: session } = useSession();
   const pathname = usePathname();
@@ -107,12 +105,12 @@ export function Header() {
   return (
     <div className="flex flex-col w-full print:hidden">
       <Navbar
-        className="border-b border-slate-200 bg-white/70 backdrop-blur dark:border-slate-800 dark:bg-slate-900/70"
+        className="border-b border-slate-200 bg-white/70 backdrop-blur dark:border-slate-800 dark:bg-slate-900/70 gap-0"
         maxWidth="xl"
         position="static"
       >
-        <NavbarBrand className="flex-shrink-0 gap-2 min-w-0">
-          <Link href="/" className="flex items-center gap-2 min-w-0">
+        <NavbarBrand className="hidden md:flex flex-none grow-0 min-w-0 mr-2">
+          <Link href="/" className="flex items-center md:gap-2 min-w-0">
             <Image
               src="/logo-iron.png"
               alt="IRON DISTRIBUIDORA SC"
@@ -120,30 +118,20 @@ export function Header() {
               height={48}
               className="h-8 w-8 flex-shrink-0 rounded-full object-cover sm:h-10 sm:w-10"
             />
-            <span className="truncate text-xs font-semibold text-slate-900 dark:text-slate-100 sm:text-sm md:text-base lg:text-lg">
-              <span className="hidden md:inline">IRON DISTRIBUIDORA SC</span>
-              <span className="md:hidden">IRON DISTRIB.</span>
+            <span className="hidden md:block truncate text-xs font-semibold text-slate-900 dark:text-slate-100 sm:text-sm md:text-base lg:text-lg">
+              IRON DISTRIBUIDORA SC
             </span>
           </Link>
         </NavbarBrand>
 
-        <NavbarContent className="hidden md:flex flex-1 px-4" justify="center">
+        <NavbarContent className="flex-1 px-0 sm:px-4 w-full max-w-full">
           <GlobalSearch />
         </NavbarContent>
 
-        <NavbarContent justify="end" className="gap-1 sm:gap-2 md:gap-3">
-          {/* Mobile Search Toggle */}
-          <NavbarItem className="md:hidden">
-            <Button
-              isIconOnly
-              variant="light"
-              aria-label={isSearchOpen ? "Fechar busca" : "Abrir busca"}
-              onPress={() => setIsSearchOpen(!isSearchOpen)}
-            >
-              <MagnifyingGlassIcon className="h-5 w-5 text-slate-900 dark:text-slate-100" />
-            </Button>
-          </NavbarItem>
-
+        <NavbarContent
+          justify="end"
+          className="flex-none !grow-0 gap-0 sm:gap-2 md:gap-3"
+        >
           {/* Hamburger button - mobile only */}
           <NavbarItem className="md:hidden">
             <Button
@@ -163,12 +151,15 @@ export function Header() {
               )}
             </Button>
           </NavbarItem>
-          <NavbarItem className="flex items-center gap-2">
+
+          {/* Desktop Items */}
+          <NavbarItem className="hidden md:flex items-center gap-2">
             {session?.user?.role === "ADMIN" && <NotificationBell />}
             {session?.user?.role === "USER" && <CustomerNotificationBell />}
             <ThemeToggle />
             {renderUserMenu()}
           </NavbarItem>
+
           <NavbarItem>
             <div className="relative">
               <Button
@@ -188,13 +179,6 @@ export function Header() {
           </NavbarItem>
         </NavbarContent>
       </Navbar>
-
-      {/* Mobile Search Bar */}
-      {isSearchOpen && (
-        <div className="md:hidden w-full border-b border-slate-200 bg-white p-4 dark:border-slate-800 dark:bg-slate-900">
-          <GlobalSearch />
-        </div>
-      )}
 
       {/* Sub-header for Desktop Navigation */}
       <div className="hidden md:flex w-full border-b border-slate-200 bg-white dark:border-slate-800 dark:bg-slate-900 py-2">

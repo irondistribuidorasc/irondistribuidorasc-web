@@ -1,10 +1,17 @@
 "use client";
 
+import {
+  type ResetPasswordSchema,
+  resetPasswordSchema,
+} from "@/src/lib/schemas";
 import { MIN_PASSWORD_LENGTH } from "@/src/lib/validation";
 import { Button, Card, CardBody, Input } from "@heroui/react";
+import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { type FormEvent, Suspense, useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 
 function ResetPasswordContent() {
   const searchParams = useSearchParams();
@@ -12,12 +19,16 @@ function ResetPasswordContent() {
   const router = useRouter();
 
   const [isMounted, setIsMounted] = useState(false);
-  const [newPassword, setNewPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [status, setStatus] = useState<
-    "idle" | "loading" | "success" | "error"
-  >("idle");
-  const [message, setMessage] = useState("");
+  const [isSuccess, setIsSuccess] = useState(false);
+  const [successMessage, setSuccessMessage] = useState("");
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm<ResetPasswordSchema>({
+    resolver: zodResolver(resetPasswordSchema),
+  });
 
   useEffect(() => {
     setIsMounted(true);
@@ -38,53 +49,42 @@ function ResetPasswordContent() {
     );
   }
 
-  async function handleSubmit(e: FormEvent) {
-    e.preventDefault();
-
-    if (newPassword !== confirmPassword) {
-      setStatus("error");
-      setMessage("As senhas não coincidem.");
-      return;
-    }
-
-    setStatus("loading");
-    setMessage("");
-
+  async function onSubmit(data: ResetPasswordSchema) {
     try {
       const response = await fetch("/api/auth/reset-password", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ token, newPassword }),
+        body: JSON.stringify({ token, newPassword: data.newPassword }),
       });
 
-      const data = await response.json();
+      const payload = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.message || "Erro ao redefinir senha.");
+        throw new Error(payload.message || "Erro ao redefinir senha.");
       }
 
-      setStatus("success");
-      setMessage(data.message);
+      setIsSuccess(true);
+      setSuccessMessage(payload.message);
+      toast.success("Senha redefinida com sucesso!");
 
       // Redirecionar após alguns segundos
       setTimeout(() => {
         router.push("/login");
       }, 3000);
     } catch (error) {
-      setStatus("error");
       if (error instanceof Error) {
-        setMessage(error.message);
+        toast.error(error.message);
       } else {
-        setMessage("Ocorreu um erro. Tente novamente.");
+        toast.error("Ocorreu um erro. Tente novamente.");
       }
     }
   }
 
-  if (status === "success") {
+  if (isSuccess) {
     return (
       <div className="space-y-6 text-center">
         <div className="rounded-lg bg-emerald-50 p-4 text-sm text-emerald-700 dark:bg-emerald-900/20 dark:text-emerald-400">
-          {message}
+          {successMessage}
         </div>
         <p className="text-sm text-slate-600">
           Você será redirecionado para o login em instantes...
@@ -97,49 +97,31 @@ function ResetPasswordContent() {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
       <Input
+        {...register("newPassword")}
         label={`Nova senha (mínimo ${MIN_PASSWORD_LENGTH} caracteres)`}
         type="password"
-        required
-        minLength={MIN_PASSWORD_LENGTH}
         variant="bordered"
-        value={newPassword}
-        onValueChange={setNewPassword}
         autoComplete="new-password"
+        isInvalid={!!errors.newPassword}
+        errorMessage={errors.newPassword?.message}
       />
       <Input
+        {...register("confirmPassword")}
         label="Confirmar nova senha"
         type="password"
-        required
         variant="bordered"
-        value={confirmPassword}
-        onValueChange={setConfirmPassword}
         autoComplete="new-password"
-        isInvalid={
-          confirmPassword.length > 0 && newPassword !== confirmPassword
-        }
-        errorMessage={
-          confirmPassword.length > 0 && newPassword !== confirmPassword
-            ? "As senhas não coincidem."
-            : undefined
-        }
+        isInvalid={!!errors.confirmPassword}
+        errorMessage={errors.confirmPassword?.message}
       />
-
-      {status === "error" && (
-        <p className="text-sm text-red-600 dark:text-red-400">{message}</p>
-      )}
 
       <Button
         type="submit"
         color="danger"
         className="w-full bg-brand-600 text-white"
-        isLoading={status === "loading"}
-        isDisabled={
-          !newPassword ||
-          newPassword.length < MIN_PASSWORD_LENGTH ||
-          newPassword !== confirmPassword
-        }
+        isLoading={isSubmitting}
       >
         Redefinir Senha
       </Button>

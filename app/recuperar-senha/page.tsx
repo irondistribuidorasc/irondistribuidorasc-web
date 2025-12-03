@@ -1,42 +1,50 @@
 "use client";
 
+import {
+  type ForgotPasswordSchema,
+  forgotPasswordSchema,
+} from "@/src/lib/schemas";
 import { Button, Card, CardBody, Input } from "@heroui/react";
+import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
-import { type FormEvent, useState } from "react";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 
 export default function ForgotPasswordPage() {
-  const [email, setEmail] = useState("");
-  const [status, setStatus] = useState<
-    "idle" | "loading" | "success" | "error"
-  >("idle");
-  const [message, setMessage] = useState("");
+  const [isSuccess, setIsSuccess] = useState(false);
+  const [successMessage, setSuccessMessage] = useState("");
 
-  async function handleSubmit(e: FormEvent) {
-    e.preventDefault();
-    setStatus("loading");
-    setMessage("");
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm<ForgotPasswordSchema>({
+    resolver: zodResolver(forgotPasswordSchema),
+  });
 
+  async function onSubmit(data: ForgotPasswordSchema) {
     try {
       const response = await fetch("/api/auth/forgot-password", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email }),
+        body: JSON.stringify({ email: data.email }),
       });
 
-      const data = await response.json();
+      const payload = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.message || "Erro ao enviar solicitação.");
+        throw new Error(payload.message || "Erro ao enviar solicitação.");
       }
 
-      setStatus("success");
-      setMessage(data.message);
+      setIsSuccess(true);
+      setSuccessMessage(payload.message);
+      toast.success("E-mail de recuperação enviado!");
     } catch (error) {
-      setStatus("error");
       if (error instanceof Error) {
-        setMessage(error.message);
+        toast.error(error.message);
       } else {
-        setMessage("Ocorreu um erro. Tente novamente.");
+        toast.error("Ocorreu um erro. Tente novamente.");
       }
     }
   }
@@ -54,10 +62,10 @@ export default function ForgotPasswordPage() {
             </p>
           </div>
 
-          {status === "success" ? (
+          {isSuccess ? (
             <div className="space-y-6 text-center">
               <div className="rounded-lg bg-emerald-50 p-4 text-sm text-emerald-700 dark:bg-emerald-900/20 dark:text-emerald-400">
-                {message}
+                {successMessage}
               </div>
               <p className="text-xs text-slate-500">
                 Verifique sua caixa de entrada (e spam). O link expira em 1
@@ -73,31 +81,24 @@ export default function ForgotPasswordPage() {
               </Button>
             </div>
           ) : (
-            <form onSubmit={handleSubmit} className="space-y-6">
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
               <Input
+                {...register("email")}
                 label="E-mail"
                 type="email"
-                required
                 variant="bordered"
-                value={email}
-                onValueChange={setEmail}
                 autoComplete="email"
-                isDisabled={status === "loading"}
+                isDisabled={isSubmitting}
+                isInvalid={!!errors.email}
+                errorMessage={errors.email?.message}
               />
-
-              {status === "error" && (
-                <p className="text-sm text-red-600 dark:text-red-400">
-                  {message}
-                </p>
-              )}
 
               <div className="space-y-3">
                 <Button
                   type="submit"
                   color="danger"
                   className="w-full bg-brand-600 text-white"
-                  isLoading={status === "loading"}
-                  isDisabled={!email}
+                  isLoading={isSubmitting}
                 >
                   Enviar link de recuperação
                 </Button>
@@ -106,7 +107,7 @@ export default function ForgotPasswordPage() {
                   href="/login"
                   variant="light"
                   className="w-full"
-                  isDisabled={status === "loading"}
+                  isDisabled={isSubmitting}
                 >
                   Cancelar
                 </Button>

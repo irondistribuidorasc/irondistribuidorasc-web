@@ -1,33 +1,45 @@
 "use client";
 
-import { MIN_PASSWORD_LENGTH } from "@/src/lib/validation";
+import {
+  type LoginSchema,
+  loginSchema,
+  type RegisterSchema,
+  registerSchema,
+} from "@/src/lib/schemas";
 import { Button, Card, CardBody, Input, Tab, Tabs } from "@heroui/react";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { signIn, signOut, useSession } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { type FormEvent, Suspense, useState } from "react";
+import { Suspense, useState } from "react";
+import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 
 function LoginPageContent() {
   const { data: session, status } = useSession();
   const router = useRouter();
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get("callbackUrl") ?? "/";
+  const [activeTab, setActiveTab] = useState<string | number>(
+    searchParams.get("tab") === "register" ? "register" : "login"
+  );
 
-  const [loginEmail, setLoginEmail] = useState("");
-  const [loginPassword, setLoginPassword] = useState("");
-  const [loginError, setLoginError] = useState<string | null>(null);
-  const [isLoggingIn, setIsLoggingIn] = useState(false);
+  const {
+    register: registerLogin,
+    handleSubmit: handleSubmitLogin,
+    formState: { errors: loginErrors, isSubmitting: isLoggingIn },
+  } = useForm<LoginSchema>({
+    resolver: zodResolver(loginSchema),
+  });
 
-  const [registerName, setRegisterName] = useState("");
-  const [registerEmail, setRegisterEmail] = useState("");
-  const [registerPhone, setRegisterPhone] = useState("");
-  const [registerDoc, setRegisterDoc] = useState("");
-  const [registerPassword, setRegisterPassword] = useState("");
-  const [registerPasswordConfirm, setRegisterPasswordConfirm] = useState("");
-  const [registerError, setRegisterError] = useState<string | null>(null);
-  const [registerSuccess, setRegisterSuccess] = useState<string | null>(null);
-  const [isRegistering, setIsRegistering] = useState(false);
+  const {
+    register: registerRegister,
+    handleSubmit: handleSubmitRegister,
+    formState: { errors: registerErrors, isSubmitting: isRegistering },
+  } = useForm<RegisterSchema>({
+    resolver: zodResolver(registerSchema),
+  });
 
   const isAuthenticated = status === "authenticated" && !!session?.user;
 
@@ -36,21 +48,17 @@ function LoginPageContent() {
     router.refresh();
   };
 
-  async function handleCredentialLogin(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    setLoginError(null);
-    setIsLoggingIn(true);
-
+  async function onLoginSubmit(data: LoginSchema) {
     try {
       const result = await signIn("credentials", {
-        email: loginEmail.trim().toLowerCase(),
-        password: loginPassword,
+        email: data.email.trim().toLowerCase(),
+        password: data.password,
         redirect: false,
         callbackUrl,
       });
 
       if (result?.error) {
-        setLoginError(
+        toast.error(
           result.error === "CredentialsSignin"
             ? "E-mail ou senha inválidos."
             : result.error
@@ -58,58 +66,47 @@ function LoginPageContent() {
         return;
       }
 
+      toast.success("Login realizado com sucesso!");
       redirectAfterAuth(result?.url);
-    } finally {
-      setIsLoggingIn(false);
+    } catch {
+      toast.error("Ocorreu um erro ao tentar fazer login.");
     }
   }
 
-  async function handleRegister(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    setRegisterError(null);
-    setRegisterSuccess(null);
-
-    // Validação de senhas iguais
-    if (registerPassword !== registerPasswordConfirm) {
-      setRegisterError("As senhas não coincidem.");
-      return;
-    }
-
-    setIsRegistering(true);
-
+  async function onRegisterSubmit(data: RegisterSchema) {
     try {
       const response = await fetch("/api/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          name: registerName.trim(),
-          email: registerEmail.trim().toLowerCase(),
-          phone: registerPhone.trim() || null,
-          docNumber: registerDoc.trim() || null,
-          password: registerPassword,
+          name: data.name.trim(),
+          email: data.email.trim().toLowerCase(),
+          phone: data.phone?.trim() || null,
+          docNumber: data.docNumber?.trim() || null,
+          password: data.password,
         }),
       });
 
       const payload = await response.json().catch(() => ({}));
 
       if (!response.ok) {
-        setRegisterError(
+        toast.error(
           payload?.message ?? "Não foi possível completar o cadastro."
         );
         return;
       }
 
-      setRegisterSuccess("Cadastro criado! Entrando...");
+      toast.success("Cadastro criado! Entrando...");
 
       const result = await signIn("credentials", {
-        email: registerEmail.trim().toLowerCase(),
-        password: registerPassword,
+        email: data.email.trim().toLowerCase(),
+        password: data.password,
         redirect: false,
         callbackUrl,
       });
 
       if (result?.error) {
-        setRegisterError(
+        toast.error(
           "Cadastro feito, mas não foi possível entrar automaticamente."
         );
         return;
@@ -117,10 +114,7 @@ function LoginPageContent() {
 
       redirectAfterAuth(result?.url);
     } catch {
-      // Erro capturado no cliente - mensagem genérica para o usuário
-      setRegisterError("Não foi possível completar o cadastro.");
-    } finally {
-      setIsRegistering(false);
+      toast.error("Não foi possível completar o cadastro.");
     }
   }
 
@@ -207,35 +201,32 @@ function LoginPageContent() {
             aria-label="Fluxo de autenticação"
             variant="bordered"
             color="danger"
-            defaultSelectedKey={
-              searchParams.get("tab") === "register" ? "register" : "login"
-            }
+            selectedKey={activeTab}
+            onSelectionChange={setActiveTab}
           >
             <Tab key="login" title="Entrar">
-              <form className="space-y-4" onSubmit={handleCredentialLogin}>
+              <form
+                className="space-y-4"
+                onSubmit={handleSubmitLogin(onLoginSubmit)}
+              >
                 <Input
+                  {...registerLogin("email")}
                   label="E-mail"
                   type="email"
-                  required
                   variant="bordered"
-                  value={loginEmail}
-                  onValueChange={setLoginEmail}
                   autoComplete="email"
+                  isInvalid={!!loginErrors.email}
+                  errorMessage={loginErrors.email?.message}
                 />
                 <Input
+                  {...registerLogin("password")}
                   label="Senha"
                   type="password"
-                  required
                   variant="bordered"
-                  value={loginPassword}
-                  onValueChange={setLoginPassword}
                   autoComplete="current-password"
+                  isInvalid={!!loginErrors.password}
+                  errorMessage={loginErrors.password?.message}
                 />
-                {loginError && (
-                  <p className="text-sm text-red-600 dark:text-red-400">
-                    {loginError}
-                  </p>
-                )}
                 <div className="flex justify-end">
                   <Link
                     href="/recuperar-senha"
@@ -249,100 +240,77 @@ function LoginPageContent() {
                   color="danger"
                   className="w-full bg-brand-600 text-white"
                   isLoading={isLoggingIn}
-                  isDisabled={!loginEmail || !loginPassword}
                 >
                   Entrar
                 </Button>
               </form>
             </Tab>
             <Tab key="register" title="Criar conta">
-              <form className="space-y-4" onSubmit={handleRegister}>
+              <form
+                className="space-y-4"
+                onSubmit={handleSubmitRegister(onRegisterSubmit)}
+              >
                 <Input
+                  {...registerRegister("name")}
                   label="Nome completo"
-                  required
                   variant="bordered"
-                  value={registerName}
-                  onValueChange={setRegisterName}
                   autoComplete="name"
                   onKeyDown={(e) => {
                     if (e.key === " ") {
                       e.nativeEvent.stopPropagation();
                     }
                   }}
+                  isInvalid={!!registerErrors.name}
+                  errorMessage={registerErrors.name?.message}
                 />
                 <Input
+                  {...registerRegister("email")}
                   label="E-mail"
                   type="email"
-                  required
                   variant="bordered"
-                  value={registerEmail}
-                  onValueChange={setRegisterEmail}
                   autoComplete="email"
+                  isInvalid={!!registerErrors.email}
+                  errorMessage={registerErrors.email?.message}
                 />
                 <Input
+                  {...registerRegister("phone")}
                   label="Telefone (opcional)"
                   variant="bordered"
-                  value={registerPhone}
-                  onValueChange={setRegisterPhone}
                   autoComplete="tel"
+                  isInvalid={!!registerErrors.phone}
+                  errorMessage={registerErrors.phone?.message}
                 />
                 <Input
+                  {...registerRegister("docNumber")}
                   label="CPF/CNPJ (opcional)"
                   variant="bordered"
-                  value={registerDoc}
-                  onValueChange={setRegisterDoc}
                   autoComplete="off"
+                  isInvalid={!!registerErrors.docNumber}
+                  errorMessage={registerErrors.docNumber?.message}
                 />
                 <Input
-                  label={`Senha (mínimo ${MIN_PASSWORD_LENGTH} caracteres)`}
+                  {...registerRegister("password")}
+                  label="Senha"
                   type="password"
-                  required
-                  minLength={MIN_PASSWORD_LENGTH}
                   variant="bordered"
-                  value={registerPassword}
-                  onValueChange={setRegisterPassword}
                   autoComplete="new-password"
+                  isInvalid={!!registerErrors.password}
+                  errorMessage={registerErrors.password?.message}
                 />
                 <Input
+                  {...registerRegister("confirmPassword")}
                   label="Confirmar senha"
                   type="password"
-                  required
                   variant="bordered"
-                  value={registerPasswordConfirm}
-                  onValueChange={setRegisterPasswordConfirm}
                   autoComplete="new-password"
-                  isInvalid={
-                    registerPasswordConfirm.length > 0 &&
-                    registerPassword !== registerPasswordConfirm
-                  }
-                  errorMessage={
-                    registerPasswordConfirm.length > 0 &&
-                    registerPassword !== registerPasswordConfirm
-                      ? "As senhas não coincidem."
-                      : undefined
-                  }
+                  isInvalid={!!registerErrors.confirmPassword}
+                  errorMessage={registerErrors.confirmPassword?.message}
                 />
-                {registerError && (
-                  <p className="text-sm text-red-600 dark:text-red-400">
-                    {registerError}
-                  </p>
-                )}
-                {registerSuccess && (
-                  <p className="text-sm text-emerald-600 dark:text-emerald-400">
-                    {registerSuccess}
-                  </p>
-                )}
                 <Button
                   type="submit"
                   color="danger"
                   className="w-full bg-brand-600 text-white"
                   isLoading={isRegistering}
-                  isDisabled={
-                    !registerName ||
-                    !registerEmail ||
-                    registerPassword.length < MIN_PASSWORD_LENGTH ||
-                    registerPassword !== registerPasswordConfirm
-                  }
                 >
                   Criar conta
                 </Button>

@@ -1,14 +1,15 @@
 "use client";
 
-import { useState, useMemo, useCallback } from "react";
-import type { Product, Brand, Category } from "@/src/data/products";
+import type { Brand, Category, Product } from "@/src/data/products";
 import {
   filterProducts,
-  sortByRelevance,
-  paginateProducts,
   getTotalPages,
+  paginateProducts,
   type ProductFilters,
+  type SortOption,
+  sortProducts,
 } from "@/src/lib/productUtils";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
 type UseProductFiltersReturn = {
   // Produtos processados
@@ -33,6 +34,10 @@ type UseProductFiltersReturn = {
   setInStockOnly: (inStockOnly: boolean) => void;
   clearFilters: () => void;
   hasActiveFilters: boolean;
+
+  // Ordenação
+  sortOption: SortOption;
+  setSortOption: (option: SortOption) => void;
 };
 
 const ITEMS_PER_PAGE = 60;
@@ -45,16 +50,37 @@ const initialFilters: ProductFilters = {
 };
 
 export function useProductFilters(
-  allProducts: Product[]
+  allProducts: Product[],
+  initialSearchQuery: string = "",
+  initialCategory?: Category,
+  initialBrand?: Brand
 ): UseProductFiltersReturn {
   const [currentPage, setCurrentPage] = useState(1);
-  const [filters, setFilters] = useState<ProductFilters>(initialFilters);
+  const [sortOption, setSortOption] = useState<SortOption>("relevance");
+  const [filters, setFilters] = useState<ProductFilters>({
+    ...initialFilters,
+    searchQuery: initialSearchQuery,
+    categories: initialCategory ? [initialCategory] : [],
+    brands: initialBrand ? [initialBrand] : [],
+  });
+
+  // Sync filters with props when URL params change
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setFilters((prev) => ({
+      ...prev,
+      searchQuery: initialSearchQuery,
+      categories: initialCategory ? [initialCategory] : [],
+      brands: initialBrand ? [initialBrand] : [],
+    }));
+    setCurrentPage(1);
+  }, [initialSearchQuery, initialCategory, initialBrand]);
 
   // Produtos filtrados e ordenados
   const filteredAndSortedProducts = useMemo(() => {
     const filtered = filterProducts(allProducts, filters);
-    return sortByRelevance(filtered);
-  }, [allProducts, filters]);
+    return sortProducts(filtered, sortOption);
+  }, [allProducts, filters, sortOption]);
 
   // Total de produtos após filtros
   const totalProducts = filteredAndSortedProducts.length;
@@ -96,7 +122,10 @@ export function useProductFilters(
   );
 
   const goToFirstPage = useCallback(() => setPage(1), [setPage]);
-  const goToLastPage = useCallback(() => setPage(totalPages), [setPage, totalPages]);
+  const goToLastPage = useCallback(
+    () => setPage(totalPages),
+    [setPage, totalPages]
+  );
   const goToNextPage = useCallback(
     () => setPage(currentPage + 1),
     [setPage, currentPage]
@@ -140,6 +169,7 @@ export function useProductFilters(
   const clearFilters = useCallback(() => {
     setFilters(initialFilters);
     setCurrentPage(1);
+    setSortOption("relevance");
   }, []);
 
   return {
@@ -160,6 +190,7 @@ export function useProductFilters(
     setInStockOnly,
     clearFilters,
     hasActiveFilters,
+    sortOption,
+    setSortOption,
   };
 }
-

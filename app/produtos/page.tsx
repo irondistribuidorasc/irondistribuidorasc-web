@@ -15,7 +15,16 @@ export const metadata: Metadata = {
 // Revalidate every 60 seconds
 export const revalidate = 60;
 
-export default async function ProdutosPage() {
+type Props = {
+  searchParams: Promise<{ search?: string; category?: string; brand?: string }>;
+};
+
+export default async function ProdutosPage(props: Props) {
+  const searchParams = await props.searchParams;
+  const searchQuery = searchParams.search;
+  const category = searchParams.category as Category | undefined;
+  const brand = searchParams.brand as Brand | undefined;
+
   const products = await db.product.findMany({
     orderBy: { createdAt: "desc" },
   });
@@ -37,5 +46,12 @@ export default async function ProdutosPage() {
     popularity: p.popularity,
   }));
 
-  return <ProductCatalog initialProducts={mappedProducts} />;
+  return (
+    <ProductCatalog
+      initialProducts={mappedProducts}
+      searchQuery={searchQuery}
+      initialCategory={category}
+      initialBrand={brand}
+    />
+  );
 }

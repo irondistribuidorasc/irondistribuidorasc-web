@@ -33,6 +33,7 @@ model User {
   accounts      Account[]
   sessions      Session[]
   orders        Order[]
+  notifications Notification[]
 }
 
 enum Role {
@@ -159,4 +160,17 @@ model OrderItem {
   total       Float
   
   @@index([orderId])
+}
+
+model Notification {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title     String
+  message   String
+  read      Boolean  @default(false)
+  link      String?
+  createdAt DateTime @default(now())
+  
+  @@index([userId])
 }

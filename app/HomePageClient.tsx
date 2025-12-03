@@ -217,25 +217,28 @@ export default function HomePageClient() {
           </ScrollAnimation>
           <div className="flex flex-wrap justify-center gap-12 opacity-50 grayscale transition-all duration-500 hover:opacity-100 hover:grayscale-0 md:gap-20">
             {[
-              { name: "Samsung", slug: "samsung" },
-              { name: "Apple", slug: "apple" },
-              { name: "Xiaomi", slug: "xiaomi" },
-              { name: "Motorola", slug: "motorola" },
-              { name: "LG", slug: "lg" },
+              { name: "Samsung", slug: "samsung", filter: "Samsung" },
+              { name: "Apple", slug: "apple", filter: "iPhone" },
+              { name: "Xiaomi", slug: "xiaomi", filter: "Xiaomi" },
+              { name: "Motorola", slug: "motorola", filter: "Motorola" },
+              { name: "LG", slug: "lg", filter: "LG" },
             ].map((brand, index) => (
               <ScrollAnimation
                 key={brand.name}
                 variant="scaleIn"
                 delay={index * 0.1}
               >
-                <div className="relative h-12 w-32 transition-transform hover:scale-110">
+                <Link
+                  href={`/produtos?brand=${brand.filter}`}
+                  className="relative block h-12 w-32 transition-transform hover:scale-110"
+                >
                   <Image
                     src={`/brands/${brand.slug}.svg`}
                     alt={brand.name}
                     fill
                     className="object-contain dark:invert"
                   />
-                </div>
+                </Link>
               </ScrollAnimation>
             ))}
           </div>

@@ -1,19 +1,30 @@
-
 "use client";
 
+import { Pagination } from "@/src/components/produtos/Pagination";
 import { ProductFilters } from "@/src/components/produtos/ProductFilters";
 import { ProductGrid } from "@/src/components/produtos/ProductGrid";
-import { ProductSearch } from "@/src/components/produtos/ProductSearch";
-import { Pagination } from "@/src/components/produtos/Pagination";
+import type { Brand, Category, Product } from "@/src/data/products";
 import { useProductFilters } from "@/src/hooks/useProductFilters";
-import type { Product } from "@/src/data/products";
+import type { SortOption } from "@/src/lib/productUtils";
+import { useSession } from "next-auth/react";
 import Link from "next/link";
 
 type ProductCatalogProps = {
   initialProducts: Product[];
+  searchQuery?: string;
+  initialCategory?: Category;
+  initialBrand?: Brand;
 };
 
-export default function ProductCatalog({ initialProducts }: ProductCatalogProps) {
+export default function ProductCatalog({
+  initialProducts,
+  searchQuery = "",
+  initialCategory,
+  initialBrand,
+}: ProductCatalogProps) {
+  const { data: session } = useSession();
+  const isAuthenticated = !!session?.user;
+
   const {
     paginatedProducts,
     totalProducts,
@@ -26,13 +37,19 @@ export default function ProductCatalog({ initialProducts }: ProductCatalogProps)
     goToNextPage,
     goToPreviousPage,
     filters,
-    setSearchQuery,
     toggleBrand,
     toggleCategory,
     setInStockOnly,
     clearFilters,
     hasActiveFilters,
-  } = useProductFilters(initialProducts);
+    sortOption,
+    setSortOption,
+  } = useProductFilters(
+    initialProducts,
+    searchQuery,
+    initialCategory,
+    initialBrand
+  );
 
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-slate-900">
@@ -78,15 +95,6 @@ export default function ProductCatalog({ initialProducts }: ProductCatalogProps)
               Adicione ao carrinho e finalize seu pedido via WhatsApp.
             </p>
           </div>
-
-          {/* Barra de busca */}
-          <div className="mt-6">
-            <ProductSearch
-              value={filters.searchQuery}
-              onChange={setSearchQuery}
-              placeholder="Buscar por nome, código ou modelo..."
-            />
-          </div>
         </div>
       </div>
 
@@ -111,10 +119,37 @@ export default function ProductCatalog({ initialProducts }: ProductCatalogProps)
           {/* Grid de produtos */}
           <div className="flex-1">
             {/* Header com ordenação */}
-            <div className="mb-6 flex items-center justify-between">
+            <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
               <p className="text-sm text-slate-600 dark:text-slate-400">
-                Ordenado por <span className="font-semibold">Mais Relevância</span>
+                Mostrando{" "}
+                <span className="font-semibold">
+                  {paginatedProducts.length}
+                </span>{" "}
+                de <span className="font-semibold">{totalProducts}</span>{" "}
+                produtos
               </p>
+              <div className="flex items-center gap-2">
+                <label
+                  htmlFor="sort"
+                  className="text-sm font-medium text-slate-700 dark:text-slate-300"
+                >
+                  Ordenar por:
+                </label>
+                <select
+                  id="sort"
+                  value={sortOption}
+                  onChange={(e) => setSortOption(e.target.value as SortOption)}
+                  disabled={!isAuthenticated}
+                  title={
+                    !isAuthenticated ? "Faça login para ordenar" : undefined
+                  }
+                  className="rounded-lg border-slate-200 bg-white py-2 pl-3 pr-2 text-sm font-medium text-slate-900 focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500 disabled:cursor-not-allowed disabled:opacity-50 dark:border-slate-700 dark:bg-slate-800 dark:text-white"
+                >
+                  <option value="relevance">Mais Relevância</option>
+                  <option value="price_desc">Valor mais alto</option>
+                  <option value="price_asc">Valor mais baixo</option>
+                </select>
+              </div>
             </div>
 
             {/* Grid */}

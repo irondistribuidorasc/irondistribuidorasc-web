@@ -86,7 +86,7 @@ export async function PATCH(
       }
 
       // Atualizar o pedido
-      return await tx.order.update({
+      const updatedOrder = await tx.order.update({
         where: { id },
         data: { status },
         include: {
@@ -100,6 +100,18 @@ export async function PATCH(
           },
         },
       });
+
+      // Criar notificação para o usuário
+      await tx.notification.create({
+        data: {
+          userId: updatedOrder.userId,
+          title: "Atualização de Pedido",
+          message: `Seu pedido #${updatedOrder.orderNumber} mudou para ${status}.`,
+          link: `/meus-pedidos?orderId=${updatedOrder.id}`,
+        },
+      });
+
+      return updatedOrder;
     });
 
     return NextResponse.json(updatedOrder);

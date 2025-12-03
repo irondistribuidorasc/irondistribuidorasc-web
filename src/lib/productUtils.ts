@@ -1,4 +1,4 @@
-import type { Product, Brand, Category } from "@/src/data/products";
+import type { Brand, Category, Product } from "@/src/data/products";
 
 export type ProductFilters = {
   brands: Brand[];
@@ -25,21 +25,42 @@ export function getRelevanceScore(product: Product): number {
   return score;
 }
 
+export type SortOption = "relevance" | "price_asc" | "price_desc";
+
+/**
+ * Ordena produtos com base na opção selecionada
+ */
+export function sortProducts(
+  products: Product[],
+  sortOption: SortOption
+): Product[] {
+  return [...products].sort((a, b) => {
+    switch (sortOption) {
+      case "price_asc":
+        return a.price - b.price;
+      case "price_desc":
+        return b.price - a.price;
+      case "relevance":
+      default:
+        const scoreA = getRelevanceScore(a);
+        const scoreB = getRelevanceScore(b);
+
+        // Se scores iguais, ordena alfabeticamente pelo nome
+        if (scoreA === scoreB) {
+          return a.name.localeCompare(b.name, "pt-BR");
+        }
+
+        return scoreB - scoreA;
+    }
+  });
+}
+
 /**
  * Ordena produtos por relevância (maior score primeiro)
+ * @deprecated Use sortProducts com option 'relevance'
  */
 export function sortByRelevance(products: Product[]): Product[] {
-  return [...products].sort((a, b) => {
-    const scoreA = getRelevanceScore(a);
-    const scoreB = getRelevanceScore(b);
-
-    // Se scores iguais, ordena alfabeticamente pelo nome
-    if (scoreA === scoreB) {
-      return a.name.localeCompare(b.name, "pt-BR");
-    }
-
-    return scoreB - scoreA;
-  });
+  return sortProducts(products, "relevance");
 }
 
 /**
@@ -71,7 +92,8 @@ export function filterProducts(
     // Filtro de busca (nome, código, modelo)
     if (filters.searchQuery.trim()) {
       const query = filters.searchQuery.toLowerCase().trim();
-      const searchableText = `${product.name} ${product.code} ${product.model}`.toLowerCase();
+      const searchableText =
+        `${product.name} ${product.code} ${product.model}`.toLowerCase();
 
       if (!searchableText.includes(query)) {
         return false;
@@ -100,12 +122,12 @@ export function formatPrice(price: number): string {
  */
 export function formatRestockDate(dateString: string): string {
   const date = new Date(dateString);
-  
+
   // Valida se a data é válida
   if (isNaN(date.getTime())) {
     throw new Error(`Invalid date string: ${dateString}`);
   }
-  
+
   return new Intl.DateTimeFormat("pt-BR", {
     day: "2-digit",
     month: "2-digit",
@@ -129,7 +151,10 @@ export function paginateProducts(
 /**
  * Calcula o total de páginas
  */
-export function getTotalPages(totalItems: number, itemsPerPage: number): number {
+export function getTotalPages(
+  totalItems: number,
+  itemsPerPage: number
+): number {
   return Math.ceil(totalItems / itemsPerPage);
 }
 
@@ -155,4 +180,3 @@ export function getPageRange(
 
   return Array.from({ length: end - start + 1 }, (_, i) => start + i);
 }
-

@@ -2,6 +2,7 @@
 
 import NotificationBell from "@/src/components/admin/NotificationBell";
 import { CartDrawer } from "@/src/components/cart/CartDrawer";
+import { GlobalSearch } from "@/src/components/layout/GlobalSearch";
 import { MobileMenu } from "@/src/components/layout/MobileMenu";
 import { ThemeToggle } from "@/src/components/ui/ThemeToggle";
 import { useCart } from "@/src/contexts/CartContext";
@@ -26,11 +27,12 @@ import { signOut, useSession } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useRef, useState } from "react";
+import { Suspense, useRef, useState } from "react";
+import { CategoryNavigation } from "./CategoryNavigation";
+import CustomerNotificationBell from "./CustomerNotificationBell";
 
 export function Header() {
-  const { totalItems } = useCart();
-  const [isCartOpen, setIsCartOpen] = useState(false);
+  const { totalItems, isCartOpen, openCart, closeCart } = useCart();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const hamburgerButtonRef = useRef<HTMLButtonElement>(null);
   const { status, data: session } = useSession();
@@ -101,8 +103,12 @@ export function Header() {
   };
 
   return (
-    <>
-      <Navbar className="border-b border-slate-200 bg-white/70 backdrop-blur dark:border-slate-800 dark:bg-slate-900/70 print:hidden">
+    <div className="flex flex-col w-full print:hidden">
+      <Navbar
+        className="border-b border-slate-200 bg-white/70 backdrop-blur dark:border-slate-800 dark:bg-slate-900/70"
+        maxWidth="xl"
+        position="static"
+      >
         <NavbarBrand className="flex-shrink-0 gap-2 min-w-0">
           <Link href="/" className="flex items-center gap-2 min-w-0">
             <Image
@@ -118,58 +124,11 @@ export function Header() {
             </span>
           </Link>
         </NavbarBrand>
-        <NavbarContent justify="center" className="hidden gap-6 md:flex">
-          <NavbarItem>
-            <Link
-              href="/produtos"
-              className={`text-sm font-medium transition ${
-                pathname === "/produtos"
-                  ? "text-brand-600 dark:text-brand-400"
-                  : "text-slate-700 hover:text-brand-600 dark:text-slate-300 dark:hover:text-brand-400"
-              }`}
-            >
-              Produtos
-            </Link>
-          </NavbarItem>
-          <NavbarItem>
-            <Link
-              href="/carrinho"
-              className={`text-sm font-medium transition ${
-                pathname === "/carrinho"
-                  ? "text-brand-600 dark:text-brand-400"
-                  : "text-slate-700 hover:text-brand-600 dark:text-slate-300 dark:hover:text-brand-400"
-              }`}
-            >
-              Carrinho
-            </Link>
-          </NavbarItem>
-          <NavbarItem>
-            <Link
-              href="/garantia"
-              className={`text-sm font-medium transition ${
-                pathname === "/garantia"
-                  ? "text-brand-600 dark:text-brand-400"
-                  : "text-slate-700 hover:text-brand-600 dark:text-slate-300 dark:hover:text-brand-400"
-              }`}
-            >
-              Garantia
-            </Link>
-          </NavbarItem>
-          {session?.user?.role === "ADMIN" && (
-            <NavbarItem>
-              <Link
-                href="/admin"
-                className={`text-sm font-medium transition ${
-                  pathname === "/admin"
-                    ? "text-brand-600 dark:text-brand-400"
-                    : "text-slate-700 hover:text-brand-600 dark:text-slate-300 dark:hover:text-brand-400"
-                }`}
-              >
-                Administração
-              </Link>
-            </NavbarItem>
-          )}
+
+        <NavbarContent className="hidden md:flex flex-1 px-4" justify="center">
+          <GlobalSearch />
         </NavbarContent>
+
         <NavbarContent justify="end" className="gap-1 sm:gap-2 md:gap-3">
           {/* Hamburger button - mobile only */}
           <NavbarItem className="md:hidden">
@@ -190,9 +149,9 @@ export function Header() {
               )}
             </Button>
           </NavbarItem>
-
           <NavbarItem className="flex items-center gap-2">
             {session?.user?.role === "ADMIN" && <NotificationBell />}
+            {session?.user?.role === "USER" && <CustomerNotificationBell />}
             <ThemeToggle />
             {renderUserMenu()}
           </NavbarItem>
@@ -202,7 +161,7 @@ export function Header() {
                 isIconOnly
                 aria-label="Abrir carrinho"
                 variant="light"
-                onPress={() => setIsCartOpen(true)}
+                onPress={openCart}
               >
                 <ShoppingCartIcon className="h-6 w-6 text-slate-900 dark:text-slate-100" />
               </Button>
@@ -215,7 +174,28 @@ export function Header() {
           </NavbarItem>
         </NavbarContent>
       </Navbar>
-      <CartDrawer isOpen={isCartOpen} onClose={() => setIsCartOpen(false)} />
+
+      {/* Sub-header for Desktop Navigation */}
+      <div className="hidden md:flex w-full border-b border-slate-200 bg-white dark:border-slate-800 dark:bg-slate-900 py-2">
+        <div className="mx-auto w-full max-w-7xl px-6 flex justify-center">
+          <Suspense fallback={<div className="h-6 w-full" />}>
+            <CategoryNavigation />
+          </Suspense>
+          {session?.user?.role === "ADMIN" && (
+            <Link
+              href="/admin"
+              className={`ml-8 text-sm font-medium transition ${
+                pathname === "/admin"
+                  ? "text-brand-600 dark:text-brand-400"
+                  : "text-slate-700 hover:text-brand-600 dark:text-slate-300 dark:hover:text-brand-400"
+              }`}
+            >
+              Administração
+            </Link>
+          )}
+        </div>
+      </div>
+      <CartDrawer isOpen={isCartOpen} onClose={closeCart} />
       <MobileMenu
         isOpen={isMobileMenuOpen}
         onClose={() => setIsMobileMenuOpen(false)}
@@ -226,6 +206,6 @@ export function Header() {
         userRole={session?.user?.role}
         triggerRef={hamburgerButtonRef}
       />
-    </>
+    </div>
   );
 }

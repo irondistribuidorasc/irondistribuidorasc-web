@@ -14,7 +14,7 @@ type ProductInfoProps = {
 const FEEDBACK_DURATION_MS = 600;
 
 export function ProductInfo({ product }: ProductInfoProps) {
-  const { addItem } = useCart();
+  const { addItem, openCart } = useCart();
   const { data: session } = useSession();
   const [isAdding, setIsAdding] = useState(false);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -35,6 +35,7 @@ export function ProductInfo({ product }: ProductInfoProps) {
   const handleAddToCart = () => {
     setIsAdding(true);
     addItem(product);
+    openCart();
 
     // Temporary visual feedback
     timeoutRef.current = setTimeout(() => {

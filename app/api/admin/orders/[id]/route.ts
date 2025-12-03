@@ -63,6 +63,19 @@ export async function PATCH(
         });
 
         for (const item of orderItems) {
+          // Verificar se o produto ainda existe
+          const productExists = await tx.product.findUnique({
+            where: { id: item.productId },
+            select: { id: true },
+          });
+
+          if (!productExists) {
+            console.warn(
+              `Product ${item.productId} not found for order item ${item.id}. Skipping stock update.`
+            );
+            continue;
+          }
+
           const updatedProduct = await tx.product.update({
             where: { id: item.productId },
             data: {

@@ -1,5 +1,7 @@
 "use client";
 
+import NotificationBell from "@/src/components/admin/NotificationBell";
+import CustomerNotificationBell from "@/src/components/layout/CustomerNotificationBell";
 import { ThemeToggle } from "@/src/components/ui/ThemeToggle";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import { Button } from "@heroui/react";
@@ -279,6 +281,20 @@ export function MobileMenu({
                     <p className="text-xs text-slate-600 dark:text-slate-400">
                       {userEmail}
                     </p>
+                  )}
+                </div>
+              )}
+
+              {/* Notifications (Authenticated) */}
+              {isAuthenticated && (
+                <div className="border-b border-slate-200 p-4 dark:border-slate-800 flex items-center justify-between">
+                  <span className="text-sm font-medium text-slate-900 dark:text-slate-100">
+                    Notificações
+                  </span>
+                  {userRole === "ADMIN" ? (
+                    <NotificationBell />
+                  ) : (
+                    <CustomerNotificationBell />
                   )}
                 </div>
               )}

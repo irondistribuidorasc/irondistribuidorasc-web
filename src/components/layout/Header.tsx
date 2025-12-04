@@ -109,7 +109,7 @@ export function Header() {
         maxWidth="xl"
         position="static"
       >
-        <NavbarBrand className="hidden md:flex flex-none grow-0 min-w-0 mr-2">
+        <NavbarBrand className="flex flex-none grow-0 min-w-0 mr-2">
           <Link href="/" className="flex items-center md:gap-2 min-w-0">
             <Image
               src="/logo-iron.png"

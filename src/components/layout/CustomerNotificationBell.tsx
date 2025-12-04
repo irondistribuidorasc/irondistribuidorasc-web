@@ -22,7 +22,11 @@ interface Notification {
   createdAt: string;
 }
 
-export default function CustomerNotificationBell() {
+export default function CustomerNotificationBell({
+  label,
+}: {
+  label?: string;
+}) {
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [unreadCount, setUnreadCount] = useState(0);
   const router = useRouter();
@@ -96,7 +100,16 @@ export default function CustomerNotificationBell() {
   return (
     <Dropdown placement="bottom-end">
       <DropdownTrigger>
-        <div className="cursor-pointer flex items-center">
+        <div
+          className={`cursor-pointer flex items-center ${
+            label ? "w-full justify-between" : ""
+          }`}
+        >
+          {label && (
+            <span className="text-sm font-medium text-slate-900 dark:text-slate-100">
+              {label}
+            </span>
+          )}
           <Badge
             content={unreadCount}
             color="danger"

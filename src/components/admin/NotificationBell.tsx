@@ -11,7 +11,7 @@ import {
 import { useCallback, useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 
-export default function NotificationBell() {
+export default function NotificationBell({ label }: { label?: string }) {
   const [counts, setCounts] = useState({
     lowStockCount: 0,
     pendingOrdersCount: 0,
@@ -158,7 +158,16 @@ export default function NotificationBell() {
   return (
     <Dropdown placement="bottom-end">
       <DropdownTrigger>
-        <div className="cursor-pointer flex">
+        <div
+          className={`cursor-pointer flex items-center ${
+            label ? "w-full justify-between" : ""
+          }`}
+        >
+          {label && (
+            <span className="text-sm font-medium text-slate-900 dark:text-slate-100">
+              {label}
+            </span>
+          )}
           <Badge
             content={totalNotifications}
             color="danger"

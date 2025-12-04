@@ -5,7 +5,7 @@ import { Button } from "@heroui/react";
 import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
 
-export function ThemeToggle() {
+export function ThemeToggle({ label }: { label?: string }) {
   const { resolvedTheme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
 
@@ -25,14 +25,20 @@ export function ThemeToggle() {
 
   return (
     <Button
-      isIconOnly
+      isIconOnly={!label}
       variant="light"
       aria-label={`Alternar para tema ${
         nextTheme === "dark" ? "escuro" : "claro"
       }`}
       title={`Alternar para tema ${nextTheme === "dark" ? "escuro" : "claro"}`}
       onPress={() => setTheme(nextTheme)}
+      className={label ? "w-full justify-between px-0" : ""}
     >
+      {label && (
+        <span className="text-sm font-medium text-slate-700 dark:text-slate-300">
+          {label}
+        </span>
+      )}
       {isDark ? (
         <SunIcon className="h-6 w-6 text-slate-900 dark:text-slate-100" />
       ) : (

@@ -287,14 +287,11 @@ export function MobileMenu({
 
               {/* Notifications (Authenticated) */}
               {isAuthenticated && (
-                <div className="border-b border-slate-200 p-4 dark:border-slate-800 flex items-center justify-between">
-                  <span className="text-sm font-medium text-slate-900 dark:text-slate-100">
-                    Notificações
-                  </span>
+                <div className="border-b border-slate-200 p-4 dark:border-slate-800">
                   {userRole === "ADMIN" ? (
-                    <NotificationBell />
+                    <NotificationBell label="Notificações" />
                   ) : (
-                    <CustomerNotificationBell />
+                    <CustomerNotificationBell label="Notificações" />
                   )}
                 </div>
               )}
@@ -351,11 +348,8 @@ export function MobileMenu({
                 </ul>
 
                 <div className="mt-6 border-t border-slate-200 pt-6 dark:border-slate-800">
-                  <div className="flex items-center justify-between px-4">
-                    <span className="text-sm font-medium text-slate-700 dark:text-slate-300">
-                      Tema
-                    </span>
-                    <ThemeToggle />
+                  <div className="px-4">
+                    <ThemeToggle label="Tema" />
                   </div>
                 </div>
               </div>

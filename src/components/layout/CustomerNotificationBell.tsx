@@ -1,5 +1,9 @@
 "use client";
 
+import {
+  Notification,
+  useNotification,
+} from "@/src/contexts/NotificationContext";
 import { BellIcon } from "@heroicons/react/24/outline";
 import {
   Badge,
@@ -10,88 +14,23 @@ import {
   DropdownTrigger,
 } from "@heroui/react";
 import { useRouter } from "next/navigation";
-import { useCallback, useEffect, useState } from "react";
-import { toast } from "sonner";
-
-interface Notification {
-  id: string;
-  title: string;
-  message: string;
-  read: boolean;
-  link: string | null;
-  createdAt: string;
-}
 
 export default function CustomerNotificationBell({
   label,
 }: {
   label?: string;
 }) {
-  const [notifications, setNotifications] = useState<Notification[]>([]);
-  const [unreadCount, setUnreadCount] = useState(0);
+  const { notifications, unreadCount, markAsRead, markAllAsRead } =
+    useNotification();
   const router = useRouter();
-
-  const fetchNotifications = useCallback(async () => {
-    try {
-      const res = await fetch("/api/notifications");
-      if (res.ok) {
-        const data = await res.json();
-        setNotifications(data.notifications);
-        setUnreadCount(data.unreadCount);
-      }
-    } catch (error) {
-      console.error("Failed to fetch notifications", error);
-    }
-  }, []);
-
-  useEffect(() => {
-    // Wrap in a timeout to avoid synchronous state update warning during render phase
-    const timer = setTimeout(() => {
-      fetchNotifications();
-    }, 0);
-    const interval = setInterval(fetchNotifications, 30000); // Poll every 30s
-    return () => {
-      clearTimeout(timer);
-      clearInterval(interval);
-    };
-  }, [fetchNotifications]);
 
   const handleNotificationClick = async (notification: Notification) => {
     if (!notification.read) {
-      try {
-        await fetch(`/api/notifications/${notification.id}/read`, {
-          method: "PATCH",
-        });
-        setUnreadCount((prev) => Math.max(0, prev - 1));
-        setNotifications((prev) =>
-          prev.map((n) => (n.id === notification.id ? { ...n, read: true } : n))
-        );
-      } catch (error) {
-        console.error("Failed to mark notification as read", error);
-      }
+      await markAsRead(notification.id);
     }
 
     if (notification.link) {
       router.push(notification.link);
-    }
-  };
-
-  const handleMarkAllAsRead = async () => {
-    // Optimistic update
-    const unreadNotifications = notifications.filter((n) => !n.read);
-    setUnreadCount(0);
-    setNotifications((prev) => prev.map((n) => ({ ...n, read: true })));
-
-    try {
-      await Promise.all(
-        unreadNotifications.map((n) =>
-          fetch(`/api/notifications/${n.id}/read`, { method: "PATCH" })
-        )
-      );
-      toast.success("Todas as notificações marcadas como lidas");
-    } catch (error) {
-      console.error("Failed to mark all as read", error);
-      fetchNotifications(); // Revert on error
     }
   };
 
@@ -143,7 +82,7 @@ export default function CustomerNotificationBell({
                 color="primary"
                 className="h-6 px-2 text-xs"
                 onPress={() => {
-                  handleMarkAllAsRead();
+                  markAllAsRead();
                 }}
               >
                 Marcar todas como lidas

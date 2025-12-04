@@ -6,6 +6,7 @@ import { GlobalSearch } from "@/src/components/layout/GlobalSearch";
 import { MobileMenu } from "@/src/components/layout/MobileMenu";
 import { ThemeToggle } from "@/src/components/ui/ThemeToggle";
 import { useCart } from "@/src/contexts/CartContext";
+import { useNotification } from "@/src/contexts/NotificationContext";
 import {
   Bars3Icon,
   ShoppingCartIcon,
@@ -13,6 +14,7 @@ import {
 } from "@heroicons/react/24/outline";
 import {
   Avatar,
+  Badge,
   Button,
   Dropdown,
   DropdownItem,
@@ -39,6 +41,7 @@ export function Header() {
   const pathname = usePathname();
   const isLoadingSession = status === "loading";
   const isAuthenticated = status === "authenticated";
+  const { unreadCount } = useNotification();
 
   const getUserDisplayName = () => {
     return session?.user?.name || session?.user?.email || "cliente";
@@ -144,11 +147,19 @@ export function Header() {
               onPress={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
               className="transition-transform duration-200"
             >
-              {isMobileMenuOpen ? (
-                <XMarkIcon className="h-6 w-6 text-slate-900 dark:text-slate-100" />
-              ) : (
-                <Bars3Icon className="h-6 w-6 text-slate-900 dark:text-slate-100" />
-              )}
+              <Badge
+                content={unreadCount}
+                color="danger"
+                shape="circle"
+                isInvisible={unreadCount === 0 || isMobileMenuOpen}
+                className="border-2 border-white dark:border-slate-900"
+              >
+                {isMobileMenuOpen ? (
+                  <XMarkIcon className="h-6 w-6 text-slate-900 dark:text-slate-100" />
+                ) : (
+                  <Bars3Icon className="h-6 w-6 text-slate-900 dark:text-slate-100" />
+                )}
+              </Badge>
             </Button>
           </NavbarItem>
 

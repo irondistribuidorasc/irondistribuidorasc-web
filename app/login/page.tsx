@@ -12,7 +12,7 @@ import { signIn, signOut, useSession } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Suspense, useState } from "react";
+import { Suspense, useState, useTransition } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 
@@ -24,6 +24,7 @@ function LoginPageContent() {
   const [activeTab, setActiveTab] = useState<string | number>(
     searchParams.get("tab") === "register" ? "register" : "login"
   );
+  const [isPending, startTransition] = useTransition();
 
   const {
     register: registerLogin,
@@ -44,8 +45,10 @@ function LoginPageContent() {
   const isAuthenticated = status === "authenticated" && !!session?.user;
 
   const redirectAfterAuth = (url?: string | null) => {
-    router.push(url ?? callbackUrl);
-    router.refresh();
+    startTransition(() => {
+      router.refresh();
+      router.push(url ?? callbackUrl);
+    });
   };
 
   async function onLoginSubmit(data: LoginSchema) {
@@ -239,7 +242,7 @@ function LoginPageContent() {
                   type="submit"
                   color="danger"
                   className="w-full bg-brand-600 text-white"
-                  isLoading={isLoggingIn}
+                  isLoading={isLoggingIn || isPending}
                 >
                   Entrar
                 </Button>
@@ -310,7 +313,7 @@ function LoginPageContent() {
                   type="submit"
                   color="danger"
                   className="w-full bg-brand-600 text-white"
-                  isLoading={isRegistering}
+                  isLoading={isRegistering || isPending}
                 >
                   Criar conta
                 </Button>

@@ -19,7 +19,7 @@ function SearchInput() {
   const [isOpen, setIsOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
-  const { status } = useSession();
+  const { status, data: session } = useSession();
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -135,7 +135,7 @@ function SearchInput() {
                 </p>
                 <div className="flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400">
                   <span>{product.brand}</span>
-                  {status === "authenticated" && (
+                  {status === "authenticated" && session?.user?.approved && (
                     <>
                       <span>•</span>
                       <span className="font-medium text-brand-600 dark:text-brand-400">

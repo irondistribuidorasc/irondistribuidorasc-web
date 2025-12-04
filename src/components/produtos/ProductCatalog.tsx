@@ -10,14 +10,20 @@ import { useSession } from "next-auth/react";
 import Link from "next/link";
 
 type ProductCatalogProps = {
-  initialProducts: Product[];
+  products: Product[];
+  totalProducts: number;
+  totalPages: number;
+  currentPage: number;
   searchQuery?: string;
   initialCategory?: Category;
   initialBrand?: Brand;
 };
 
 export default function ProductCatalog({
-  initialProducts,
+  products,
+  totalProducts,
+  totalPages,
+  currentPage,
   searchQuery = "",
   initialCategory,
   initialBrand,
@@ -27,10 +33,6 @@ export default function ProductCatalog({
 
   const {
     paginatedProducts,
-    totalProducts,
-    totalPages,
-    currentPage,
-    itemsPerPage,
     setPage,
     goToFirstPage,
     goToLastPage,
@@ -44,8 +46,12 @@ export default function ProductCatalog({
     hasActiveFilters,
     sortOption,
     setSortOption,
+    isPending,
   } = useProductFilters(
-    initialProducts,
+    products,
+    totalProducts,
+    totalPages,
+    currentPage,
     searchQuery,
     initialCategory,
     initialBrand
@@ -153,7 +159,13 @@ export default function ProductCatalog({
             </div>
 
             {/* Grid */}
-            <ProductGrid products={paginatedProducts} />
+            <div
+              className={`transition-opacity duration-200 ${
+                isPending ? "opacity-50" : "opacity-100"
+              }`}
+            >
+              <ProductGrid products={paginatedProducts} />
+            </div>
 
             {/* Paginação */}
             {totalProducts > 0 && (
@@ -161,7 +173,7 @@ export default function ProductCatalog({
                 currentPage={currentPage}
                 totalPages={totalPages}
                 totalItems={totalProducts}
-                itemsPerPage={itemsPerPage}
+                itemsPerPage={12}
                 onPageChange={setPage}
                 onFirstPage={goToFirstPage}
                 onLastPage={goToLastPage}

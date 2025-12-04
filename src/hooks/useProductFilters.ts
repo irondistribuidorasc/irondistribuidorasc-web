@@ -1,18 +1,12 @@
 "use client";
 
 import type { Brand, Category, Product } from "@/src/data/products";
-import {
-  filterProducts,
-  getTotalPages,
-  paginateProducts,
-  type ProductFilters,
-  type SortOption,
-  sortProducts,
-} from "@/src/lib/productUtils";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import type { ProductFilters, SortOption } from "@/src/lib/productUtils";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useCallback, useMemo, useTransition } from "react";
 
 type UseProductFiltersReturn = {
-  // Produtos processados
+  // Produtos processados (pass-through do server)
   paginatedProducts: Product[];
   totalProducts: number;
   totalPages: number;
@@ -38,67 +32,41 @@ type UseProductFiltersReturn = {
   // Ordenação
   sortOption: SortOption;
   setSortOption: (option: SortOption) => void;
+
+  // Loading state
+  isPending: boolean;
 };
 
 const ITEMS_PER_PAGE = 60;
 
-const initialFilters: ProductFilters = {
-  brands: [],
-  categories: [],
-  inStockOnly: false,
-  searchQuery: "",
-};
-
 export function useProductFilters(
-  allProducts: Product[],
+  products: Product[],
+  totalProducts: number,
+  totalPages: number,
+  currentPage: number,
   initialSearchQuery: string = "",
   initialCategory?: Category,
   initialBrand?: Brand
 ): UseProductFiltersReturn {
-  const [currentPage, setCurrentPage] = useState(1);
-  const [sortOption, setSortOption] = useState<SortOption>("relevance");
-  const [filters, setFilters] = useState<ProductFilters>({
-    ...initialFilters,
-    searchQuery: initialSearchQuery,
-    categories: initialCategory ? [initialCategory] : [],
-    brands: initialBrand ? [initialBrand] : [],
-  });
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const [isPending, startTransition] = useTransition();
 
-  // Sync filters with props when URL params change
-  useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setFilters((prev) => ({
-      ...prev,
+  // Get current state from URL or props
+  const currentSort = (searchParams.get("sort") as SortOption) || "relevance";
+  const currentInStock = searchParams.get("inStock") === "true";
+
+  // Construct filters object
+  const filters: ProductFilters = useMemo(
+    () => ({
       searchQuery: initialSearchQuery,
       categories: initialCategory ? [initialCategory] : [],
       brands: initialBrand ? [initialBrand] : [],
-    }));
-    setCurrentPage(1);
-  }, [initialSearchQuery, initialCategory, initialBrand]);
-
-  // Produtos filtrados e ordenados
-  const filteredAndSortedProducts = useMemo(() => {
-    const filtered = filterProducts(allProducts, filters);
-    return sortProducts(filtered, sortOption);
-  }, [allProducts, filters, sortOption]);
-
-  // Total de produtos após filtros
-  const totalProducts = filteredAndSortedProducts.length;
-
-  // Total de páginas
-  const totalPages = useMemo(
-    () => getTotalPages(totalProducts, ITEMS_PER_PAGE),
-    [totalProducts]
+      inStockOnly: currentInStock,
+    }),
+    [initialSearchQuery, initialCategory, initialBrand, currentInStock]
   );
 
-  // Produtos da página atual
-  const paginatedProducts = useMemo(
-    () =>
-      paginateProducts(filteredAndSortedProducts, currentPage, ITEMS_PER_PAGE),
-    [filteredAndSortedProducts, currentPage]
-  );
-
-  // Verifica se tem filtros ativos
   const hasActiveFilters = useMemo(
     () =>
       filters.brands.length > 0 ||
@@ -108,17 +76,44 @@ export function useProductFilters(
     [filters]
   );
 
-  // Navegação de páginas
+  // Helper to update URL
+  const updateUrl = useCallback(
+    (newParams: Record<string, string | null>) => {
+      const params = new URLSearchParams(searchParams.toString());
+
+      Object.entries(newParams).forEach(([key, value]) => {
+        if (value === null) {
+          params.delete(key);
+        } else {
+          params.set(key, value);
+        }
+      });
+
+      // Reset page to 1 if not explicitly setting page
+      if (!newParams.page && newParams.page !== null) {
+        params.set("page", "1");
+      }
+
+      const queryString = params.toString();
+      const url = queryString ? `?${queryString}` : window.location.pathname;
+
+      startTransition(() => {
+        router.push(url, { scroll: true });
+      });
+    },
+    [router, searchParams]
+  );
+
+  // Pagination handlers
   const setPage = useCallback(
     (page: number) => {
-      const validPage = Math.max(1, Math.min(page, totalPages));
-      setCurrentPage(validPage);
-      // Scroll para o topo ao mudar de página (apenas no client)
-      if (typeof window !== "undefined") {
-        window.scrollTo({ top: 0, behavior: "smooth" });
-      }
+      const params = new URLSearchParams(searchParams.toString());
+      params.set("page", page.toString());
+      startTransition(() => {
+        router.push(`?${params.toString()}`, { scroll: true });
+      });
     },
-    [totalPages]
+    [router, searchParams]
   );
 
   const goToFirstPage = useCallback(() => setPage(1), [setPage]);
@@ -135,45 +130,70 @@ export function useProductFilters(
     [setPage, currentPage]
   );
 
-  // Atualização de filtros
-  const setSearchQuery = useCallback((query: string) => {
-    setFilters((prev) => ({ ...prev, searchQuery: query }));
-    setCurrentPage(1); // Reset para primeira página ao filtrar
-  }, []);
+  // Filter handlers
+  const setSearchQuery = useCallback(
+    (query: string) => {
+      updateUrl({ search: query || null });
+    },
+    [updateUrl]
+  );
 
-  const toggleBrand = useCallback((brand: Brand) => {
-    setFilters((prev) => {
-      const brands = prev.brands.includes(brand)
-        ? prev.brands.filter((b) => b !== brand)
-        : [...prev.brands, brand];
-      return { ...prev, brands };
-    });
-    setCurrentPage(1);
-  }, []);
+  const toggleBrand = useCallback(
+    (brand: Brand) => {
+      // Since we only support single selection in URL for simplicity in this refactor,
+      // or we can support multiple if we want.
+      // The previous implementation supported multiple in state, but URL usually implies single or comma-separated.
+      // Let's stick to single selection for now to match the `page.tsx` implementation which expects `brand` string.
+      // If the user wants to toggle off, we remove it.
+      const currentBrand = searchParams.get("brand");
+      if (currentBrand === brand) {
+        updateUrl({ brand: null });
+      } else {
+        updateUrl({ brand: brand });
+      }
+    },
+    [searchParams, updateUrl]
+  );
 
-  const toggleCategory = useCallback((category: Category) => {
-    setFilters((prev) => {
-      const categories = prev.categories.includes(category)
-        ? prev.categories.filter((c) => c !== category)
-        : [...prev.categories, category];
-      return { ...prev, categories };
-    });
-    setCurrentPage(1);
-  }, []);
+  const toggleCategory = useCallback(
+    (category: Category) => {
+      const currentCategory = searchParams.get("category");
+      if (currentCategory === category) {
+        updateUrl({ category: null });
+      } else {
+        updateUrl({ category: category });
+      }
+    },
+    [searchParams, updateUrl]
+  );
 
-  const setInStockOnly = useCallback((inStockOnly: boolean) => {
-    setFilters((prev) => ({ ...prev, inStockOnly }));
-    setCurrentPage(1);
-  }, []);
+  const setInStockOnly = useCallback(
+    (inStockOnly: boolean) => {
+      updateUrl({ inStock: inStockOnly ? "true" : null });
+    },
+    [updateUrl]
+  );
 
   const clearFilters = useCallback(() => {
-    setFilters(initialFilters);
-    setCurrentPage(1);
-    setSortOption("relevance");
-  }, []);
+    startTransition(() => {
+      router.push(window.location.pathname, { scroll: true });
+    });
+  }, [router]);
+
+  const setSortOption = useCallback(
+    (option: SortOption) => {
+      // Don't reset page when sorting
+      const params = new URLSearchParams(searchParams.toString());
+      params.set("sort", option);
+      startTransition(() => {
+        router.push(`?${params.toString()}`, { scroll: true });
+      });
+    },
+    [router, searchParams]
+  );
 
   return {
-    paginatedProducts,
+    paginatedProducts: products, // Pass-through
     totalProducts,
     totalPages,
     currentPage,
@@ -190,7 +210,8 @@ export function useProductFilters(
     setInStockOnly,
     clearFilters,
     hasActiveFilters,
-    sortOption,
+    sortOption: currentSort,
     setSortOption,
+    isPending,
   };
 }

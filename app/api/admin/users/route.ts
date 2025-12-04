@@ -118,6 +118,18 @@ export async function PATCH(request: NextRequest) {
       },
     });
 
+    if (approved) {
+      await db.notification.create({
+        data: {
+          userId: user.id,
+          title: "Conta Aprovada",
+          message:
+            "Sua conta foi aprovada! Agora você pode visualizar preços e fazer pedidos.",
+          link: "/",
+        },
+      });
+    }
+
     return NextResponse.json({ user });
   } catch (error) {
     console.error("Error updating user:", error);

@@ -24,6 +24,7 @@ interface CreateOrderPayload {
     postalCode: string;
   };
   notes?: string;
+  paymentMethod?: string;
 }
 
 /**
@@ -152,6 +153,13 @@ export async function POST(req: NextRequest) {
             state: payload.customer.state,
             postalCode: payload.customer.postalCode,
             notes: payload.notes || null,
+            paymentMethod:
+              (payload.paymentMethod as
+                | "PIX"
+                | "CREDIT_CARD"
+                | "DEBIT_CARD"
+                | "CASH"
+                | "OTHER") || "OTHER",
             whatsappMessageSent: true,
             items: {
               create: orderItems,

@@ -3,6 +3,7 @@
 import { type CustomerDetails, useCart } from "@/src/contexts/CartContext";
 import { logger } from "@/src/lib/logger";
 import { maskCEP, maskCPFOrCNPJ, maskPhone } from "@/src/lib/masks";
+import { buildOrderWhatsAppMessage, getWhatsAppUrl } from "@/src/lib/whatsapp";
 import { MinusIcon, PlusIcon, TrashIcon } from "@heroicons/react/24/outline";
 import {
   Button,
@@ -16,6 +17,8 @@ import {
   ModalContent,
   ModalFooter,
   ModalHeader,
+  Select,
+  SelectItem,
   Textarea,
   useDisclosure,
 } from "@heroui/react";
@@ -24,6 +27,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
+import { toast } from "sonner";
 
 const PROFILE_SYNC_DEBOUNCE_MS = 800;
 const STATUS_RESET_DELAY_MS = 2000;
@@ -58,6 +62,14 @@ const VALID_STATES = new Set([
   "TO",
 ]);
 
+const PAYMENT_METHODS = [
+  { key: "PIX", label: "Pix" },
+  { key: "CREDIT_CARD", label: "Cartão de Crédito" },
+  { key: "DEBIT_CARD", label: "Cartão de Débito" },
+  { key: "CASH", label: "Dinheiro" },
+  { key: "OTHER", label: "Outro" },
+];
+
 export function CarrinhoCheckout() {
   const router = useRouter();
   const {
@@ -85,11 +97,13 @@ export function CarrinhoCheckout() {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
   const isStateValid = VALID_STATES.has(customer.state.toUpperCase());
+  const isPaymentMethodValid = Boolean(customer.paymentMethod);
   const isCustomerInfoValid = Boolean(
     customer.name.trim() &&
       customer.city.trim() &&
       customer.state.trim() &&
-      isStateValid
+      isStateValid &&
+      isPaymentMethodValid
   );
   const canFinalize = items.length > 0 && isCustomerInfoValid;
 
@@ -97,11 +111,6 @@ export function CarrinhoCheckout() {
   const [isEditingCustomer, setIsEditingCustomer] = useState(
     !isCustomerInfoValid
   );
-
-  // Update editing mode if customer info becomes invalid externally (though less likely here)
-  // or just on mount if we want to force it.
-  // Actually, let's keep it simple: if it starts valid, show summary. If not, show form.
-  // We don't need a useEffect for this unless we want to auto-switch, which might be annoying.
 
   const handleCustomerChange =
     (field: keyof CustomerDetails) => (value: string) => {
@@ -252,6 +261,7 @@ export function CarrinhoCheckout() {
           postalCode: customer.postalCode,
         },
         notes: customer.notes,
+        paymentMethod: customer.paymentMethod,
       };
 
       const response = await fetch("/api/orders/create", {
@@ -273,12 +283,32 @@ export function CarrinhoCheckout() {
       clearCart();
 
       logger.info("Order created successfully", { orderId: order.id });
+
+      // Redirecionar para o WhatsApp
+      const message = buildOrderWhatsAppMessage(
+        items,
+        {
+          name: customer.name,
+          city: customer.city,
+          state: customer.state,
+          notes: customer.notes,
+          paymentMethod: customer.paymentMethod,
+        },
+        order.orderNumber
+      );
+      const whatsappUrl = getWhatsAppUrl(message);
+      window.open(whatsappUrl, "_blank");
+
       router.push(`/pedido-confirmado/${order.id}`);
     } catch (error) {
       logger.error("Failed to create order", {
         error: error instanceof Error ? error.message : "Unknown error",
       });
-      // Aqui poderíamos mostrar um toast de erro
+      toast.error(
+        error instanceof Error
+          ? error.message
+          : "Erro ao criar pedido. Tente novamente."
+      );
     } finally {
       setIsCreatingOrder(false);
     }
@@ -359,6 +389,18 @@ export function CarrinhoCheckout() {
                   </p>
                   <p className="text-sm text-slate-700 dark:text-slate-300">
                     {customer.notes}
+                  </p>
+                </div>
+              )}
+              {customer.paymentMethod && (
+                <div className="mt-2 w-full rounded-md bg-brand-50 p-3 dark:bg-brand-900/20 md:mt-0 md:w-auto">
+                  <p className="text-xs font-medium text-brand-600 dark:text-brand-400">
+                    Forma de pagamento:
+                  </p>
+                  <p className="text-sm font-medium text-brand-700 dark:text-brand-300">
+                    {PAYMENT_METHODS.find(
+                      (pm) => pm.key === customer.paymentMethod
+                    )?.label || customer.paymentMethod}
                   </p>
                 </div>
               )}
@@ -503,6 +545,30 @@ export function CarrinhoCheckout() {
                   }
                 }}
               />
+              <Select
+                label="Forma de pagamento"
+                placeholder="Selecione a forma de pagamento"
+                selectedKeys={
+                  customer.paymentMethod ? [customer.paymentMethod] : []
+                }
+                onChange={(e) =>
+                  handleCustomerChange("paymentMethod")(e.target.value)
+                }
+                isInvalid={showErrors && !customer.paymentMethod}
+                errorMessage={
+                  showErrors && !customer.paymentMethod
+                    ? "Selecione a forma de pagamento."
+                    : undefined
+                }
+                isRequired
+                className="md:col-span-2"
+              >
+                {PAYMENT_METHODS.map((pm) => (
+                  <SelectItem key={pm.key} value={pm.key}>
+                    {pm.label}
+                  </SelectItem>
+                ))}
+              </Select>
               <div className="flex flex-col justify-between gap-4 md:col-span-2 md:flex-row md:items-center">
                 {session?.user && (
                   <p className="text-xs text-slate-500">
@@ -633,7 +699,7 @@ export function CarrinhoCheckout() {
           size="lg"
           className="bg-brand-600 text-white sm:w-auto"
           onPress={handlePreFinalize}
-          isDisabled={!canFinalize && isApproved}
+          isDisabled={!canFinalize}
         >
           {isApproved ? "Fechar pedido" : "Aguardando aprovação"}
         </Button>
@@ -673,14 +739,7 @@ export function CarrinhoCheckout() {
                 </Button>
                 <Button
                   color="primary"
-                  onPress={() => {
-                    handleFinalize();
-                    // Não fechamos o modal aqui pois vamos redirecionar
-                    // ou podemos fechar se quisermos, mas o loading state está no botão "Fechar pedido" original
-                    // Vamos mover o loading state para este botão do modal?
-                    // O handleFinalize usa setIsCreatingOrder, mas esse state é usado no botão principal.
-                    // Idealmente o loading deveria estar no botão de confirmar do modal.
-                  }}
+                  onPress={handleFinalize}
                   isLoading={isCreatingOrder}
                 >
                   Confirmar

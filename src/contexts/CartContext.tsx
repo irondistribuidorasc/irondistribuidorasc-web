@@ -28,6 +28,7 @@ export type CustomerDetails = {
   state: string;
   postalCode: string;
   notes: string;
+  paymentMethod: string;
 };
 
 type CartState = {
@@ -70,6 +71,7 @@ const initialState: CartState = {
     state: "",
     postalCode: "",
     notes: "",
+    paymentMethod: "",
   },
 };
 

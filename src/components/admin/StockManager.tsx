@@ -87,7 +87,7 @@ export default function StockManager() {
 
   const handleStockChange = (id: string, value: string) => {
     const quantity = parseInt(value);
-    if (Number.isNaN(quantity)) return;
+    if (Number.isNaN(quantity) || quantity < 0) return;
 
     setChanges((prev) => ({
       ...prev,
@@ -211,6 +211,7 @@ export default function StockManager() {
                         type="number"
                         size="sm"
                         className="w-32"
+                        min={0}
                         value={currentStock.toString()}
                         onValueChange={(v) => handleStockChange(product.id, v)}
                       />

@@ -11,26 +11,32 @@ export async function GET() {
       return new NextResponse("Unauthorized", { status: 401 });
     }
 
-    const notifications = await db.notification.findMany({
-      where: {
-        userId: session.user.id,
-      },
-      orderBy: {
-        createdAt: "desc",
-      },
-      take: 20, // Limit to last 20 notifications
-    });
-
-    const unreadCount = await db.notification.count({
-      where: {
-        userId: session.user.id,
-        read: false,
-      },
-    });
+    const [notifications, unreadCount, user] = await Promise.all([
+      db.notification.findMany({
+        where: {
+          userId: session.user.id,
+        },
+        orderBy: {
+          createdAt: "desc",
+        },
+        take: 20, // Limit to last 20 notifications
+      }),
+      db.notification.count({
+        where: {
+          userId: session.user.id,
+          read: false,
+        },
+      }),
+      db.user.findUnique({
+        where: { id: session.user.id },
+        select: { approved: true },
+      }),
+    ]);
 
     return NextResponse.json({
       notifications,
       unreadCount,
+      userApproved: user?.approved ?? false,
     });
   } catch (error) {
     console.error("Error fetching notifications:", error);

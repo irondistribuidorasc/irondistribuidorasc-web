@@ -64,7 +64,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Buscar produtos no banco para garantir preços corretos
+    // Buscar produtos no banco para garantir preços corretos e validar estoque
     const productIds = payload.items.map((item) => item.productId);
     const dbProducts = await db.product.findMany({
       where: {
@@ -77,10 +77,32 @@ export async function POST(req: NextRequest) {
         price: true,
         name: true,
         code: true,
+        stockQuantity: true,
       },
     });
 
     const productsMap = new Map(dbProducts.map((p) => [p.id, p]));
+
+    // Validar estoque antes de processar o pedido
+    const stockErrors: string[] = [];
+    for (const item of payload.items) {
+      const dbProduct = productsMap.get(item.productId);
+      if (dbProduct && item.quantity > dbProduct.stockQuantity) {
+        stockErrors.push(
+          `${dbProduct.name}: solicitado ${item.quantity}, disponível ${dbProduct.stockQuantity}`
+        );
+      }
+    }
+
+    if (stockErrors.length > 0) {
+      return NextResponse.json(
+        {
+          error: "Estoque insuficiente",
+          details: stockErrors,
+        },
+        { status: 400 }
+      );
+    }
 
     // Validar se todos os produtos existem e recalcular itens
     const orderItems = [];

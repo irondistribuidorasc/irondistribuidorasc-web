@@ -36,7 +36,7 @@ const NotificationContext = createContext<NotificationContextValue | undefined>(
 export function NotificationProvider({ children }: { children: ReactNode }) {
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [unreadCount, setUnreadCount] = useState(0);
-  const { status } = useSession();
+  const { data: session, status, update } = useSession();
   const isAuthenticated = status === "authenticated";
 
   const fetchNotifications = useCallback(async () => {
@@ -48,11 +48,20 @@ export function NotificationProvider({ children }: { children: ReactNode }) {
         const data = await res.json();
         setNotifications(data.notifications);
         setUnreadCount(data.unreadCount);
+
+        // Verifica se o status de aprovação mudou de false para true
+        // Se sim, dispara update da session para forçar refresh do JWT
+        if (data.userApproved === true && session?.user?.approved === false) {
+          await update();
+          toast.success(
+            "Sua conta foi aprovada! Agora você pode visualizar preços e fazer pedidos."
+          );
+        }
       }
     } catch (error) {
       console.error("Failed to fetch notifications", error);
     }
-  }, [isAuthenticated]);
+  }, [isAuthenticated, session, update]);
 
   useEffect(() => {
     if (!isAuthenticated) {

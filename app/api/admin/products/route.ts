@@ -16,6 +16,7 @@ export async function GET(request: Request) {
   const search = searchParams.get("search") || "";
   const category = searchParams.get("category");
   const brand = searchParams.get("brand");
+  const lowStock = searchParams.get("lowStock") === "true";
 
   const skip = (page - 1) * limit;
 
@@ -39,15 +40,61 @@ export async function GET(request: Request) {
   }
 
   try {
-    const [products, total] = await Promise.all([
-      db.product.findMany({
-        where,
-        skip,
-        take: limit,
-        orderBy: { createdAt: "desc" },
-      }),
-      db.product.count({ where }),
-    ]);
+    let products: unknown[];
+    let total: number;
+
+    // Filtro de estoque baixo requer comparação entre dois campos do mesmo registro
+    // Prisma não suporta isso nativamente, então usamos raw query
+    if (lowStock) {
+      // Constrói a query SQL para filtrar produtos com estoque baixo
+      let baseWhere = '"stockQuantity" <= "minStockThreshold"';
+      const params: (string | number)[] = [];
+
+      if (search) {
+        baseWhere += ` AND (LOWER("name") LIKE $${
+          params.length + 1
+        } OR LOWER("code") LIKE $${params.length + 1} OR LOWER("model") LIKE $${
+          params.length + 1
+        })`;
+        params.push(`%${search.toLowerCase()}%`);
+      }
+      if (category) {
+        baseWhere += ` AND "category" = $${params.length + 1}`;
+        params.push(category);
+      }
+      if (brand) {
+        baseWhere += ` AND "brand" = $${params.length + 1}`;
+        params.push(brand);
+      }
+
+      const countQuery = `SELECT COUNT(*) as count FROM "Product" WHERE ${baseWhere}`;
+      const dataQuery = `SELECT * FROM "Product" WHERE ${baseWhere} ORDER BY "createdAt" DESC LIMIT $${
+        params.length + 1
+      } OFFSET $${params.length + 2}`;
+
+      const countResult = await db.$queryRawUnsafe<{ count: bigint }[]>(
+        countQuery,
+        ...params
+      );
+      total = Number(countResult[0]?.count ?? 0);
+
+      products = await db.$queryRawUnsafe<typeof products>(
+        dataQuery,
+        ...params,
+        limit,
+        skip
+      );
+    } else {
+      [products, total] = await Promise.all([
+        db.product.findMany({
+          where,
+          skip,
+          take: limit,
+          orderBy: { createdAt: "desc" },
+        }),
+        db.product.count({ where }),
+      ]);
+    }
 
     return NextResponse.json({
       products,

@@ -274,6 +274,18 @@ export function CarrinhoCheckout() {
 
       if (!response.ok) {
         const data = await response.json().catch(() => ({}));
+
+        // Tratar erro de estoque insuficiente com detalhes
+        if (data.error === "Estoque insuficiente" && data.details) {
+          const detailsMessage = Array.isArray(data.details)
+            ? data.details.join("\n• ")
+            : data.details;
+          toast.error(`Estoque insuficiente:\n• ${detailsMessage}`, {
+            duration: 8000,
+          });
+          throw new Error("Estoque insuficiente para alguns produtos");
+        }
+
         throw new Error(data.error || "Falha ao criar pedido");
       }
 
@@ -304,11 +316,18 @@ export function CarrinhoCheckout() {
       logger.error("Failed to create order", {
         error: error instanceof Error ? error.message : "Unknown error",
       });
-      toast.error(
-        error instanceof Error
-          ? error.message
-          : "Erro ao criar pedido. Tente novamente."
-      );
+
+      // Só exibe toast genérico se não for erro de estoque (já exibido acima)
+      if (
+        !(error instanceof Error) ||
+        !error.message.includes("Estoque insuficiente")
+      ) {
+        toast.error(
+          error instanceof Error
+            ? error.message
+            : "Erro ao criar pedido. Tente novamente."
+        );
+      }
     } finally {
       setIsCreatingOrder(false);
     }

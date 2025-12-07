@@ -10,6 +10,22 @@ const PAYMENT_METHOD_LABELS: Record<string, string> = {
   OTHER: "Outro",
 };
 
+// Emojis usando escape sequences para evitar problemas de encoding
+const EMOJI = {
+  wave: "\u{1F44B}", // 👋
+  cart: "\u{1F6D2}", // 🛒
+  person: "\u{1F464}", // 👤
+  pin: "\u{1F4CD}", // 📍
+  card: "\u{1F4B3}", // 💳
+  memo: "\u{1F4DD}", // 📝
+  rocket: "\u{1F680}", // 🚀
+  bullet: "\u{25AA}\u{FE0F}", // ▪️
+  tools: "\u{1F6E0}\u{FE0F}", // 🛠️
+  clipboard: "\u{1F4CB}", // 📋
+  package: "\u{1F4E6}", // 📦
+  phone: "\u{1F4F1}", // 📱
+};
+
 function getPaymentMethodLabel(method?: string): string {
   return PAYMENT_METHOD_LABELS[method || ""] || "Não informado";
 }
@@ -32,24 +48,33 @@ export function buildOrderWhatsAppMessage(
   const paymentMethod = getPaymentMethodLabel(customer.paymentMethod);
 
   const header = orderId
-    ? `👋 Olá, gostaria de finalizar o pedido #${orderId}:`
-    : "👋 Olá, gostaria de fazer um pedido:";
+    ? `${EMOJI.wave} Olá, gostaria de finalizar o pedido #${orderId}:`
+    : `${EMOJI.wave} Olá, gostaria de fazer um pedido:`;
   const lines = items.map(
     (item) =>
-      `▪️ ${item.quantity}x ${item.product.name} (${
+      `${EMOJI.bullet} ${item.quantity}x ${item.product.name} (${
         item.product.brand
       } - ${item.product.model.toUpperCase()})`
   );
   const customerBlock = [
-    `👤 *Dados do cliente:*`,
-    `👤 Nome: ${name}`,
-    `📍 Cidade/UF: ${city}/${state}`,
-    `💳 Pagamento: ${paymentMethod}`,
-    `📝 Observações: ${notes}`,
+    `${EMOJI.person} *Dados do cliente:*`,
+    `${EMOJI.person} Nome: ${name}`,
+    `${EMOJI.pin} Cidade/UF: ${city}/${state}`,
+    `${EMOJI.card} Pagamento: ${paymentMethod}`,
+    `${EMOJI.memo} Observações: ${notes}`,
   ];
-  const footer = "🚀 Enviado via site irondistribuidorasc.com.br";
+  const footer = `${EMOJI.rocket} Enviado via site irondistribuidorasc.com.br`;
 
-  return [header, "", "🛒 *Itens:*", ...lines, "", ...customerBlock, "", footer]
+  return [
+    header,
+    "",
+    `${EMOJI.cart} *Itens:*`,
+    ...lines,
+    "",
+    ...customerBlock,
+    "",
+    footer,
+  ]
     .filter(Boolean)
     .join("\n");
 }
@@ -60,14 +85,14 @@ export function buildWarrantyWhatsAppMessage(payload: {
   model: string;
   description: string;
 }) {
-  const header = "🛠️ Olá, gostaria de solicitar GARANTIA/TROCA:";
+  const header = `${EMOJI.tools} Olá, gostaria de solicitar GARANTIA/TROCA:`;
   const lines = [
-    `📋 Tipo: ${payload.requestType}`,
-    `📦 Item: ${payload.itemType}`,
-    `📱 Modelo do aparelho: ${payload.model}`,
-    `📝 Descrição do problema: ${payload.description}`,
+    `${EMOJI.clipboard} Tipo: ${payload.requestType}`,
+    `${EMOJI.package} Item: ${payload.itemType}`,
+    `${EMOJI.phone} Modelo do aparelho: ${payload.model}`,
+    `${EMOJI.memo} Descrição do problema: ${payload.description}`,
     "",
-    "🚀 Enviado via site irondistribuidorasc.com.br",
+    `${EMOJI.rocket} Enviado via site irondistribuidorasc.com.br`,
   ];
 
   return [header, ...lines].join("\n");

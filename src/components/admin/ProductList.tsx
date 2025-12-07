@@ -81,6 +81,10 @@ export default function ProductList() {
         params.append("search", debouncedSearch);
       }
 
+      if (showLowStock) {
+        params.append("lowStock", "true");
+      }
+
       const response = await fetch(`/api/admin/products?${params}`);
       if (response.ok) {
         const data = await response.json();
@@ -92,7 +96,7 @@ export default function ProductList() {
     } finally {
       setLoading(false);
     }
-  }, [pagination.page, pagination.limit, debouncedSearch]);
+  }, [pagination.page, pagination.limit, debouncedSearch, showLowStock]);
 
   useEffect(() => {
     fetchProducts();
@@ -153,12 +157,8 @@ export default function ProductList() {
     );
   }
 
-  const filteredProducts = products.filter((product) => {
-    if (showLowStock) {
-      return product.stockQuantity <= product.minStockThreshold;
-    }
-    return true;
-  });
+  // O filtro de estoque baixo já é aplicado no backend
+  const filteredProducts = products;
 
   return (
     <div className="space-y-4">
@@ -175,7 +175,10 @@ export default function ProductList() {
         <Button
           color={showLowStock ? "warning" : "default"}
           variant={showLowStock ? "solid" : "flat"}
-          onPress={() => setShowLowStock(!showLowStock)}
+          onPress={() => {
+            setShowLowStock(!showLowStock);
+            setPagination((prev) => ({ ...prev, page: 1 }));
+          }}
         >
           {showLowStock ? "Mostrando Estoque Baixo" : "Filtrar Estoque Baixo"}
         </Button>

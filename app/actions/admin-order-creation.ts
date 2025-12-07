@@ -1,5 +1,6 @@
 "use server";
 
+import { auth } from "@/src/lib/auth";
 import { db as prisma } from "@/src/lib/prisma";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
@@ -14,7 +15,14 @@ const OrderItemSchema = z.object({
 const CreateOrderSchema = z.object({
   userId: z.string(),
   items: z.array(OrderItemSchema).min(1),
-  status: z.enum(["PENDING", "CONFIRMED", "PROCESSING", "SHIPPED", "DELIVERED", "CANCELLED"]),
+  status: z.enum([
+    "PENDING",
+    "CONFIRMED",
+    "PROCESSING",
+    "SHIPPED",
+    "DELIVERED",
+    "CANCELLED",
+  ]),
   paymentMethod: z.enum(["PIX", "CREDIT_CARD", "DEBIT_CARD", "CASH", "OTHER"]),
   notes: z.string().optional(),
   createdAt: z.date().optional(),
@@ -23,6 +31,11 @@ const CreateOrderSchema = z.object({
 export type CreateOrderInput = z.infer<typeof CreateOrderSchema>;
 
 export async function searchUsers(query: string) {
+  const session = await auth();
+  if (!session || session.user.role !== "ADMIN") {
+    throw new Error("Não autorizado");
+  }
+
   if (!query || query.length < 2) return [];
 
   const users = await prisma.user.findMany({
@@ -54,6 +67,11 @@ export async function searchUsers(query: string) {
 }
 
 export async function searchProducts(query: string) {
+  const session = await auth();
+  if (!session || session.user.role !== "ADMIN") {
+    throw new Error("Não autorizado");
+  }
+
   if (!query || query.length < 2) return [];
 
   const products = await prisma.product.findMany({
@@ -79,13 +97,19 @@ export async function searchProducts(query: string) {
 }
 
 export async function createAdminOrder(data: CreateOrderInput) {
+  const session = await auth();
+  if (!session || session.user.role !== "ADMIN") {
+    return { success: false, error: "Não autorizado" };
+  }
+
   const result = CreateOrderSchema.safeParse(data);
 
   if (!result.success) {
     return { success: false, error: "Dados inválidos" };
   }
 
-  const { userId, items, status, paymentMethod, notes, createdAt } = result.data;
+  const { userId, items, status, paymentMethod, notes, createdAt } =
+    result.data;
 
   try {
     // Fetch user details for snapshot
@@ -159,6 +183,9 @@ export async function createAdminOrder(data: CreateOrderInput) {
     return { success: true, orderId: order.id };
   } catch (error) {
     console.error("Error creating admin order:", error);
-    return { success: false, error: error instanceof Error ? error.message : "Erro ao criar pedido" };
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : "Erro ao criar pedido",
+    };
   }
 }

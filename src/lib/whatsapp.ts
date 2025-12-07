@@ -1,6 +1,6 @@
 import type { CartItem } from "@/src/contexts/CartContext";
 
-const PHONE_NUMBER = "5548991147117";
+const PHONE_NUMBER = process.env.NEXT_PUBLIC_WHATSAPP_PHONE || "5548991147117";
 
 const PAYMENT_METHOD_LABELS: Record<string, string> = {
   PIX: "Pix",

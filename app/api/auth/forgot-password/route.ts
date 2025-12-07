@@ -17,16 +17,14 @@ export async function POST(request: Request) {
     }
 
     const normalizedEmail = normalizeEmail(email);
-    console.log(`[ForgotPassword] Solicitado para: ${normalizedEmail}`);
+    // Log sem expor email para proteção de dados
 
     const user = await db.user.findUnique({
       where: { email: normalizedEmail },
     });
 
     if (!user) {
-      console.log(
-        `[ForgotPassword] Usuário NÃO encontrado: ${normalizedEmail}`
-      );
+      // Usuário não encontrado - não logamos email para evitar enumeração
       // Retornamos sucesso mesmo se o usuário não existir para evitar enumeração de e-mails
       return NextResponse.json(
         {
@@ -36,7 +34,7 @@ export async function POST(request: Request) {
       );
     }
 
-    console.log(`[ForgotPassword] Usuário encontrado. Gerando token...`);
+    // Token gerado com sucesso
 
     // Gerar token seguro
     const token = randomBytes(32).toString("hex");
@@ -85,7 +83,7 @@ export async function POST(request: Request) {
     const fromEmail = process.env.EMAIL_FROM || "onboarding@resend.dev";
     console.log(`[ForgotPassword] Enviando via Resend de: ${fromEmail}`);
 
-    const { data, error } = await resend.emails.send({
+    const { error } = await resend.emails.send({
       from: `Iron Distribuidora <${fromEmail}>`,
       to: normalizedEmail,
       subject: "Recuperação de Senha - Iron Distribuidora",
@@ -108,11 +106,7 @@ export async function POST(request: Request) {
       );
     }
 
-    console.log(`[ForgotPassword] E-mail enviado com sucesso. ID: ${data?.id}`);
-
-    console.log(
-      `[ForgotPassword] E-mail enviado com sucesso para: ${normalizedEmail}`
-    );
+    // E-mail enviado com sucesso - ID registrado internamente
 
     return NextResponse.json(
       { message: "Se o e-mail existir, um link de recuperação será enviado." },

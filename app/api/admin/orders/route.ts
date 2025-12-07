@@ -26,7 +26,7 @@ export async function GET(req: NextRequest) {
     const status = searchParams.get("status") as OrderStatus | "all" | null;
     const search = searchParams.get("search") || "";
     const page = parseInt(searchParams.get("page") || "1");
-    const limit = parseInt(searchParams.get("limit") || "20");
+    const limit = Math.min(parseInt(searchParams.get("limit") || "20"), 100);
     const orderBy = searchParams.get("orderBy") || "createdAt";
     const order = searchParams.get("order") || "desc";
 

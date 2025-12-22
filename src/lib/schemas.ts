@@ -16,6 +16,7 @@ export const loginSchema = z.object({
   password: z.string().min(1, "Senha é obrigatória"),
 });
 
+// Schema para validação no cliente (formulário de registro)
 export const registerSchema = z
   .object({
     name: z.string().min(3, "Nome deve ter pelo menos 3 caracteres"),
@@ -29,6 +30,15 @@ export const registerSchema = z
     message: "As senhas não coincidem",
     path: ["confirmPassword"],
   });
+
+// Schema para validação na API (não precisa de confirmPassword)
+export const registerApiSchema = z.object({
+  name: z.string().min(3, "Nome deve ter pelo menos 3 caracteres"),
+  email: z.string().email("E-mail inválido"),
+  phone: z.string().optional().nullable(),
+  docNumber: z.string().optional().nullable(),
+  password: passwordSchema,
+});
 
 export const forgotPasswordSchema = z.object({
   email: z.string().email("E-mail inválido"),

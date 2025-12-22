@@ -3,12 +3,17 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import { Footer } from "@/src/components/layout/Footer";
 import { Header } from "@/src/components/layout/Header";
+import { StagingBanner } from "@/src/components/layout/StagingBanner";
 import "./globals.css";
 import { Providers } from "./providers";
 
 const inter = Inter({ subsets: ["latin"], display: "swap" });
 
-const title = "IRON DISTRIBUIDORA SC";
+const isStaging = process.env.NEXT_PUBLIC_IS_STAGING === "true";
+
+const title = isStaging
+  ? "[STAGING] IRON DISTRIBUIDORA SC"
+  : "IRON DISTRIBUIDORA SC";
 const description =
   "Distribuidora de peças para celular com garantia de 1 ano. Atendemos Itapema, Tijucas, Porto Belo e São João Batista.";
 
@@ -16,17 +21,26 @@ export const metadata: Metadata = {
   metadataBase: new URL("https://irondistribuidorasc.com.br"),
   title,
   description,
-  robots: {
-    index: true,
-    follow: true,
-    googleBot: {
-      index: true,
-      follow: true,
-      "max-video-preview": -1,
-      "max-image-preview": "large",
-      "max-snippet": -1,
-    },
-  },
+  robots: isStaging
+    ? {
+        index: false,
+        follow: false,
+        googleBot: {
+          index: false,
+          follow: false,
+        },
+      }
+    : {
+        index: true,
+        follow: true,
+        googleBot: {
+          index: true,
+          follow: true,
+          "max-video-preview": -1,
+          "max-image-preview": "large",
+          "max-snippet": -1,
+        },
+      },
   verification: {
     google: "SXiK1lviE-scDll1j8nRYL84bYuoFvG10uOdTciatLw", // TODO: Replace with actual code from Google Search Console
   },
@@ -174,6 +188,7 @@ export default function RootLayout({
       </head>
       <body className={`${inter.className}`}>
         <Providers>
+          <StagingBanner />
           <div className="flex min-h-screen flex-col overflow-x-hidden">
             <Header />
             <main className="flex-1">{children}</main>

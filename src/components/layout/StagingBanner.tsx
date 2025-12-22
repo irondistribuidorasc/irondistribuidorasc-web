@@ -1,7 +1,7 @@
 "use client";
 
 export function StagingBanner() {
-	const isStaging = process.env.NEXT_PUBLIC_IS_STAGING === "true";
+	const isStaging = process.env.VERCEL_ENV === "preview";
 
 	if (!isStaging) {
 		return null;

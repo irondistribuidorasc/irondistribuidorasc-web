@@ -1,6 +1,6 @@
 import { MetadataRoute } from "next";
 
-const isStaging = process.env.NEXT_PUBLIC_IS_STAGING === "true";
+const isStaging = process.env.VERCEL_ENV === "preview";
 
 export default function robots(): MetadataRoute.Robots {
   // Em staging, bloqueia todos os crawlers

@@ -9,7 +9,7 @@ import { Providers } from "./providers";
 
 const inter = Inter({ subsets: ["latin"], display: "swap" });
 
-const isStaging = process.env.NEXT_PUBLIC_IS_STAGING === "true";
+const isStaging = process.env.VERCEL_ENV === "preview";
 
 const title = isStaging
   ? "[STAGING] IRON DISTRIBUIDORA SC"

@@ -1,6 +1,8 @@
-export function StagingBanner() {
-	const isStaging = process.env.VERCEL_ENV === "preview";
+type StagingBannerProps = {
+	isStaging: boolean;
+};
 
+export function StagingBanner({ isStaging }: StagingBannerProps) {
 	if (!isStaging) {
 		return null;
 	}

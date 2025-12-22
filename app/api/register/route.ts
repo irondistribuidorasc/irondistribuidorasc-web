@@ -1,6 +1,6 @@
 import { logger } from "@/src/lib/logger";
 import { db } from "@/src/lib/prisma";
-import { registerSchema } from "@/src/lib/schemas";
+import { registerApiSchema } from "@/src/lib/schemas";
 import { hash } from "bcrypt";
 import { NextResponse } from "next/server";
 
@@ -11,7 +11,7 @@ export async function POST(request: Request) {
     const body = await request.json();
 
     // Validação com Zod
-    const validationResult = registerSchema.safeParse(body);
+    const validationResult = registerApiSchema.safeParse(body);
 
     if (!validationResult.success) {
       // Retorna o primeiro erro encontrado

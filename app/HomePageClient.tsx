@@ -69,7 +69,7 @@ export default function HomePageClient() {
 									/>
 								</div>
 								<p className="rounded-full bg-brand-50 px-4 py-1.5 text-xs font-bold uppercase tracking-widest text-brand-600 dark:bg-brand-900/20 dark:text-brand-400">
-									Iron Distribuidora SC 123
+									Iron Distribuidora SC
 								</p>
 							</div>
 						</ScrollAnimation>

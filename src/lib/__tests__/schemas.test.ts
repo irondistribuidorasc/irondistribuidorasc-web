@@ -25,16 +25,21 @@ describe("schemas", () => {
 		).toThrow();
 	});
 
-	it("registerSchema exige confirmPassword igual", () => {
+	it("registerSchema exige confirmPassword igual e acceptedTerms true", () => {
 		const base = {
 			name: "Fulano",
 			email: "fulano@exemplo.com",
 			password: "Aa1!aaaa",
 			confirmPassword: "Aa1!aaaa",
+			acceptedTerms: true as const,
 		};
 		expect(() => registerSchema.parse(base)).not.toThrow();
 		expect(() =>
 			registerSchema.parse({ ...base, confirmPassword: "diferente" }),
+		).toThrow();
+		// Deve exigir acceptedTerms como true
+		expect(() =>
+			registerSchema.parse({ ...base, acceptedTerms: false }),
 		).toThrow();
 	});
 

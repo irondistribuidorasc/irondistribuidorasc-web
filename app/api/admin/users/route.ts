@@ -1,4 +1,5 @@
 import { auth } from "@/src/lib/auth";
+import { logger } from "@/src/lib/logger";
 import { db } from "@/src/lib/prisma";
 import { Prisma } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
@@ -80,7 +81,9 @@ export async function GET(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error("Error fetching users:", error);
+    logger.error("admin/users:GET - Erro ao buscar usuários", {
+      error: error instanceof Error ? error.message : String(error),
+    });
     return NextResponse.json(
       { error: "Failed to fetch users" },
       { status: 500 }
@@ -132,7 +135,9 @@ export async function PATCH(request: NextRequest) {
 
     return NextResponse.json({ user });
   } catch (error) {
-    console.error("Error updating user:", error);
+    logger.error("admin/users:PATCH - Erro ao atualizar usuário", {
+      error: error instanceof Error ? error.message : String(error),
+    });
     return NextResponse.json(
       { error: "Failed to update user" },
       { status: 500 }

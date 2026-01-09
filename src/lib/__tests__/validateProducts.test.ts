@@ -106,4 +106,169 @@ describe("validateProducts", () => {
 		const result = validateProducts([validWithOptionals]);
 		expect(result).toEqual([validWithOptionals]);
 	});
+
+	// Testes de campos obrigatórios
+	it("rejeita produto sem id", () => {
+		const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
+		const valid = makeValidProduct();
+		const invalidProduct = { ...makeValidProduct(), id: "" };
+		const result = validateProducts([valid, invalidProduct]);
+		expect(result).toEqual([valid]);
+		warn.mockRestore();
+	});
+
+	it("rejeita produto com id não-string", () => {
+		const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
+		const valid = makeValidProduct();
+		const invalidProduct = { ...makeValidProduct(), id: 123 };
+		const result = validateProducts([valid, invalidProduct]);
+		expect(result).toEqual([valid]);
+		warn.mockRestore();
+	});
+
+	it("rejeita produto sem code", () => {
+		const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
+		const valid = makeValidProduct();
+		const invalidProduct = { ...makeValidProduct(), code: "" };
+		const result = validateProducts([valid, invalidProduct]);
+		expect(result).toEqual([valid]);
+		warn.mockRestore();
+	});
+
+	it("rejeita produto com code não-string", () => {
+		const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
+		const valid = makeValidProduct();
+		const invalidProduct = { ...makeValidProduct(), code: 456 };
+		const result = validateProducts([valid, invalidProduct]);
+		expect(result).toEqual([valid]);
+		warn.mockRestore();
+	});
+
+	it("rejeita produto sem name", () => {
+		const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
+		const valid = makeValidProduct();
+		const invalidProduct = { ...makeValidProduct(), name: "" };
+		const result = validateProducts([valid, invalidProduct]);
+		expect(result).toEqual([valid]);
+		warn.mockRestore();
+	});
+
+	it("rejeita produto com name não-string", () => {
+		const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
+		const valid = makeValidProduct();
+		const invalidProduct = { ...makeValidProduct(), name: null };
+		const result = validateProducts([valid, invalidProduct]);
+		expect(result).toEqual([valid]);
+		warn.mockRestore();
+	});
+
+	it("rejeita produto com brand inválida", () => {
+		const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
+		const valid = makeValidProduct();
+		const invalidProduct = { ...makeValidProduct(), brand: "InvalidBrand" };
+		const result = validateProducts([valid, invalidProduct]);
+		expect(result).toEqual([valid]);
+		warn.mockRestore();
+	});
+
+	it("rejeita produto com category inválida", () => {
+		const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
+		const valid = makeValidProduct();
+		const invalidProduct = { ...makeValidProduct(), category: "invalid_category" };
+		const result = validateProducts([valid, invalidProduct]);
+		expect(result).toEqual([valid]);
+		warn.mockRestore();
+	});
+
+	it("rejeita produto sem model", () => {
+		const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
+		const valid = makeValidProduct();
+		const invalidProduct = { ...makeValidProduct(), model: "" };
+		const result = validateProducts([valid, invalidProduct]);
+		expect(result).toEqual([valid]);
+		warn.mockRestore();
+	});
+
+	it("rejeita produto com model não-string", () => {
+		const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
+		const valid = makeValidProduct();
+		const invalidProduct = { ...makeValidProduct(), model: 999 };
+		const result = validateProducts([valid, invalidProduct]);
+		expect(result).toEqual([valid]);
+		warn.mockRestore();
+	});
+
+	it("rejeita produto sem imageUrl", () => {
+		const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
+		const valid = makeValidProduct();
+		const invalidProduct = { ...makeValidProduct(), imageUrl: "" };
+		const result = validateProducts([valid, invalidProduct]);
+		expect(result).toEqual([valid]);
+		warn.mockRestore();
+	});
+
+	it("rejeita produto com imageUrl não-string", () => {
+		const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
+		const valid = makeValidProduct();
+		const invalidProduct = { ...makeValidProduct(), imageUrl: undefined };
+		const result = validateProducts([valid, invalidProduct]);
+		expect(result).toEqual([valid]);
+		warn.mockRestore();
+	});
+
+	it("rejeita produto com inStock não-boolean", () => {
+		const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
+		const valid = makeValidProduct();
+		const invalidProduct = { ...makeValidProduct(), inStock: "yes" };
+		const result = validateProducts([valid, invalidProduct]);
+		expect(result).toEqual([valid]);
+		warn.mockRestore();
+	});
+
+	it("rejeita produto com price negativo", () => {
+		const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
+		const valid = makeValidProduct();
+		const invalidProduct = { ...makeValidProduct(), price: -10 };
+		const result = validateProducts([valid, invalidProduct]);
+		expect(result).toEqual([valid]);
+		warn.mockRestore();
+	});
+
+	it("rejeita produto com price não-number", () => {
+		const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
+		const valid = makeValidProduct();
+		const invalidProduct = { ...makeValidProduct(), price: "free" };
+		const result = validateProducts([valid, invalidProduct]);
+		expect(result).toEqual([valid]);
+		warn.mockRestore();
+	});
+
+	it("aceita produto com price zero", () => {
+		const validWithZeroPrice = makeValidProduct({ price: 0 });
+		const result = validateProducts([validWithZeroPrice]);
+		expect(result).toEqual([validWithZeroPrice]);
+	});
+
+	it("aceita todas as brands válidas", () => {
+		const brands = ["Samsung", "Xiaomi", "Motorola", "iPhone", "LG"] as const;
+		const products = brands.map((brand, i) =>
+			makeValidProduct({ id: `p${i}`, brand }),
+		);
+		const result = validateProducts(products);
+		expect(result).toHaveLength(5);
+	});
+
+	it("aceita todas as categories válidas", () => {
+		const categories = [
+			"display",
+			"battery",
+			"charging_board",
+			"back_cover",
+		] as const;
+		const products = categories.map((category, i) =>
+			makeValidProduct({ id: `p${i}`, category }),
+		);
+		const result = validateProducts(products);
+		expect(result).toHaveLength(4);
+	});
 });

@@ -1,6 +1,7 @@
 import { Analytics } from "@vercel/analytics/next";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
+import { CookieConsent } from "@/src/components/layout/CookieConsent";
 import { Footer } from "@/src/components/layout/Footer";
 import { Header } from "@/src/components/layout/Header";
 import { StagingBanner } from "@/src/components/layout/StagingBanner";
@@ -195,6 +196,7 @@ export default function RootLayout({
 						<Footer />
 					</div>
 				</Providers>
+				<CookieConsent />
 				<Analytics />
 			</body>
 		</html>

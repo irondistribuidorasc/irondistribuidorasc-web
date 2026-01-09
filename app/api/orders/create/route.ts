@@ -1,5 +1,7 @@
 import { auth } from "@/src/lib/auth";
+import { logger } from "@/src/lib/logger";
 import { db } from "@/src/lib/prisma";
+import { Prisma } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
 
 interface CreateOrderItem {
@@ -196,13 +198,14 @@ export async function POST(req: NextRequest) {
         break;
       } catch (error) {
         // Se for erro de constraint unique no orderNumber, tenta o próximo número
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        if ((error as any).code === "P2002") {
-          console.warn(
-            `Order number collision for ${nextNumber}. Retrying with ${
-              nextNumber + 1
-            }...`
-          );
+        if (
+          error instanceof Prisma.PrismaClientKnownRequestError &&
+          error.code === "P2002"
+        ) {
+          logger.warn("orders/create - Colisão de orderNumber", {
+            orderNumber: nextNumber,
+            nextAttempt: nextNumber + 1,
+          });
           nextNumber++;
           attempts++;
           continue;
@@ -215,9 +218,17 @@ export async function POST(req: NextRequest) {
       throw new Error("Falha ao gerar número do pedido após várias tentativas");
     }
 
+    logger.info("orders/create - Pedido criado com sucesso", {
+      orderId: order.id,
+      orderNumber: order.orderNumber,
+      userId: session.user.id,
+    });
+
     return NextResponse.json(order, { status: 201 });
   } catch (error) {
-    console.error("Error creating order:", error);
+    logger.error("orders/create - Erro ao criar pedido", {
+      error: error instanceof Error ? error.message : String(error),
+    });
     return NextResponse.json(
       {
         error: error instanceof Error ? error.message : "Erro ao criar pedido",

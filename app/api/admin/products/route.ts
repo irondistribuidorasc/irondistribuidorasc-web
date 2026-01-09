@@ -1,5 +1,7 @@
 import { authOptions } from "@/src/lib/auth";
+import { logger } from "@/src/lib/logger";
 import { db } from "@/src/lib/prisma";
+import { Prisma } from "@prisma/client";
 import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
 
@@ -23,8 +25,8 @@ export async function GET(request: Request) {
 
   const skip = (page - 1) * limit;
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const where: any = {};
+  // Construir filtros do Prisma
+  const where: Prisma.ProductWhereInput = {};
 
   if (search) {
     where.OR = [
@@ -47,46 +49,141 @@ export async function GET(request: Request) {
     let total: number;
 
     // Filtro de estoque baixo requer comparação entre dois campos do mesmo registro
-    // Prisma não suporta isso nativamente, então usamos raw query
+    // Prisma não suporta isso nativamente, então usamos raw query com tagged template
     if (lowStock) {
-      // Constrói a query SQL para filtrar produtos com estoque baixo
-      let baseWhere = '"stockQuantity" <= "minStockThreshold"';
-      const params: (string | number)[] = [];
+      const searchPattern = search ? `%${search.toLowerCase()}%` : null;
 
-      if (search) {
-        baseWhere += ` AND (LOWER("name") LIKE $${
-          params.length + 1
-        } OR LOWER("code") LIKE $${params.length + 1} OR LOWER("model") LIKE $${
-          params.length + 1
-        })`;
-        params.push(`%${search.toLowerCase()}%`);
+      // Query segura usando tagged template literals do Prisma
+      if (search && category && brand) {
+        const countResult = await db.$queryRaw<{ count: bigint }[]>`
+          SELECT COUNT(*)::bigint as count FROM "Product" 
+          WHERE "stockQuantity" <= "minStockThreshold"
+          AND (LOWER("name") LIKE ${searchPattern} OR LOWER("code") LIKE ${searchPattern} OR LOWER("model") LIKE ${searchPattern})
+          AND "category" = ${category}
+          AND "brand" = ${brand}
+        `;
+        total = Number(countResult[0]?.count ?? 0);
+
+        products = await db.$queryRaw`
+          SELECT * FROM "Product" 
+          WHERE "stockQuantity" <= "minStockThreshold"
+          AND (LOWER("name") LIKE ${searchPattern} OR LOWER("code") LIKE ${searchPattern} OR LOWER("model") LIKE ${searchPattern})
+          AND "category" = ${category}
+          AND "brand" = ${brand}
+          ORDER BY "createdAt" DESC 
+          LIMIT ${limit} OFFSET ${skip}
+        `;
+      } else if (search && category) {
+        const countResult = await db.$queryRaw<{ count: bigint }[]>`
+          SELECT COUNT(*)::bigint as count FROM "Product" 
+          WHERE "stockQuantity" <= "minStockThreshold"
+          AND (LOWER("name") LIKE ${searchPattern} OR LOWER("code") LIKE ${searchPattern} OR LOWER("model") LIKE ${searchPattern})
+          AND "category" = ${category}
+        `;
+        total = Number(countResult[0]?.count ?? 0);
+
+        products = await db.$queryRaw`
+          SELECT * FROM "Product" 
+          WHERE "stockQuantity" <= "minStockThreshold"
+          AND (LOWER("name") LIKE ${searchPattern} OR LOWER("code") LIKE ${searchPattern} OR LOWER("model") LIKE ${searchPattern})
+          AND "category" = ${category}
+          ORDER BY "createdAt" DESC 
+          LIMIT ${limit} OFFSET ${skip}
+        `;
+      } else if (search && brand) {
+        const countResult = await db.$queryRaw<{ count: bigint }[]>`
+          SELECT COUNT(*)::bigint as count FROM "Product" 
+          WHERE "stockQuantity" <= "minStockThreshold"
+          AND (LOWER("name") LIKE ${searchPattern} OR LOWER("code") LIKE ${searchPattern} OR LOWER("model") LIKE ${searchPattern})
+          AND "brand" = ${brand}
+        `;
+        total = Number(countResult[0]?.count ?? 0);
+
+        products = await db.$queryRaw`
+          SELECT * FROM "Product" 
+          WHERE "stockQuantity" <= "minStockThreshold"
+          AND (LOWER("name") LIKE ${searchPattern} OR LOWER("code") LIKE ${searchPattern} OR LOWER("model") LIKE ${searchPattern})
+          AND "brand" = ${brand}
+          ORDER BY "createdAt" DESC 
+          LIMIT ${limit} OFFSET ${skip}
+        `;
+      } else if (category && brand) {
+        const countResult = await db.$queryRaw<{ count: bigint }[]>`
+          SELECT COUNT(*)::bigint as count FROM "Product" 
+          WHERE "stockQuantity" <= "minStockThreshold"
+          AND "category" = ${category}
+          AND "brand" = ${brand}
+        `;
+        total = Number(countResult[0]?.count ?? 0);
+
+        products = await db.$queryRaw`
+          SELECT * FROM "Product" 
+          WHERE "stockQuantity" <= "minStockThreshold"
+          AND "category" = ${category}
+          AND "brand" = ${brand}
+          ORDER BY "createdAt" DESC 
+          LIMIT ${limit} OFFSET ${skip}
+        `;
+      } else if (search) {
+        const countResult = await db.$queryRaw<{ count: bigint }[]>`
+          SELECT COUNT(*)::bigint as count FROM "Product" 
+          WHERE "stockQuantity" <= "minStockThreshold"
+          AND (LOWER("name") LIKE ${searchPattern} OR LOWER("code") LIKE ${searchPattern} OR LOWER("model") LIKE ${searchPattern})
+        `;
+        total = Number(countResult[0]?.count ?? 0);
+
+        products = await db.$queryRaw`
+          SELECT * FROM "Product" 
+          WHERE "stockQuantity" <= "minStockThreshold"
+          AND (LOWER("name") LIKE ${searchPattern} OR LOWER("code") LIKE ${searchPattern} OR LOWER("model") LIKE ${searchPattern})
+          ORDER BY "createdAt" DESC 
+          LIMIT ${limit} OFFSET ${skip}
+        `;
+      } else if (category) {
+        const countResult = await db.$queryRaw<{ count: bigint }[]>`
+          SELECT COUNT(*)::bigint as count FROM "Product" 
+          WHERE "stockQuantity" <= "minStockThreshold"
+          AND "category" = ${category}
+        `;
+        total = Number(countResult[0]?.count ?? 0);
+
+        products = await db.$queryRaw`
+          SELECT * FROM "Product" 
+          WHERE "stockQuantity" <= "minStockThreshold"
+          AND "category" = ${category}
+          ORDER BY "createdAt" DESC 
+          LIMIT ${limit} OFFSET ${skip}
+        `;
+      } else if (brand) {
+        const countResult = await db.$queryRaw<{ count: bigint }[]>`
+          SELECT COUNT(*)::bigint as count FROM "Product" 
+          WHERE "stockQuantity" <= "minStockThreshold"
+          AND "brand" = ${brand}
+        `;
+        total = Number(countResult[0]?.count ?? 0);
+
+        products = await db.$queryRaw`
+          SELECT * FROM "Product" 
+          WHERE "stockQuantity" <= "minStockThreshold"
+          AND "brand" = ${brand}
+          ORDER BY "createdAt" DESC 
+          LIMIT ${limit} OFFSET ${skip}
+        `;
+      } else {
+        // Sem filtros adicionais
+        const countResult = await db.$queryRaw<{ count: bigint }[]>`
+          SELECT COUNT(*)::bigint as count FROM "Product" 
+          WHERE "stockQuantity" <= "minStockThreshold"
+        `;
+        total = Number(countResult[0]?.count ?? 0);
+
+        products = await db.$queryRaw`
+          SELECT * FROM "Product" 
+          WHERE "stockQuantity" <= "minStockThreshold"
+          ORDER BY "createdAt" DESC 
+          LIMIT ${limit} OFFSET ${skip}
+        `;
       }
-      if (category) {
-        baseWhere += ` AND "category" = $${params.length + 1}`;
-        params.push(category);
-      }
-      if (brand) {
-        baseWhere += ` AND "brand" = $${params.length + 1}`;
-        params.push(brand);
-      }
-
-      const countQuery = `SELECT COUNT(*) as count FROM "Product" WHERE ${baseWhere}`;
-      const dataQuery = `SELECT * FROM "Product" WHERE ${baseWhere} ORDER BY "createdAt" DESC LIMIT $${
-        params.length + 1
-      } OFFSET $${params.length + 2}`;
-
-      const countResult = await db.$queryRawUnsafe<{ count: bigint }[]>(
-        countQuery,
-        ...params
-      );
-      total = Number(countResult[0]?.count ?? 0);
-
-      products = await db.$queryRawUnsafe<typeof products>(
-        dataQuery,
-        ...params,
-        limit,
-        skip
-      );
     } else {
       [products, total] = await Promise.all([
         db.product.findMany({
@@ -109,7 +206,9 @@ export async function GET(request: Request) {
       },
     });
   } catch (error) {
-    console.error("Error fetching products:", error);
+    logger.error("admin/products:GET - Erro ao buscar produtos", {
+      error: error instanceof Error ? error.message : String(error),
+    });
     return NextResponse.json(
       { error: "Failed to fetch products" },
       { status: 500 }
@@ -161,10 +260,15 @@ export async function POST(request: Request) {
     });
 
     return NextResponse.json(product, { status: 201 });
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  } catch (error: any) {
-    console.error("Error creating product:", error);
-    if (error.code === "P2002") {
+  } catch (error) {
+    logger.error("admin/products:POST - Erro ao criar produto", {
+      error: error instanceof Error ? error.message : String(error),
+    });
+    // Verificar erro de duplicação (Prisma P2002)
+    if (
+      error instanceof Prisma.PrismaClientKnownRequestError &&
+      error.code === "P2002"
+    ) {
       return NextResponse.json(
         { error: "Product with this code already exists" },
         { status: 409 }

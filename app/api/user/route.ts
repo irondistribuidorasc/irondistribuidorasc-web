@@ -1,4 +1,5 @@
 import { auth } from "@/src/lib/auth";
+import { logger } from "@/src/lib/logger";
 import { db } from "@/src/lib/prisma";
 import { userProfileSchema } from "@/src/lib/schemas/user";
 import { NextRequest, NextResponse } from "next/server";
@@ -38,7 +39,9 @@ export async function GET() {
 
     return NextResponse.json(user);
   } catch (error) {
-    console.error("Error fetching user profile:", error);
+    logger.error("user:GET - Erro ao buscar perfil", {
+      error: error instanceof Error ? error.message : String(error),
+    });
     return NextResponse.json(
       { error: "Failed to fetch user profile" },
       { status: 500 }
@@ -114,7 +117,9 @@ export async function PATCH(request: NextRequest) {
 
     return NextResponse.json(updatedUser);
   } catch (error) {
-    console.error("Error updating user profile:", error);
+    logger.error("user:PATCH - Erro ao atualizar perfil", {
+      error: error instanceof Error ? error.message : String(error),
+    });
     return NextResponse.json(
       { error: "Failed to update user profile" },
       { status: 500 }

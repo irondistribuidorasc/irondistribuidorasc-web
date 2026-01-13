@@ -2,6 +2,7 @@
 
 import { Button } from "@heroui/react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useSyncExternalStore, useCallback } from "react";
 
 const COOKIE_CONSENT_KEY = "iron-cookie-consent";
@@ -30,6 +31,8 @@ function subscribeToConsent(callback: () => void): () => void {
 }
 
 export function CookieConsent() {
+  const pathname = usePathname();
+  
   // Usar useSyncExternalStore para sincronizar com localStorage sem causar cascata de renders
   const savedConsent = useSyncExternalStore(
     subscribeToConsent,
@@ -37,7 +40,9 @@ export function CookieConsent() {
     getConsentServerSnapshot
   );
 
-  const showBanner = savedConsent === null;
+  // Não exibir em rotas de impressão
+  const isPrintRoute = pathname?.includes("/print");
+  const showBanner = savedConsent === null && !isPrintRoute;
 
   const saveConsent = useCallback((type: ConsentType) => {
     const consent = {
@@ -57,7 +62,7 @@ export function CookieConsent() {
 
   return (
     <div
-      className="fixed inset-x-0 bottom-0 z-50 bg-white/95 backdrop-blur-sm shadow-[0_-4px_20px_rgba(0,0,0,0.1)] dark:bg-slate-900/95 dark:shadow-[0_-4px_20px_rgba(0,0,0,0.3)]"
+      className="fixed inset-x-0 bottom-0 z-50 bg-white/95 backdrop-blur-sm shadow-[0_-4px_20px_rgba(0,0,0,0.1)] print:hidden dark:bg-slate-900/95 dark:shadow-[0_-4px_20px_rgba(0,0,0,0.3)]"
       role="dialog"
       aria-modal="true"
       aria-labelledby="cookie-consent-title"

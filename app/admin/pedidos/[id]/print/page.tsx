@@ -58,8 +58,12 @@ export default async function OrderPrintPage({ params }: PageProps) {
         </h1>
         <p className="text-sm">Pedido #{order.orderNumber}</p>
         <p className="text-sm">
-          {new Date(order.createdAt).toLocaleDateString("pt-BR")} -{" "}
-          {new Date(order.createdAt).toLocaleTimeString("pt-BR")}
+          {new Date(order.createdAt).toLocaleDateString("pt-BR", {
+            timeZone: "America/Sao_Paulo",
+          })} -{" "}
+          {new Date(order.createdAt).toLocaleTimeString("pt-BR", {
+            timeZone: "America/Sao_Paulo",
+          })}
         </p>
       </div>
 

@@ -15,9 +15,18 @@ import {
 import { OrderStatusBadge } from "./OrderStatusBadge";
 import { OrderStatusSelector } from "./OrderStatusSelector";
 import { formatCurrency } from "@/src/lib/utils";
-import { format } from "date-fns";
-import { ptBR } from "date-fns/locale";
 import Link from "next/link";
+
+// Formata data considerando timezone local corretamente
+function formatDate(dateString: string | Date): string {
+	const date = new Date(dateString);
+	return date.toLocaleDateString("pt-BR", {
+		day: "2-digit",
+		month: "2-digit",
+		year: "numeric",
+		timeZone: "America/Sao_Paulo",
+	});
+}
 
 interface AdminOrdersTableProps {
 	orders: Order[];
@@ -101,9 +110,7 @@ export function AdminOrdersTable({
 								</TableCell>
 								<TableCell>
 									<span className="text-sm text-slate-600 dark:text-slate-400">
-										{format(new Date(order.createdAt), "dd/MM/yyyy", {
-											locale: ptBR,
-										})}
+										{formatDate(order.createdAt)}
 									</span>
 								</TableCell>
 								<TableCell>
@@ -154,9 +161,7 @@ export function AdminOrdersTable({
 									{formatCurrency(order.total)}
 								</span>
 								<span className="text-sm text-slate-600 dark:text-slate-400">
-									{format(new Date(order.createdAt), "dd/MM/yyyy", {
-										locale: ptBR,
-									})}
+									{formatDate(order.createdAt)}
 								</span>
 							</div>
 

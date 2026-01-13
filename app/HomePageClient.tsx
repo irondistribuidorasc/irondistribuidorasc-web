@@ -95,7 +95,7 @@ export default function HomePageClient() {
 									as={Link}
 									href="/produtos"
 									size="lg"
-									className="bg-brand-600 px-8 font-semibold text-white shadow-lg shadow-brand-600/20 transition-transform hover:scale-105 hover:bg-brand-700"
+									className="bg-brand-600 px-8 font-semibold text-white shadow-lg shadow-brand-600/20 transition-transform hover:scale-105 hover:bg-brand-700 dark:text-white"
 								>
 									Fazer pedido de peças
 								</Button>

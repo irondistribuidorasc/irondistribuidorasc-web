@@ -1,6 +1,7 @@
 "use server";
 
 import { auth } from "@/src/lib/auth";
+import { logger } from "@/src/lib/logger";
 import { db as prisma } from "@/src/lib/prisma";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
@@ -96,6 +97,48 @@ export async function searchProducts(query: string) {
   return products;
 }
 
+export async function createQuickUser(name: string) {
+  const session = await auth();
+  if (!session || session.user.role !== "ADMIN") {
+    return { success: false, error: "Não autorizado" };
+  }
+
+  const trimmedName = name.trim();
+  if (!trimmedName || trimmedName.length < 2) {
+    return { success: false, error: "Nome deve ter pelo menos 2 caracteres" };
+  }
+
+  try {
+    // Gera email único fictício para clientes avulsos
+    const uniqueEmail = `avulso_${Date.now()}@iron.local`;
+
+    const user = await prisma.user.create({
+      data: {
+        name: trimmedName,
+        email: uniqueEmail,
+        role: "USER",
+        approved: true, // Cliente avulso já fica aprovado
+      },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        storeName: true,
+      },
+    });
+
+    return { success: true, user };
+  } catch (error) {
+    logger.error("admin-order-creation:createQuickUser - Erro ao criar cliente", {
+      error: error instanceof Error ? error.message : String(error),
+    });
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : "Erro ao criar cliente",
+    };
+  }
+}
+
 export async function createAdminOrder(data: CreateOrderInput) {
   const session = await auth();
   if (!session || session.user.role !== "ADMIN") {
@@ -182,7 +225,9 @@ export async function createAdminOrder(data: CreateOrderInput) {
     revalidatePath("/admin/pedidos");
     return { success: true, orderId: order.id };
   } catch (error) {
-    console.error("Error creating admin order:", error);
+    logger.error("admin-order-creation:createAdminOrder - Erro ao criar pedido", {
+      error: error instanceof Error ? error.message : String(error),
+    });
     return {
       success: false,
       error: error instanceof Error ? error.message : "Erro ao criar pedido",

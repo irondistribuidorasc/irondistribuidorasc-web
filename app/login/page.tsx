@@ -23,6 +23,7 @@ import {
 	type RegisterSchema,
 	registerSchema,
 } from "@/src/lib/schemas";
+import { maskCPFOrCNPJ, maskPhone } from "@/src/lib/masks";
 
 function LoginPageContent() {
 	const { data: session, status } = useSession();
@@ -297,6 +298,11 @@ function LoginPageContent() {
 									autoComplete="tel"
 									isInvalid={!!registerErrors.phone}
 									errorMessage={registerErrors.phone?.message}
+									onChange={(e) => {
+										const masked = maskPhone(e.target.value);
+										setRegisterValue("phone", masked);
+									}}
+									value={watchRegister("phone") || ""}
 								/>
 								<Input
 									{...registerRegister("docNumber")}
@@ -305,6 +311,11 @@ function LoginPageContent() {
 									autoComplete="off"
 									isInvalid={!!registerErrors.docNumber}
 									errorMessage={registerErrors.docNumber?.message}
+									onChange={(e) => {
+										const masked = maskCPFOrCNPJ(e.target.value);
+										setRegisterValue("docNumber", masked);
+									}}
+									value={watchRegister("docNumber") || ""}
 								/>
 								<Input
 									{...registerRegister("password")}

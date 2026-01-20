@@ -231,7 +231,7 @@ export function OrderDetailsModal({
         </ModalBody>
 
         <ModalFooter>
-          <Button color="danger" variant="light" onPress={onClose}>
+          <Button color="default" variant="light" onPress={onClose}>
             Fechar
           </Button>
         </ModalFooter>

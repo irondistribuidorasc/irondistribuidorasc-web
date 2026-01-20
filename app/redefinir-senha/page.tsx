@@ -41,7 +41,9 @@ function ResetPasswordContent() {
   if (!token) {
     return (
       <div className="text-center">
-        <p className="mb-4 text-red-600">Token inválido ou ausente.</p>
+        <p className="mb-4 text-error-600 dark:text-error-400">
+          Token inválido ou ausente.
+        </p>
         <Button as={Link} href="/recuperar-senha" variant="bordered">
           Solicitar novo link
         </Button>
@@ -119,7 +121,7 @@ function ResetPasswordContent() {
 
       <Button
         type="submit"
-        color="danger"
+        color="primary"
         className="w-full bg-brand-600 text-white"
         isLoading={isSubmitting}
       >

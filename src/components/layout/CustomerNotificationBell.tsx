@@ -51,7 +51,7 @@ export default function CustomerNotificationBell({
           )}
           <Badge
             content={unreadCount}
-            color="danger"
+            color="primary"
             shape="circle"
             isInvisible={unreadCount === 0}
           >

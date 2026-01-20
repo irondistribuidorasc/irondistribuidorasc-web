@@ -155,7 +155,7 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                 </Button>
                 <Button
                   fullWidth
-                  color="danger"
+                  color="primary"
                   className="bg-brand-600 text-white"
                   onPress={handleGoToCheckout}
                   isDisabled={!hasItems}

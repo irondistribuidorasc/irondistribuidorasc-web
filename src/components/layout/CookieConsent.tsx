@@ -100,7 +100,7 @@ export function CookieConsent() {
               Apenas essenciais
             </Button>
             <Button
-              color="danger"
+              color="primary"
               size="sm"
               onPress={() => saveConsent("all")}
               className="w-full bg-brand-600 text-white sm:w-auto"

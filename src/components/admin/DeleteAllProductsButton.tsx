@@ -39,7 +39,7 @@ export default function DeleteAllProductsButton() {
   return (
     <>
       <Button
-        className="bg-red-600 text-white font-medium shadow-lg shadow-red-600/30 hover:bg-red-700 hover:shadow-xl hover:shadow-red-600/40 transition-all"
+        className="bg-error-600 text-white font-medium shadow-lg shadow-error-600/30 hover:bg-error-700 hover:shadow-xl hover:shadow-error-600/40 transition-all"
         startContent={<TrashIcon className="h-5 w-5" />}
         onPress={onOpen}
       >

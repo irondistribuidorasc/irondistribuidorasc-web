@@ -1,6 +1,6 @@
 "use client";
 
-import { Order } from "@/types/order";
+import type { Order } from "@/types/order";
 import {
 	Table,
 	TableHeader,
@@ -42,7 +42,7 @@ export function AdminOrdersTable({
 	if (isLoading) {
 		return (
 			<div className="flex justify-center py-12">
-				<Spinner size="lg" color="danger" />
+				<Spinner size="lg" color="primary" />
 			</div>
 		);
 	}

@@ -90,7 +90,7 @@ export function ProductInfo({ product }: ProductInfoProps) {
         <div className="space-y-6 border-t border-slate-100 pt-6 dark:border-slate-700">
           {!product.inStock ? (
             <div className="space-y-3">
-              <div className="flex items-center text-red-600 dark:text-red-400">
+              <div className="flex items-center text-error-600 dark:text-error-400">
                 <svg
                   className="mr-2 h-5 w-5"
                   fill="none"

@@ -1,19 +1,18 @@
 "use client";
 
-import { formatCurrency } from "@/src/lib/utils";
 import {
-	ChevronLeftIcon,
-	PrinterIcon,
-	BanknotesIcon,
-	CurrencyDollarIcon,
-	CreditCardIcon,
-	DevicePhoneMobileIcon,
-	ClockIcon,
-	CalendarDaysIcon,
-	HashtagIcon,
-	UserIcon,
-	InboxIcon,
 	ArrowTrendingUpIcon,
+	BanknotesIcon,
+	CalendarDaysIcon,
+	ChevronLeftIcon,
+	ClockIcon,
+	CreditCardIcon,
+	CurrencyDollarIcon,
+	DevicePhoneMobileIcon,
+	HashtagIcon,
+	InboxIcon,
+	PrinterIcon,
+	UserIcon,
 	WalletIcon,
 } from "@heroicons/react/24/outline";
 import {
@@ -26,10 +25,11 @@ import {
 } from "@heroui/react";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
-import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
+import { useSession } from "next-auth/react";
 import { Suspense, useEffect, useState } from "react";
+import { formatCurrency } from "@/src/lib/utils";
 
 interface FinancialSummary {
 	total: number;
@@ -72,7 +72,9 @@ function FinancialPageContent() {
 	const searchParams = useSearchParams();
 	const dateParam = searchParams.get("date");
 
-	const [date, setDate] = useState(dateParam ? dateParam : getLocalDateString());
+	const [date, setDate] = useState(
+		dateParam ? dateParam : getLocalDateString(),
+	);
 	const [loading, setLoading] = useState(true);
 	const [orders, setOrders] = useState<Order[]>([]);
 	const [summary, setSummary] = useState<FinancialSummary>({
@@ -203,11 +205,11 @@ function FinancialPageContent() {
 
 				{/* Header Card - Hidden on print */}
 				<Card className="mb-8 overflow-hidden border-0 shadow-xl print:hidden">
-					<div className="relative bg-gradient-to-r from-slate-700 via-slate-800 to-slate-700">
+					<div className="relative bg-gradient-to-r from-slate-50 via-white to-slate-100 dark:from-slate-700 dark:via-slate-800 dark:to-slate-700">
 						{/* Decorative elements */}
 						<div className="absolute inset-0 overflow-hidden">
-							<div className="absolute -top-10 -right-10 h-40 w-40 rounded-full bg-white/5 blur-3xl" />
-							<div className="absolute -bottom-10 -left-10 h-40 w-40 rounded-full bg-slate-500/10 blur-3xl" />
+							<div className="absolute -top-10 -right-10 h-40 w-40 rounded-full bg-brand-500/10 blur-3xl dark:bg-white/5" />
+							<div className="absolute -bottom-10 -left-10 h-40 w-40 rounded-full bg-brand-600/10 blur-3xl dark:bg-slate-500/10" />
 						</div>
 
 						<div className="relative px-6 py-6 sm:px-8">
@@ -217,10 +219,10 @@ function FinancialPageContent() {
 										<BanknotesIcon className="h-7 w-7 text-white" />
 									</div>
 									<div>
-										<h1 className="text-2xl font-bold text-white sm:text-3xl">
+										<h1 className="text-2xl font-bold text-slate-900 dark:text-white sm:text-3xl">
 											Controle Financeiro
 										</h1>
-										<p className="mt-1 text-slate-300">
+										<p className="mt-1 text-slate-600 dark:text-slate-300">
 											Resumo de vendas e fechamento de caixa
 										</p>
 									</div>
@@ -228,13 +230,13 @@ function FinancialPageContent() {
 
 								{/* Date Selector & Actions */}
 								<div className="flex flex-wrap items-center gap-3">
-									<div className="flex items-center gap-2 rounded-xl bg-white/10 px-4 py-2.5 backdrop-blur-sm">
-										<CalendarDaysIcon className="h-5 w-5 text-white" />
+									<div className="flex items-center gap-2 rounded-xl bg-slate-100/80 px-4 py-2.5 backdrop-blur-sm dark:bg-white/10">
+										<CalendarDaysIcon className="h-5 w-5 text-slate-700 dark:text-white" />
 										<input
 											type="date"
 											value={date}
 											onChange={handleDateChange}
-											className="bg-transparent text-white font-medium outline-none cursor-pointer [color-scheme:dark]"
+											className="bg-transparent text-slate-700 font-medium outline-none cursor-pointer [color-scheme:light] dark:text-white dark:[color-scheme:dark]"
 										/>
 									</div>
 									<Button
@@ -248,7 +250,7 @@ function FinancialPageContent() {
 							</div>
 
 							{/* Date Display */}
-							<div className="mt-4 text-sm text-slate-400 capitalize">
+							<div className="mt-4 text-sm text-slate-500 dark:text-slate-400 capitalize">
 								📅 {formattedDate}
 							</div>
 						</div>
@@ -262,7 +264,9 @@ function FinancialPageContent() {
 							Iron Distribuidora
 						</h1>
 						<p className="text-xs">Fechamento de Caixa</p>
-						<p className="text-xs">{format(parseLocalDate(date), "dd/MM/yyyy")}</p>
+						<p className="text-xs">
+							{format(parseLocalDate(date), "dd/MM/yyyy")}
+						</p>
 					</div>
 
 					<div className="mb-2 border-b border-black pb-2">
@@ -400,7 +404,7 @@ function FinancialPageContent() {
 						<Card className="overflow-hidden border-0 shadow-lg bg-white/80 backdrop-blur-sm dark:bg-slate-800/80 hover:shadow-xl transition-all">
 							<CardBody className="p-5">
 								<div className="flex items-center gap-3">
-									<div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-violet-500 to-purple-600 shadow-lg shadow-violet-500/30">
+									<div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-brand-500 to-brand-600 shadow-lg shadow-brand-500/30">
 										<CreditCardIcon className="h-6 w-6 text-white" />
 									</div>
 									<div>
@@ -416,14 +420,14 @@ function FinancialPageContent() {
 									<Chip
 										size="sm"
 										variant="flat"
-										className="bg-violet-100 text-violet-700 dark:bg-violet-900/30 dark:text-violet-300"
+										className="bg-brand-100 text-brand-700 dark:bg-brand-900/30 dark:text-brand-300"
 									>
 										C: {formatCurrency(summary.creditCard)}
 									</Chip>
 									<Chip
 										size="sm"
 										variant="flat"
-										className="bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300"
+										className="bg-brand-200 text-brand-800 dark:bg-brand-900/40 dark:text-brand-200"
 									>
 										D: {formatCurrency(summary.debitCard)}
 									</Chip>
@@ -533,11 +537,14 @@ function FinancialPageContent() {
 												{/* Horário */}
 												<div className="col-span-2 flex items-center">
 													<span className="text-sm text-slate-500 dark:text-slate-400">
-														{new Date(order.createdAt).toLocaleTimeString("pt-BR", {
-															hour: "2-digit",
-															minute: "2-digit",
-															timeZone: "America/Sao_Paulo",
-														})}
+														{new Date(order.createdAt).toLocaleTimeString(
+															"pt-BR",
+															{
+																hour: "2-digit",
+																minute: "2-digit",
+																timeZone: "America/Sao_Paulo",
+															},
+														)}
 													</span>
 												</div>
 

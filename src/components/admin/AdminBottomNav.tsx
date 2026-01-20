@@ -21,8 +21,8 @@ const navItems = [
     label: "Pedidos",
     icon: ShoppingBagIcon,
     iconActive: ShoppingBagSolid,
-    color: "text-rose-500",
-    bgColor: "bg-rose-500/10",
+    color: "text-brand-500",
+    bgColor: "bg-brand-500/10",
   },
   {
     href: "/admin/usuarios",
@@ -37,8 +37,8 @@ const navItems = [
     label: "Produtos",
     icon: TagIcon,
     iconActive: TagSolid,
-    color: "text-violet-500",
-    bgColor: "bg-violet-500/10",
+    color: "text-brand-500",
+    bgColor: "bg-brand-500/10",
   },
   {
     href: "/admin/financeiro",

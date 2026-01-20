@@ -714,7 +714,7 @@ export function CarrinhoCheckout() {
       {/* Botão finalizar */}
       <div className="flex flex-col gap-3 sm:flex-row sm:justify-end">
         <Button
-          color="danger"
+          color="primary"
           size="lg"
           className="bg-brand-600 text-white sm:w-auto"
           onPress={handlePreFinalize}
@@ -724,7 +724,7 @@ export function CarrinhoCheckout() {
         </Button>
       </div>
       {showErrors && !isCustomerInfoValid && (
-        <p className="text-center text-sm text-red-600 dark:text-red-400">
+        <p className="text-center text-sm text-error-600 dark:text-error-400">
           {!isStateValid && customer.state.trim()
             ? "UF inválida. Informe uma sigla de estado válida (ex: SC, SP, RJ)."
             : "Preencha os campos obrigatórios (nome, cidade e estado válido) para finalizar."}
@@ -753,7 +753,7 @@ export function CarrinhoCheckout() {
                 <p>Deseja confirmar e enviar o pedido?</p>
               </ModalBody>
               <ModalFooter>
-                <Button color="danger" variant="light" onPress={onClose}>
+                <Button color="default" variant="light" onPress={onClose}>
                   Cancelar
                 </Button>
                 <Button

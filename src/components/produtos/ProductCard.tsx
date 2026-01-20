@@ -52,7 +52,7 @@ export function ProductCard({ product }: ProductCardProps) {
     >
       {/* Badge de disponibilidade */}
       {!product.inStock && (
-        <div className="absolute left-2 top-2 z-10 rounded-md bg-red-500 px-2 py-1 text-xs font-semibold text-white">
+        <div className="absolute left-2 top-2 z-10 rounded-md bg-error-500 px-2 py-1 text-xs font-semibold text-white">
           Fora de estoque
         </div>
       )}

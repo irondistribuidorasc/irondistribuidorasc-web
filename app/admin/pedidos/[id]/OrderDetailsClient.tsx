@@ -138,7 +138,7 @@ export default function OrderDetailsClient({ order }: OrderDetailsClientProps) {
 							<div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
 								{/* Left: Order Info */}
 								<div className="flex items-start gap-4">
-									<div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-brand-500 to-red-600 shadow-lg shadow-brand-500/30">
+									<div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-brand-500 to-brand-600 shadow-lg shadow-brand-500/30">
 										<ShoppingBagIcon className="h-7 w-7 text-white" />
 									</div>
 									<div>
@@ -244,9 +244,9 @@ export default function OrderDetailsClient({ order }: OrderDetailsClientProps) {
 					<div className="space-y-6 lg:col-span-2">
 						{/* Order Items */}
 						<Card className="overflow-hidden border-0 shadow-lg bg-white/80 backdrop-blur-sm dark:bg-slate-800/80">
-							<CardHeader className="border-b border-slate-100 bg-gradient-to-r from-violet-50 to-purple-50 px-6 py-4 dark:border-slate-700 dark:from-violet-900/20 dark:to-purple-900/20">
+							<CardHeader className="border-b border-slate-100 bg-gradient-to-r from-brand-50 to-brand-100 px-6 py-4 dark:border-slate-700 dark:from-brand-900/20 dark:to-brand-900/30">
 								<div className="flex items-center gap-3">
-									<div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-violet-500 to-purple-600 shadow-lg shadow-violet-500/30">
+									<div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-brand-500 to-brand-600 shadow-lg shadow-brand-500/30">
 										<CubeIcon className="h-5 w-5 text-white" />
 									</div>
 									<div>

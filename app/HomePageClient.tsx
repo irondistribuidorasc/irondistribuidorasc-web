@@ -95,7 +95,7 @@ export default function HomePageClient() {
 									as={Link}
 									href="/produtos"
 									size="lg"
-									className="bg-brand-600 px-8 font-semibold text-white shadow-lg shadow-brand-600/20 transition-transform hover:scale-105 hover:bg-brand-700 dark:text-white"
+									className="bg-brand-600 px-8 font-semibold shadow-lg shadow-brand-600/20 transition-transform hover:scale-105 hover:bg-brand-700 [&]:text-white hover:[&]:text-white"
 								>
 									Fazer pedido de peças
 								</Button>
@@ -186,7 +186,7 @@ export default function HomePageClient() {
 						},
 					].map((item, index) => (
 						<ScrollAnimation
-							key={index}
+							key={item.title}
 							variant="fadeInUp"
 							delay={index * 0.1}
 							className="h-full"
@@ -264,9 +264,9 @@ export default function HomePageClient() {
 								"Doctor Phone",
 								"Cell Master",
 								"Top Assistência",
-							].map((partner, index) => (
+							].map((partner) => (
 								<div
-									key={index}
+									key={partner}
 									className="flex items-center gap-3 text-xl font-bold text-slate-300 transition-colors hover:text-brand-600 dark:text-slate-700 dark:hover:text-brand-500"
 								>
 									{/* Placeholder Logo Icon */}
@@ -284,9 +284,9 @@ export default function HomePageClient() {
 								"Doctor Phone",
 								"Cell Master",
 								"Top Assistência",
-							].map((partner, index) => (
+							].map((partner) => (
 								<div
-									key={`dup-${index}`}
+									key={`dup-${partner}`}
 									className="flex items-center gap-3 text-xl font-bold text-slate-300 transition-colors hover:text-brand-600 dark:text-slate-700 dark:hover:text-brand-500"
 								>
 									<div className="h-8 w-8 rounded-full bg-current opacity-20" />
@@ -323,7 +323,7 @@ export default function HomePageClient() {
 								as={Link}
 								href="/produtos"
 								variant="flat"
-								color="danger"
+								color="primary"
 								className="bg-brand-100 font-semibold text-brand-700 dark:bg-brand-900/30 dark:text-brand-400"
 							>
 								Ver todo o catálogo
@@ -430,7 +430,7 @@ export default function HomePageClient() {
 							},
 						].map((testimonial, index) => (
 							<ScrollAnimation
-								key={index}
+								key={`${testimonial.name}-${testimonial.store}`}
 								variant="fadeInUp"
 								delay={index * 0.1}
 								className="h-full"

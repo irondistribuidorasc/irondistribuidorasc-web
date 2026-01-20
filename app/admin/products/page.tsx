@@ -1,23 +1,23 @@
 "use client";
 
+import {
+	ArchiveBoxIcon,
+	ArrowUpTrayIcon,
+	ChevronLeftIcon,
+	CubeIcon,
+	ListBulletIcon,
+	PlusCircleIcon,
+} from "@heroicons/react/24/outline";
+import { Button, Card, CardBody, Spinner, Tab, Tabs } from "@heroui/react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
+import { useEffect, useState } from "react";
 import DeleteAllProductsButton from "@/src/components/admin/DeleteAllProductsButton";
 import ProductForm from "@/src/components/admin/ProductForm";
 import ProductImport from "@/src/components/admin/ProductImport";
 import ProductList from "@/src/components/admin/ProductList";
 import StockManager from "@/src/components/admin/StockManager";
-import { Button, Card, CardBody, Spinner, Tab, Tabs } from "@heroui/react";
-import {
-	CubeIcon,
-	ChevronLeftIcon,
-	ListBulletIcon,
-	ArchiveBoxIcon,
-	PlusCircleIcon,
-	ArrowUpTrayIcon,
-} from "@heroicons/react/24/outline";
-import { useSession } from "next-auth/react";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
 
 export default function AdminProductsPage() {
 	const { data: session, status } = useSession();
@@ -63,24 +63,24 @@ export default function AdminProductsPage() {
 
 				{/* Header Card */}
 				<Card className="mb-8 overflow-hidden border-0 shadow-xl">
-					<div className="relative bg-gradient-to-r from-slate-700 via-slate-800 to-slate-700">
+					<div className="relative bg-gradient-to-r from-slate-50 via-white to-slate-100 dark:from-slate-700 dark:via-slate-800 dark:to-slate-700">
 						{/* Decorative elements */}
 						<div className="absolute inset-0 overflow-hidden">
-							<div className="absolute -top-10 -right-10 h-40 w-40 rounded-full bg-white/5 blur-3xl" />
-							<div className="absolute -bottom-10 -left-10 h-40 w-40 rounded-full bg-slate-500/10 blur-3xl" />
+							<div className="absolute -top-10 -right-10 h-40 w-40 rounded-full bg-brand-500/10 blur-3xl dark:bg-white/5" />
+							<div className="absolute -bottom-10 -left-10 h-40 w-40 rounded-full bg-brand-600/10 blur-3xl dark:bg-slate-500/10" />
 						</div>
 
 						<div className="relative px-6 py-6 sm:px-8">
 							<div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
 								<div className="flex items-center gap-4">
-									<div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-violet-500 to-purple-600 shadow-lg shadow-violet-500/30">
+									<div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-brand-500 to-brand-600 shadow-lg shadow-brand-500/30">
 										<CubeIcon className="h-7 w-7 text-white" />
 									</div>
 									<div>
-										<h1 className="text-2xl font-bold text-white sm:text-3xl">
+										<h1 className="text-2xl font-bold text-slate-900 dark:text-white sm:text-3xl">
 											Gerenciar Produtos
 										</h1>
-										<p className="mt-1 text-slate-300">
+										<p className="mt-1 text-slate-600 dark:text-slate-300">
 											Adicione, edite ou importe produtos em massa
 										</p>
 									</div>
@@ -101,13 +101,13 @@ export default function AdminProductsPage() {
 						<Tabs
 							selectedKey={activeTab}
 							onSelectionChange={(key) => setActiveTab(key as string)}
-							color="secondary"
+							color="primary"
 							variant="solid"
 							classNames={{
 								tabList:
 									"gap-2 w-full flex-wrap bg-slate-100/50 dark:bg-slate-700/50 p-1 rounded-xl",
 								cursor:
-									"bg-gradient-to-r from-violet-500 to-purple-600 shadow-md",
+									"bg-gradient-to-r from-brand-500 to-brand-600 shadow-md",
 								tab: "px-4 py-2.5 font-medium",
 								tabContent: "group-data-[selected=true]:text-white",
 							}}

@@ -15,15 +15,15 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { signIn, signOut, useSession } from "next-auth/react";
 import { Suspense, useState, useTransition } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 import { toast } from "sonner";
+import { maskCPFOrCNPJ, maskPhone } from "@/src/lib/masks";
 import {
 	type LoginSchema,
 	loginSchema,
 	type RegisterSchema,
 	registerSchema,
 } from "@/src/lib/schemas";
-import { maskCPFOrCNPJ, maskPhone } from "@/src/lib/masks";
 
 function LoginPageContent() {
 	const { data: session, status } = useSession();
@@ -48,7 +48,7 @@ function LoginPageContent() {
 		handleSubmit: handleSubmitRegister,
 		formState: { errors: registerErrors, isSubmitting: isRegistering },
 		setValue: setRegisterValue,
-		watch: watchRegister,
+		control: registerControl,
 	} = useForm<RegisterSchema>({
 		resolver: zodResolver(registerSchema),
 		defaultValues: {
@@ -56,7 +56,20 @@ function LoginPageContent() {
 		},
 	});
 
-	const acceptedTerms = watchRegister("acceptedTerms");
+	const acceptedTerms = Boolean(
+		useWatch({
+			control: registerControl,
+			name: "acceptedTerms",
+		}),
+	);
+	const phoneValue = useWatch({
+		control: registerControl,
+		name: "phone",
+	});
+	const docNumberValue = useWatch({
+		control: registerControl,
+		name: "docNumber",
+	});
 
 	const isAuthenticated = status === "authenticated" && !!session?.user;
 
@@ -157,7 +170,7 @@ function LoginPageContent() {
 							<Button
 								as={Link}
 								href="/pedido"
-								color="danger"
+								color="primary"
 								className="bg-brand-600 text-white"
 								size="lg"
 							>
@@ -219,7 +232,7 @@ function LoginPageContent() {
 					<Tabs
 						aria-label="Fluxo de autenticação"
 						variant="bordered"
-						color="danger"
+						color="primary"
 						selectedKey={activeTab}
 						onSelectionChange={setActiveTab}
 					>
@@ -256,7 +269,7 @@ function LoginPageContent() {
 								</div>
 								<Button
 									type="submit"
-									color="danger"
+									color="primary"
 									className="w-full bg-brand-600 text-white"
 									isLoading={isLoggingIn || isPending}
 								>
@@ -302,7 +315,7 @@ function LoginPageContent() {
 										const masked = maskPhone(e.target.value);
 										setRegisterValue("phone", masked);
 									}}
-									value={watchRegister("phone") || ""}
+									value={phoneValue || ""}
 								/>
 								<Input
 									{...registerRegister("docNumber")}
@@ -315,7 +328,7 @@ function LoginPageContent() {
 										const masked = maskCPFOrCNPJ(e.target.value);
 										setRegisterValue("docNumber", masked);
 									}}
-									value={watchRegister("docNumber") || ""}
+									value={docNumberValue || ""}
 								/>
 								<Input
 									{...registerRegister("password")}
@@ -372,7 +385,7 @@ function LoginPageContent() {
 								</div>
 								<Button
 									type="submit"
-									color="danger"
+									color="primary"
 									className="w-full bg-brand-600 text-white"
 									isLoading={isRegistering || isPending}
 								>

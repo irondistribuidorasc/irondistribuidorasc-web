@@ -33,7 +33,7 @@ export default function ContaPendentePage() {
             <Button
               as={Link}
               href="/"
-              color="danger"
+              color="primary"
               className="bg-brand-600 text-white"
               size="lg"
             >

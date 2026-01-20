@@ -386,7 +386,7 @@ export function NewOrderForm() {
                     variant="light"
                     size="sm"
                     onPress={() => setSelectedUser(null)}
-                    className="text-slate-400 hover:text-red-500"
+                    className="text-slate-400 hover:text-brand-500"
                   >
                     <XMarkIcon className="h-5 w-5" />
                   </Button>
@@ -400,7 +400,7 @@ export function NewOrderForm() {
         <Card className={`border-none shadow-lg transition-all duration-300 ${!selectedUser ? 'opacity-50 pointer-events-none' : ''} bg-gradient-to-br from-slate-50 to-slate-100/50 dark:from-slate-800/80 dark:to-slate-900/80`}>
           <CardHeader className="px-6 py-5 border-b border-slate-200/50 dark:border-slate-700/50">
             <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-violet-500 to-purple-600 shadow-lg shadow-violet-500/25">
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-brand-500 to-brand-600 shadow-lg shadow-brand-500/25">
                 <ShoppingCartIcon className="h-5 w-5 text-white" />
               </div>
               <div>
@@ -409,7 +409,7 @@ export function NewOrderForm() {
               </div>
               {cart.length > 0 && (
                 <Chip
-                  color="secondary"
+                  color="primary"
                   variant="flat"
                   size="sm"
                   className="ml-auto"
@@ -513,7 +513,7 @@ export function NewOrderForm() {
                         size="sm"
                         variant="light"
                         onPress={() => removeProduct(item.id)}
-                        className="text-slate-400 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity"
+                        className="text-slate-400 hover:text-brand-500 opacity-0 group-hover:opacity-100 transition-opacity"
                       >
                         <TrashIcon className="w-5 h-5" />
                       </Button>
@@ -643,7 +643,7 @@ export function NewOrderForm() {
                 size="lg"
                 className={`w-full font-semibold text-white shadow-lg transition-all ${
                   canSubmit 
-                    ? 'bg-gradient-to-r from-brand-500 to-red-600 shadow-brand-500/25 hover:shadow-brand-500/40 hover:scale-[1.02]' 
+                    ? 'bg-gradient-to-r from-brand-500 to-brand-600 shadow-brand-500/25 hover:shadow-brand-500/40 hover:scale-[1.02]' 
                     : 'bg-slate-300 dark:bg-slate-700'
                 }`}
                 isLoading={loading}

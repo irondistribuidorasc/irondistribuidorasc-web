@@ -295,11 +295,11 @@ export default function AdminUsersPage() {
 
 				{/* Header Card */}
 				<Card className="mb-8 overflow-hidden border-0 shadow-xl">
-					<div className="relative bg-gradient-to-r from-slate-700 via-slate-800 to-slate-700">
+					<div className="relative bg-gradient-to-r from-slate-50 via-white to-slate-100 dark:from-slate-700 dark:via-slate-800 dark:to-slate-700">
 						{/* Decorative elements */}
 						<div className="absolute inset-0 overflow-hidden">
-							<div className="absolute -top-10 -right-10 h-40 w-40 rounded-full bg-white/5 blur-3xl" />
-							<div className="absolute -bottom-10 -left-10 h-40 w-40 rounded-full bg-slate-500/10 blur-3xl" />
+							<div className="absolute -top-10 -right-10 h-40 w-40 rounded-full bg-brand-500/10 blur-3xl dark:bg-white/5" />
+							<div className="absolute -bottom-10 -left-10 h-40 w-40 rounded-full bg-brand-600/10 blur-3xl dark:bg-slate-500/10" />
 						</div>
 
 						<div className="relative px-6 py-6 sm:px-8">
@@ -309,10 +309,10 @@ export default function AdminUsersPage() {
 										<UsersIcon className="h-7 w-7 text-white" />
 									</div>
 									<div>
-										<h1 className="text-2xl font-bold text-white sm:text-3xl">
+										<h1 className="text-2xl font-bold text-slate-900 dark:text-white sm:text-3xl">
 											Gerenciar Usuários
 										</h1>
-										<p className="mt-1 text-slate-300">
+										<p className="mt-1 text-slate-600 dark:text-slate-300">
 											Aprovação e gerenciamento de contas
 										</p>
 									</div>
@@ -320,11 +320,11 @@ export default function AdminUsersPage() {
 
 								{/* Quick Stats */}
 								<div className="flex gap-3">
-									<div className="rounded-xl bg-white/10 px-4 py-2 backdrop-blur-sm">
-										<p className="text-xs font-medium text-emerald-100">
+									<div className="rounded-xl bg-slate-100/80 px-4 py-2 backdrop-blur-sm dark:bg-white/10">
+										<p className="text-xs font-medium text-emerald-700 dark:text-emerald-100">
 											Total
 										</p>
-										<p className="text-xl font-bold text-white">
+										<p className="text-xl font-bold text-slate-900 dark:text-white">
 											{pagination.total}
 										</p>
 									</div>
@@ -338,7 +338,7 @@ export default function AdminUsersPage() {
 				<Card className="mb-6 overflow-hidden border-0 shadow-lg bg-white/80 backdrop-blur-sm dark:bg-slate-800/80">
 					<CardBody className="p-4">
 						<div className="flex items-center gap-3 mb-4">
-							<div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-violet-500 to-purple-600 shadow-md shadow-violet-500/30">
+							<div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-brand-500 to-brand-600 shadow-md shadow-brand-500/30">
 								<FunnelIcon className="h-4 w-4 text-white" />
 							</div>
 							<span className="text-sm font-medium text-slate-600 dark:text-slate-400">
@@ -356,7 +356,7 @@ export default function AdminUsersPage() {
 							classNames={{
 								tabList:
 									"gap-2 w-full flex-wrap bg-slate-100/50 dark:bg-slate-700/50 p-1 rounded-xl",
-								cursor: "bg-gradient-to-r from-brand-500 to-red-600 shadow-md",
+								cursor: "bg-gradient-to-r from-brand-500 to-brand-600 shadow-md",
 								tab: "px-4 py-2 font-medium",
 								tabContent: "group-data-[selected=true]:text-white",
 							}}
@@ -410,7 +410,7 @@ export default function AdminUsersPage() {
 										<input
 											id="search-users"
 											type="text"
-											className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2 pl-10 text-sm text-slate-900 shadow-sm outline-none transition-colors placeholder:text-slate-400 hover:bg-slate-100 focus:ring-2 focus:ring-rose-500 dark:border-slate-600 dark:bg-slate-700/50 dark:text-slate-100 dark:placeholder:text-slate-500 dark:hover:bg-slate-700"
+											className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2 pl-10 text-sm text-slate-900 shadow-sm outline-none transition-colors placeholder:text-slate-400 hover:bg-slate-100 focus:ring-2 focus:ring-brand-500 dark:border-slate-600 dark:bg-slate-700/50 dark:text-slate-100 dark:placeholder:text-slate-500 dark:hover:bg-slate-700"
 											placeholder="Nome, email, telefone..."
 											value={searchQuery}
 											onChange={(e) => setSearchQuery(e.target.value)}
@@ -655,12 +655,12 @@ export default function AdminUsersPage() {
 												{user.role === "ADMIN" ? (
 													<Chip
 														variant="flat"
-														color="secondary"
+														color="primary"
 														startContent={
 															<ShieldCheckIcon className="h-4 w-4" />
 														}
 														classNames={{
-															base: "bg-gradient-to-r from-brand-100 to-red-100 dark:from-brand-900/30 dark:to-red-900/30",
+															base: "bg-gradient-to-r from-brand-100 to-brand-200 dark:from-brand-900/30 dark:to-brand-800/30",
 															content:
 																"text-brand-700 dark:text-brand-300 font-medium",
 														}}
@@ -794,7 +794,7 @@ export default function AdminUsersPage() {
 										color="primary"
 										classNames={{
 											cursor:
-												"bg-gradient-to-r from-brand-500 to-red-600 shadow-md",
+											"bg-gradient-to-r from-brand-500 to-brand-600 shadow-md",
 										}}
 									/>
 								</Card>

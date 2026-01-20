@@ -68,7 +68,7 @@ export function Header() {
               isBordered
               as="button"
               className="transition-transform"
-              color="danger"
+              color="primary"
               name={getUserDisplayName()}
               size="sm"
               src={session?.user?.image || undefined}
@@ -87,7 +87,6 @@ export function Header() {
             </DropdownItem>
             <DropdownItem
               key="logout"
-              color="danger"
               onPress={() => signOut({ callbackUrl: "/" })}
             >
               Sair
@@ -101,7 +100,7 @@ export function Header() {
       <Button
         as={Link}
         href="/login"
-        color="danger"
+        color="primary"
         variant="flat"
         size="sm"
         className="font-medium"
@@ -155,7 +154,7 @@ export function Header() {
             >
               <Badge
                 content={unreadCount}
-                color="danger"
+                color="primary"
                 shape="circle"
                 isInvisible={unreadCount === 0 || isMobileMenuOpen}
                 className="border-2 border-white dark:border-slate-900"

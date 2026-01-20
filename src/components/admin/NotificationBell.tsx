@@ -170,7 +170,7 @@ export default function NotificationBell({ label }: { label?: string }) {
           )}
           <Badge
             content={totalNotifications}
-            color="danger"
+            color="primary"
             shape="circle"
             isInvisible={totalNotifications === 0}
           >

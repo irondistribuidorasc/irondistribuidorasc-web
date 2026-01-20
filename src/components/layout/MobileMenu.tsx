@@ -358,7 +358,7 @@ export function MobileMenu({
               {isAuthenticated && (
                 <div className="border-t border-slate-200 p-4 dark:border-slate-800">
                   <Button
-                    color="danger"
+                    color="default"
                     variant="flat"
                     className="w-full"
                     onPress={handleAuthAction}

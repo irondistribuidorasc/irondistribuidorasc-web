@@ -61,11 +61,11 @@ export default function MeusPedidosPage() {
   if (error) {
     return (
       <div className="container mx-auto px-4 py-8">
-        <div className="flex min-h-[400px] flex-col items-center justify-center rounded-lg border-2 border-dashed border-red-300 bg-red-50 p-8 text-center dark:border-red-700 dark:bg-red-900/20">
-          <p className="text-red-600 dark:text-red-400">{error}</p>
+        <div className="flex min-h-[400px] flex-col items-center justify-center rounded-lg border-2 border-dashed border-error-300 bg-error-50 p-8 text-center dark:border-error-700 dark:bg-error-900/20">
+          <p className="text-error-600 dark:text-error-400">{error}</p>
           <button
             onClick={loadOrders}
-            className="mt-4 rounded-lg bg-red-600 px-6 py-2 font-semibold text-white transition hover:bg-red-700"
+            className="mt-4 rounded-lg bg-error-600 px-6 py-2 font-semibold text-white transition hover:bg-error-700"
           >
             Tentar novamente
           </button>

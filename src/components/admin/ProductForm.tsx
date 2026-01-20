@@ -252,7 +252,7 @@ export default function ProductForm({
       />
 
       <div className="flex justify-end gap-2">
-        <Button color="danger" type="submit" isLoading={loading}>
+        <Button color="primary" type="submit" isLoading={loading}>
           {initialData ? "Atualizar Produto" : "Criar Produto"}
         </Button>
       </div>

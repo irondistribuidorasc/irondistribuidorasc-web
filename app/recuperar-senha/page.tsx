@@ -96,7 +96,7 @@ export default function ForgotPasswordPage() {
               <div className="space-y-3">
                 <Button
                   type="submit"
-                  color="danger"
+                  color="primary"
                   className="w-full bg-brand-600 text-white"
                   isLoading={isSubmitting}
                 >

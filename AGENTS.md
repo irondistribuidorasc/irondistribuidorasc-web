@@ -1,5 +1,18 @@
 # Repository Guidelines
 
+## Visual Identity & Brand Guidelines
+**OBRIGATÓRIO:** Antes de implementar qualquer componente visual, estilo ou elemento de UI, consulte o arquivo `docs/Brand_Book_Iron.md`. Este documento define a identidade visual completa do projeto, incluindo:
+
+- **Cores:** Paleta brand (vermelho `#DC0714`) e sistema dual Light/Dark
+- **Tipografia:** Inter como fonte principal com hierarquia de pesos
+- **Espaçamento:** Grid baseado em múltiplos de 4px
+- **Componentes:** Padrões de botões, cards, badges e estados
+- **Tom de voz:** Comunicação direta e profissional
+- **Animações:** Micro-interações permitidas (blob, float, shimmer)
+- **Acessibilidade:** Contraste mínimo e tamanhos de toque
+
+Qualquer implementação que desvie dessas diretrizes deve ser justificada e aprovada. O Brand Book é a fonte de verdade para decisões visuais.
+
 ## Project Structure & Module Organization
 The app router lives in `app/`, with `app/page.tsx` as the primary screen and `app/layout.tsx` providing shared metadata and shell components. Global theming and Tailwind tokens are centralized in `app/globals.css`; prefer colocated component styles only when a pattern cannot be expressed with utilities. Static assets (logos, favicons, mock data) belong in `public/` to benefit from Next.js static routing. Cross-cutting configuration is split across `next.config.ts`, `tsconfig.json`, `eslint.config.mjs`, and `postcss.config.mjs`, so update those files together when introducing new tooling. Use the `@/*` path alias from `tsconfig.json` for shared modules to avoid brittle relative imports.
 

@@ -25,6 +25,9 @@ export const registerSchema = z
     docNumber: z.string().optional(),
     password: passwordSchema,
     confirmPassword: z.string(),
+    acceptedTerms: z.literal(true, {
+      message: "Você deve aceitar os Termos de Uso e Política de Privacidade",
+    }),
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: "As senhas não coincidem",

@@ -8,7 +8,7 @@ export function StagingBanner({ isStaging }: StagingBannerProps) {
 	}
 
 	return (
-		<div className="relative z-50 bg-gradient-to-r from-amber-500 via-orange-500 to-amber-500 py-2 text-center">
+		<div className="relative z-50 bg-gradient-to-r from-amber-500 via-orange-500 to-amber-500 py-2 text-center print:hidden">
 			<div className="mx-auto flex max-w-7xl items-center justify-center gap-2 px-4">
 				<span className="inline-flex items-center gap-1.5">
 					<svg

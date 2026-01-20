@@ -1,6 +1,7 @@
 import { Analytics } from "@vercel/analytics/next";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
+import { CookieConsent } from "@/src/components/layout/CookieConsent";
 import { Footer } from "@/src/components/layout/Footer";
 import { Header } from "@/src/components/layout/Header";
 import { StagingBanner } from "@/src/components/layout/StagingBanner";
@@ -186,15 +187,16 @@ export default function RootLayout({
 					dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
 				/>
 			</head>
-			<body className={`${inter.className}`}>
+			<body className={`${inter.className} print:!bg-white`}>
 				<StagingBanner isStaging={isStaging} />
 				<Providers>
-					<div className="flex min-h-screen flex-col overflow-x-hidden">
+					<div className="flex min-h-screen flex-col overflow-x-hidden print:!min-h-0 print:!bg-white">
 						<Header />
-						<main className="flex-1">{children}</main>
+						<main className="flex-1 print:!bg-white">{children}</main>
 						<Footer />
 					</div>
 				</Providers>
+				<CookieConsent />
 				<Analytics />
 			</body>
 		</html>

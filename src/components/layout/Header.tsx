@@ -43,6 +43,12 @@ export function Header() {
   const isAuthenticated = status === "authenticated";
   const { unreadCount } = useNotification();
 
+  // Não exibir em rotas de impressão
+  const isPrintRoute = pathname?.includes("/print");
+  if (isPrintRoute) {
+    return null;
+  }
+
   const getUserDisplayName = () => {
     return session?.user?.name || session?.user?.email || "cliente";
   };

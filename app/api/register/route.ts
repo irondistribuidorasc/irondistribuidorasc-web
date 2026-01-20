@@ -1,13 +1,20 @@
 import { logger } from "@/src/lib/logger";
 import { db } from "@/src/lib/prisma";
+import { getClientIP, withRateLimit } from "@/src/lib/rate-limit";
 import { registerApiSchema } from "@/src/lib/schemas";
 import { hash } from "bcrypt";
 import { NextResponse } from "next/server";
 
-// TODO: Implementar rate limiting para proteger contra brute force
-// Sugestão: usar middleware com Redis ou biblioteca como @upstash/ratelimit
 export async function POST(request: Request) {
   try {
+    // Rate limiting por IP
+    const clientIP = getClientIP(request);
+    const rateLimitResponse = await withRateLimit(clientIP, "auth");
+    if (rateLimitResponse) {
+      logger.warn("register:POST - Rate limit excedido", { ip: clientIP });
+      return rateLimitResponse;
+    }
+
     const body = await request.json();
 
     // Validação com Zod

@@ -1,4 +1,5 @@
 import { auth } from "@/src/lib/auth";
+import { logger } from "@/src/lib/logger";
 import { db } from "@/src/lib/prisma";
 import { OrderStatus } from "@/types/order";
 import { Prisma } from "@prisma/client";
@@ -88,7 +89,9 @@ export async function GET(req: NextRequest) {
       },
     });
   } catch (error) {
-    console.error("Error fetching admin orders:", error);
+    logger.error("admin/orders:GET - Erro ao buscar pedidos", {
+      error: error instanceof Error ? error.message : String(error),
+    });
     return NextResponse.json(
       { error: "Erro ao buscar pedidos" },
       { status: 500 }

@@ -15,8 +15,6 @@ import {
   CardHeader,
   Chip,
 } from "@heroui/react";
-import { format } from "date-fns";
-import { ptBR } from "date-fns/locale";
 
 interface OrderCardProps {
   order: Order;
@@ -58,8 +56,11 @@ export function OrderCard({
           <div className="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-400">
             <CalendarIcon className="h-4 w-4" />
             <span>
-              {format(new Date(order.createdAt), "dd 'de' MMMM 'de' yyyy", {
-                locale: ptBR,
+              {new Date(order.createdAt).toLocaleDateString("pt-BR", {
+                day: "2-digit",
+                month: "long",
+                year: "numeric",
+                timeZone: "America/Sao_Paulo",
               })}
             </span>
           </div>

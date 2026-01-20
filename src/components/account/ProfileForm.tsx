@@ -1,34 +1,46 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import {
-	userProfileSchema,
-	type UserProfileSchema,
-} from "@/src/lib/schemas/user";
-import { maskCEP, maskCPFOrCNPJ, maskPhone } from "@/src/lib/masks";
 import {
 	Button,
-	Input,
 	Card,
 	CardBody,
 	CardHeader,
 	Divider,
-	Tabs,
-	Tab,
+	Input,
+	Modal,
+	ModalBody,
+	ModalContent,
+	ModalFooter,
+	ModalHeader,
 	Spinner,
+	Tab,
+	Tabs,
+	useDisclosure,
 } from "@heroui/react";
+import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
-import { toast } from "sonner";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useSession } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
+import { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
+import { toast } from "sonner";
+import { maskCEP, maskCPFOrCNPJ, maskPhone } from "@/src/lib/masks";
+import {
+	type UserProfileSchema,
+	userProfileSchema,
+} from "@/src/lib/schemas/user";
 
 export function ProfileForm() {
 	const router = useRouter();
 	const { update: updateSession } = useSession();
 	const [isLoading, setIsLoading] = useState(true);
 	const [isSaving, setIsSaving] = useState(false);
+	const [isExporting, setIsExporting] = useState(false);
+	const [isDeleting, setIsDeleting] = useState(false);
+	const [deletePassword, setDeletePassword] = useState("");
+	const [deleteConfirmation, setDeleteConfirmation] = useState("");
+	const { isOpen, onOpen, onClose } = useDisclosure();
 
 	const {
 		register,
@@ -91,6 +103,77 @@ export function ProfileForm() {
 		} finally {
 			setIsSaving(false);
 		}
+	};
+
+	const handleExportData = async () => {
+		setIsExporting(true);
+		try {
+			const response = await fetch("/api/account/export");
+			if (!response.ok) {
+				throw new Error("Erro ao exportar dados");
+			}
+
+			const blob = await response.blob();
+			const url = window.URL.createObjectURL(blob);
+			const a = document.createElement("a");
+			a.href = url;
+			a.download = `meus-dados-iron-${new Date().toISOString().split("T")[0]}.json`;
+			document.body.appendChild(a);
+			a.click();
+			window.URL.revokeObjectURL(url);
+			document.body.removeChild(a);
+
+			toast.success("Dados exportados com sucesso!");
+		} catch (error) {
+			console.error("Error exporting data:", error);
+			toast.error("Erro ao exportar dados");
+		} finally {
+			setIsExporting(false);
+		}
+	};
+
+	const handleDeleteAccount = async () => {
+		if (deleteConfirmation !== "EXCLUIR MINHA CONTA") {
+			toast.error("Digite 'EXCLUIR MINHA CONTA' para confirmar");
+			return;
+		}
+
+		setIsDeleting(true);
+		try {
+			const response = await fetch("/api/account/delete", {
+				method: "DELETE",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify({
+					password: deletePassword,
+					confirmation: deleteConfirmation,
+				}),
+			});
+
+			const data = await response.json();
+
+			if (!response.ok) {
+				throw new Error(data.error || "Erro ao excluir conta");
+			}
+
+			toast.success("Conta excluída com sucesso");
+			onClose();
+
+			// Fazer logout e redirecionar
+			await signOut({ callbackUrl: "/" });
+		} catch (error) {
+			console.error("Error deleting account:", error);
+			toast.error(
+				error instanceof Error ? error.message : "Erro ao excluir conta",
+			);
+		} finally {
+			setIsDeleting(false);
+		}
+	};
+
+	const resetDeleteModal = () => {
+		setDeletePassword("");
+		setDeleteConfirmation("");
+		onClose();
 	};
 
 	if (isLoading) {
@@ -316,6 +399,79 @@ export function ProfileForm() {
 								</div>
 							</div>
 						</Tab>
+
+						<Tab
+							key="privacy"
+							title={
+								<div className="flex items-center space-x-2">
+									<span>Privacidade</span>
+								</div>
+							}
+						>
+							<div className="flex flex-col gap-6 py-4">
+								<div>
+									<h3 className="text-lg font-semibold mb-2">
+										Seus Direitos (LGPD)
+									</h3>
+									<p className="text-sm text-default-500 mb-4">
+										De acordo com a Lei Geral de Proteção de Dados (LGPD), você
+										tem direito de acessar, exportar e solicitar a exclusão dos
+										seus dados pessoais.
+									</p>
+									<p className="text-sm text-default-500">
+										Para mais informações, consulte nossa{" "}
+										<Link
+											href="/politica-de-privacidade"
+											className="text-primary hover:underline"
+										>
+											Política de Privacidade
+										</Link>
+										.
+									</p>
+								</div>
+
+								<Divider />
+
+								<div className="flex flex-col gap-4">
+									<div className="p-4 border border-default-200 rounded-lg">
+										<h4 className="font-medium mb-2">Exportar Meus Dados</h4>
+										<p className="text-sm text-default-500 mb-4">
+											Faça o download de todos os seus dados pessoais em formato
+											JSON. Isso inclui suas informações de perfil, histórico de
+											pedidos e notificações.
+										</p>
+										<Button
+											variant="bordered"
+											onPress={handleExportData}
+											isLoading={isExporting}
+											className="font-medium"
+										>
+											{isExporting ? "Exportando..." : "Exportar Dados"}
+										</Button>
+									</div>
+
+									<div className="p-4 border border-danger-200 rounded-lg bg-danger-50 dark:bg-danger-900/20">
+										<h4 className="font-medium mb-2 text-danger">
+											Excluir Minha Conta
+										</h4>
+										<p className="text-sm text-default-500 mb-4">
+											<strong className="text-danger">Atenção:</strong> Esta
+											ação é irreversível. Todos os seus dados, incluindo
+											histórico de pedidos e informações pessoais, serão
+											permanentemente excluídos.
+										</p>
+										<Button
+											color="danger"
+											variant="flat"
+											onPress={onOpen}
+											className="font-medium"
+										>
+											Excluir Conta
+										</Button>
+									</div>
+								</div>
+							</div>
+						</Tab>
 					</Tabs>
 
 					<Divider />
@@ -333,6 +489,66 @@ export function ProfileForm() {
 					</div>
 				</form>
 			</CardBody>
+
+			{/* Modal de Confirmação de Exclusão */}
+			<Modal isOpen={isOpen} onClose={resetDeleteModal} size="lg">
+				<ModalContent>
+					<ModalHeader className="flex flex-col gap-1">
+						<span className="text-danger">Excluir Conta Permanentemente</span>
+					</ModalHeader>
+					<ModalBody>
+						<div className="flex flex-col gap-4">
+							<div className="p-4 bg-danger-50 dark:bg-danger-900/20 rounded-lg border border-danger-200">
+								<p className="text-sm font-medium text-danger mb-2">
+									Esta ação não pode ser desfeita!
+								</p>
+								<ul className="text-sm text-default-600 list-disc list-inside space-y-1">
+									<li>Seu perfil e informações pessoais serão excluídos</li>
+									<li>Seu histórico de pedidos será removido</li>
+									<li>Você perderá acesso à sua conta</li>
+								</ul>
+							</div>
+
+							<Input
+								type="password"
+								label="Sua Senha"
+								placeholder="Digite sua senha para confirmar"
+								variant="bordered"
+								value={deletePassword}
+								onValueChange={setDeletePassword}
+								description="Se você se cadastrou com Google, deixe em branco"
+							/>
+
+							<Input
+								label="Confirmação"
+								placeholder="Digite EXCLUIR MINHA CONTA"
+								variant="bordered"
+								value={deleteConfirmation}
+								onValueChange={setDeleteConfirmation}
+								description="Digite exatamente: EXCLUIR MINHA CONTA"
+								onKeyDown={(e) => {
+									if (e.key === " ") {
+										e.nativeEvent.stopPropagation();
+									}
+								}}
+							/>
+						</div>
+					</ModalBody>
+					<ModalFooter>
+						<Button variant="light" onPress={resetDeleteModal}>
+							Cancelar
+						</Button>
+						<Button
+							color="danger"
+							onPress={handleDeleteAccount}
+							isLoading={isDeleting}
+							isDisabled={deleteConfirmation !== "EXCLUIR MINHA CONTA"}
+						>
+							{isDeleting ? "Excluindo..." : "Confirmar Exclusão"}
+						</Button>
+					</ModalFooter>
+				</ModalContent>
+			</Modal>
 		</Card>
 	);
 }

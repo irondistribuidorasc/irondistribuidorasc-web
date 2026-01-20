@@ -1,9 +1,19 @@
+"use client";
+
 import { MapPinIcon, PhoneIcon } from "@heroicons/react/24/outline";
 import Image from "next/image";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 export function Footer() {
   const currentYear = new Date().getFullYear();
+  const pathname = usePathname();
+
+  // Não exibir em rotas de impressão
+  const isPrintRoute = pathname?.includes("/print");
+  if (isPrintRoute) {
+    return null;
+  }
 
   return (
     <footer className="border-t border-slate-200 bg-white pt-16 pb-8 dark:border-slate-800 dark:bg-slate-900 print:hidden">

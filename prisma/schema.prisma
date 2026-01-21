@@ -104,28 +104,29 @@ model Order {
   status      OrderStatus @default(PENDING)
   total       Float
   paymentMethod PaymentMethod @default(OTHER)
-  
+
   // Dados do cliente no momento do pedido
   customerName     String
   customerEmail    String
   customerPhone    String
   customerDocNumber String?
-  
+
   // Endereco de entrega
   addressLine1 String
   addressLine2 String?
   city         String
   state        String
   postalCode   String
-  
+
   // Metadados
   notes       String?
   whatsappMessageSent Boolean @default(false)
-  
+
   items       OrderItem[]
+  feedback    OrderFeedback?
   createdAt   DateTime    @default(now())
   updatedAt   DateTime    @updatedAt
-  
+
   @@index([userId])
   @@index([orderNumber])
 }
@@ -151,14 +152,14 @@ model OrderItem {
   id          String  @id @default(cuid())
   orderId     String
   order       Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
-  
+
   productId   String
   productCode String
   productName String
   quantity    Int
   price       Float
   total       Float
-  
+
   @@index([orderId])
 }
 
@@ -171,6 +172,17 @@ model Notification {
   read      Boolean  @default(false)
   link      String?
   createdAt DateTime @default(now())
-  
+
   @@index([userId])
+}
+
+model OrderFeedback {
+  id        String   @id @default(cuid())
+  orderId   String   @unique
+  order     Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  rating    Int      // 1 a 5 estrelas
+  comment   String?  @db.Text
+  createdAt DateTime @default(now())
+
+  @@index([orderId])
 }

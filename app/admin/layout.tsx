@@ -7,7 +7,8 @@ export default function AdminLayout({
 }) {
 	return (
 		<>
-			{children}
+			{/* Padding inferior para compensar a bottom nav no mobile */}
+			<div className="pb-20 md:pb-0">{children}</div>
 			<AdminBottomNav />
 		</>
 	);

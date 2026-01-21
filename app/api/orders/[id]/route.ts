@@ -24,6 +24,7 @@ export async function GET(
 			},
 			include: {
 				items: true,
+				feedback: true,
 			},
 		});
 

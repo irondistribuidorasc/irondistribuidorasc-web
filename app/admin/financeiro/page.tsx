@@ -215,7 +215,7 @@ function FinancialPageContent() {
 						<div className="relative px-6 py-6 sm:px-8">
 							<div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
 								<div className="flex items-center gap-4">
-									<div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-amber-500 to-orange-600 shadow-lg shadow-amber-500/30">
+									<div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-brand-500 shadow-lg shadow-brand-500/30">
 										<BanknotesIcon className="h-7 w-7 text-white" />
 									</div>
 									<div>
@@ -357,14 +357,14 @@ function FinancialPageContent() {
 					{/* Summary Cards */}
 					<div className="mb-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
 						{/* Total Card - Highlighted */}
-						<Card className="overflow-hidden border-0 shadow-lg bg-gradient-to-br from-emerald-500 to-teal-600">
+						<Card className="overflow-hidden border-0 shadow-lg bg-brand-500">
 							<CardBody className="p-5">
 								<div className="flex items-center gap-3">
 									<div className="flex h-12 w-12 items-center justify-center rounded-xl bg-white/20 shadow-lg backdrop-blur-sm">
 										<ArrowTrendingUpIcon className="h-6 w-6 text-white" />
 									</div>
 									<div>
-										<p className="text-sm font-medium text-emerald-100">
+										<p className="text-sm font-medium text-white/80">
 											Total Geral
 										</p>
 										<p className="text-2xl font-bold text-white">
@@ -373,7 +373,7 @@ function FinancialPageContent() {
 									</div>
 								</div>
 								<div className="mt-3 pt-3 border-t border-white/20">
-									<p className="text-xs text-emerald-100">
+									<p className="text-xs text-white/80">
 										{orders.length} transaç{orders.length !== 1 ? "ões" : "ão"}{" "}
 										no dia
 									</p>
@@ -382,10 +382,10 @@ function FinancialPageContent() {
 						</Card>
 
 						{/* Pix Card */}
-						<Card className="overflow-hidden border-0 shadow-lg bg-white/80 backdrop-blur-sm dark:bg-slate-800/80 hover:shadow-xl transition-all">
+						<Card className="overflow-hidden border border-slate-200 shadow-sm bg-white dark:border-slate-800 dark:bg-slate-900 hover:shadow-md transition-all">
 							<CardBody className="p-5">
 								<div className="flex items-center gap-3">
-									<div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-cyan-500 to-blue-600 shadow-lg shadow-cyan-500/30">
+									<div className="flex h-12 w-12 items-center justify-center rounded-xl bg-brand-500 shadow-lg shadow-brand-500/20">
 										<DevicePhoneMobileIcon className="h-6 w-6 text-white" />
 									</div>
 									<div>
@@ -401,10 +401,10 @@ function FinancialPageContent() {
 						</Card>
 
 						{/* Card Card */}
-						<Card className="overflow-hidden border-0 shadow-lg bg-white/80 backdrop-blur-sm dark:bg-slate-800/80 hover:shadow-xl transition-all">
+						<Card className="overflow-hidden border border-slate-200 shadow-sm bg-white dark:border-slate-800 dark:bg-slate-900 hover:shadow-md transition-all">
 							<CardBody className="p-5">
 								<div className="flex items-center gap-3">
-									<div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-brand-500 to-brand-600 shadow-lg shadow-brand-500/30">
+									<div className="flex h-12 w-12 items-center justify-center rounded-xl bg-brand-500 shadow-lg shadow-brand-500/20">
 										<CreditCardIcon className="h-6 w-6 text-white" />
 									</div>
 									<div>
@@ -420,14 +420,14 @@ function FinancialPageContent() {
 									<Chip
 										size="sm"
 										variant="flat"
-										className="bg-brand-100 text-brand-700 dark:bg-brand-900/30 dark:text-brand-300"
+										className="bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300"
 									>
 										C: {formatCurrency(summary.creditCard)}
 									</Chip>
 									<Chip
 										size="sm"
 										variant="flat"
-										className="bg-brand-200 text-brand-800 dark:bg-brand-900/40 dark:text-brand-200"
+										className="bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300"
 									>
 										D: {formatCurrency(summary.debitCard)}
 									</Chip>
@@ -436,10 +436,10 @@ function FinancialPageContent() {
 						</Card>
 
 						{/* Cash Card */}
-						<Card className="overflow-hidden border-0 shadow-lg bg-white/80 backdrop-blur-sm dark:bg-slate-800/80 hover:shadow-xl transition-all">
+						<Card className="overflow-hidden border border-slate-200 shadow-sm bg-white dark:border-slate-800 dark:bg-slate-900 hover:shadow-md transition-all">
 							<CardBody className="p-5">
 								<div className="flex items-center gap-3">
-									<div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-green-500 to-emerald-600 shadow-lg shadow-green-500/30">
+									<div className="flex h-12 w-12 items-center justify-center rounded-xl bg-brand-500 shadow-lg shadow-brand-500/20">
 										<WalletIcon className="h-6 w-6 text-white" />
 									</div>
 									<div>
@@ -456,10 +456,10 @@ function FinancialPageContent() {
 					</div>
 
 					{/* Orders Table */}
-					<Card className="overflow-hidden border-0 shadow-lg bg-white/80 backdrop-blur-sm dark:bg-slate-800/80">
-						<CardHeader className="border-b border-slate-100 bg-gradient-to-r from-amber-50 to-orange-50 px-6 py-4 dark:border-slate-700 dark:from-amber-900/20 dark:to-orange-900/20">
+					<Card className="overflow-hidden border border-slate-200 shadow-sm bg-white dark:border-slate-800 dark:bg-slate-900">
+						<CardHeader className="border-b border-slate-200 px-6 py-4 dark:border-slate-700">
 							<div className="flex items-center gap-3">
-								<div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-amber-500 to-orange-600 shadow-lg shadow-amber-500/30">
+								<div className="flex h-10 w-10 items-center justify-center rounded-xl bg-brand-500 shadow-lg shadow-brand-500/20">
 									<CurrencyDollarIcon className="h-5 w-5 text-white" />
 								</div>
 								<div>
@@ -562,7 +562,7 @@ function FinancialPageContent() {
 
 												{/* Valor */}
 												<div className="col-span-2 flex items-center justify-end">
-													<span className="font-semibold text-emerald-600 dark:text-emerald-400">
+													<span className="font-semibold text-brand-600 dark:text-brand-400">
 														{formatCurrency(order.total)}
 													</span>
 												</div>
@@ -571,15 +571,15 @@ function FinancialPageContent() {
 									</div>
 
 									{/* Total Footer */}
-									<div className="border-t border-slate-200 bg-gradient-to-r from-emerald-50 to-teal-50 px-6 py-4 dark:border-slate-700 dark:from-emerald-900/20 dark:to-teal-900/20">
+									<div className="border-t border-slate-200 bg-slate-50 px-6 py-4 dark:border-slate-700 dark:bg-slate-800/50">
 										<div className="flex items-center justify-between">
 											<div className="flex items-center gap-2">
-												<BanknotesIcon className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
+												<BanknotesIcon className="h-5 w-5 text-brand-600 dark:text-brand-400" />
 												<span className="font-semibold text-slate-700 dark:text-slate-300">
 													Total do Dia
 												</span>
 											</div>
-											<span className="text-xl font-bold text-emerald-600 dark:text-emerald-400">
+											<span className="text-xl font-bold text-brand-600 dark:text-brand-400">
 												{formatCurrency(summary.total)}
 											</span>
 										</div>

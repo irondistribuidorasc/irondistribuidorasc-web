@@ -8,7 +8,7 @@ import {
 	ListBulletIcon,
 	PlusCircleIcon,
 } from "@heroicons/react/24/outline";
-import { Button, Card, CardBody, Spinner, Tab, Tabs } from "@heroui/react";
+import { Button, Card, CardBody, Spinner } from "@heroui/react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
@@ -95,78 +95,71 @@ export default function AdminProductsPage() {
 					</div>
 				</Card>
 
-				{/* Tabs Card */}
+				{/* Navigation Tabs - Compact */}
 				<Card className="mb-6 overflow-hidden border-0 shadow-lg bg-white/80 backdrop-blur-sm dark:bg-slate-800/80">
-					<CardBody className="p-4">
-						<Tabs
-							selectedKey={activeTab}
-							onSelectionChange={(key) => setActiveTab(key as string)}
-							color="primary"
-							variant="solid"
-							classNames={{
-								tabList:
-									"gap-2 w-full flex-wrap bg-slate-100/50 dark:bg-slate-700/50 p-1 rounded-xl",
-								cursor:
-									"bg-gradient-to-r from-brand-500 to-brand-600 shadow-md",
-								tab: "px-4 py-2.5 font-medium",
-								tabContent: "group-data-[selected=true]:text-white",
-							}}
-						>
-							<Tab
-								key="list"
-								title={
-									<div className="flex items-center gap-2">
-										<ListBulletIcon className="h-4 w-4" />
-										<span>Lista de Produtos</span>
-									</div>
-								}
+					<CardBody className="p-3">
+						<div className="flex flex-wrap gap-1.5 p-1 rounded-xl bg-slate-100/80 dark:bg-slate-700/50">
+							<button
+								type="button"
+								onClick={() => setActiveTab("list")}
+								className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+									activeTab === "list"
+										? "bg-brand-500 text-white shadow-md"
+										: "text-slate-600 hover:bg-slate-200 dark:text-slate-400 dark:hover:bg-slate-600"
+								}`}
 							>
-								<div className="mt-6">
-									<ProductList />
-								</div>
-							</Tab>
-							<Tab
-								key="stock"
-								title={
-									<div className="flex items-center gap-2">
-										<ArchiveBoxIcon className="h-4 w-4" />
-										<span>Gerenciar Estoque</span>
-									</div>
-								}
+								<ListBulletIcon className="h-4 w-4" />
+								<span className="hidden sm:inline">Lista de Produtos</span>
+								<span className="sm:hidden">Lista</span>
+							</button>
+							<button
+								type="button"
+								onClick={() => setActiveTab("stock")}
+								className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+									activeTab === "stock"
+										? "bg-brand-500 text-white shadow-md"
+										: "text-slate-600 hover:bg-slate-200 dark:text-slate-400 dark:hover:bg-slate-600"
+								}`}
 							>
-								<div className="mt-6">
-									<StockManager />
-								</div>
-							</Tab>
-							<Tab
-								key="add"
-								title={
-									<div className="flex items-center gap-2">
-										<PlusCircleIcon className="h-4 w-4" />
-										<span>Adicionar Produto</span>
-									</div>
-								}
+								<ArchiveBoxIcon className="h-4 w-4" />
+								<span className="hidden sm:inline">Gerenciar Estoque</span>
+								<span className="sm:hidden">Estoque</span>
+							</button>
+							<button
+								type="button"
+								onClick={() => setActiveTab("add")}
+								className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+									activeTab === "add"
+										? "bg-brand-500 text-white shadow-md"
+										: "text-slate-600 hover:bg-slate-200 dark:text-slate-400 dark:hover:bg-slate-600"
+								}`}
 							>
-								<div className="mt-6">
-									<ProductForm onSuccess={() => setActiveTab("list")} />
-								</div>
-							</Tab>
-							<Tab
-								key="import"
-								title={
-									<div className="flex items-center gap-2">
-										<ArrowUpTrayIcon className="h-4 w-4" />
-										<span>Importar CSV</span>
-									</div>
-								}
+								<PlusCircleIcon className="h-4 w-4" />
+								<span className="hidden sm:inline">Adicionar Produto</span>
+								<span className="sm:hidden">Adicionar</span>
+							</button>
+							<button
+								type="button"
+								onClick={() => setActiveTab("import")}
+								className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+									activeTab === "import"
+										? "bg-brand-500 text-white shadow-md"
+										: "text-slate-600 hover:bg-slate-200 dark:text-slate-400 dark:hover:bg-slate-600"
+								}`}
 							>
-								<div className="mt-6">
-									<ProductImport />
-								</div>
-							</Tab>
-						</Tabs>
+								<ArrowUpTrayIcon className="h-4 w-4" />
+								<span className="hidden sm:inline">Importar CSV</span>
+								<span className="sm:hidden">Importar</span>
+							</button>
+						</div>
 					</CardBody>
 				</Card>
+
+				{/* Content */}
+				{activeTab === "list" && <ProductList />}
+				{activeTab === "stock" && <StockManager />}
+				{activeTab === "add" && <ProductForm onSuccess={() => setActiveTab("list")} />}
+				{activeTab === "import" && <ProductImport />}
 			</div>
 		</div>
 	);

@@ -5,7 +5,6 @@ import {
 	CheckCircleIcon,
 	ChevronLeftIcon,
 	ClockIcon,
-	EnvelopeIcon,
 	ExclamationTriangleIcon,
 	FunnelIcon,
 	IdentificationIcon,
@@ -35,9 +34,6 @@ import {
 	Select,
 	SelectItem,
 	Spinner,
-	Tab,
-	Tabs,
-	Tooltip,
 	useDisclosure,
 } from "@heroui/react";
 import Link from "next/link";
@@ -305,7 +301,7 @@ export default function AdminUsersPage() {
 						<div className="relative px-6 py-6 sm:px-8">
 							<div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
 								<div className="flex items-center gap-4">
-									<div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-600 shadow-lg shadow-emerald-500/30">
+									<div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-brand-500 shadow-lg shadow-brand-500/30">
 										<UsersIcon className="h-7 w-7 text-white" />
 									</div>
 									<div>
@@ -321,7 +317,7 @@ export default function AdminUsersPage() {
 								{/* Quick Stats */}
 								<div className="flex gap-3">
 									<div className="rounded-xl bg-slate-100/80 px-4 py-2 backdrop-blur-sm dark:bg-white/10">
-										<p className="text-xs font-medium text-emerald-700 dark:text-emerald-100">
+										<p className="text-xs font-medium text-slate-500 dark:text-slate-400">
 											Total
 										</p>
 										<p className="text-xl font-bold text-slate-900 dark:text-white">
@@ -334,115 +330,103 @@ export default function AdminUsersPage() {
 					</div>
 				</Card>
 
-				{/* Tabs Card */}
+				{/* Toolbar Card - Unified */}
 				<Card className="mb-6 overflow-hidden border-0 shadow-lg bg-white/80 backdrop-blur-sm dark:bg-slate-800/80">
 					<CardBody className="p-4">
-						<div className="flex items-center gap-3 mb-4">
-							<div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-brand-500 to-brand-600 shadow-md shadow-brand-500/30">
-								<FunnelIcon className="h-4 w-4 text-white" />
-							</div>
-							<span className="text-sm font-medium text-slate-600 dark:text-slate-400">
-								Filtrar por status
-							</span>
-						</div>
-						<Tabs
-							selectedKey={filter}
-							onSelectionChange={(key) => {
-								setFilter(key as typeof filter);
-								setPagination((prev) => ({ ...prev, page: 1 }));
-							}}
-							color="primary"
-							variant="solid"
-							classNames={{
-								tabList:
-									"gap-2 w-full flex-wrap bg-slate-100/50 dark:bg-slate-700/50 p-1 rounded-xl",
-								cursor: "bg-gradient-to-r from-brand-500 to-brand-600 shadow-md",
-								tab: "px-4 py-2 font-medium",
-								tabContent: "group-data-[selected=true]:text-white",
-							}}
-						>
-							<Tab
-								key="pending"
-								title={
-									<div className="flex items-center gap-2">
-										<ClockIcon className="h-4 w-4" />
-										<span>Pendentes</span>
-									</div>
-								}
-							/>
-							<Tab
-								key="approved"
-								title={
-									<div className="flex items-center gap-2">
-										<CheckCircleIcon className="h-4 w-4" />
-										<span>Aprovados</span>
-									</div>
-								}
-							/>
-							<Tab
-								key="all"
-								title={
-									<div className="flex items-center gap-2">
-										<UserGroupIcon className="h-4 w-4" />
-										<span>Todos</span>
-									</div>
-								}
-							/>
-						</Tabs>
-					</CardBody>
-				</Card>
-
-				{/* Toolbar Card */}
-				<Card className="mb-6 overflow-hidden border-0 shadow-lg bg-white/80 backdrop-blur-sm dark:bg-slate-800/80">
-					<CardBody className="p-4">
-						<div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
-							{/* Search & New Button */}
-							<div className="flex flex-col gap-3 sm:flex-row sm:items-end">
-								<div className="flex-1 min-w-0 sm:min-w-[300px]">
-									<label
-										htmlFor="search-users"
-										className="mb-2 flex items-center gap-2 text-xs font-medium text-slate-500 dark:text-slate-400"
-									>
-										<MagnifyingGlassIcon className="h-3.5 w-3.5" />
-										Buscar usuário
-									</label>
-									<div className="relative">
-										<input
-											id="search-users"
-											type="text"
-											className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2 pl-10 text-sm text-slate-900 shadow-sm outline-none transition-colors placeholder:text-slate-400 hover:bg-slate-100 focus:ring-2 focus:ring-brand-500 dark:border-slate-600 dark:bg-slate-700/50 dark:text-slate-100 dark:placeholder:text-slate-500 dark:hover:bg-slate-700"
-											placeholder="Nome, email, telefone..."
-											value={searchQuery}
-											onChange={(e) => setSearchQuery(e.target.value)}
-										/>
-										<MagnifyingGlassIcon className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
-										{searchQuery && (
-											<button
-												type="button"
-												onClick={() => setSearchQuery("")}
-												className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-300"
-												aria-label="Limpar busca"
+						<div className="flex flex-col gap-4">
+							{/* Row 1: Search, Filter Chips, and New Button */}
+							<div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+								{/* Search */}
+								<div className="relative flex-1 max-w-sm">
+									<input
+										id="search-users"
+										type="text"
+										className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2 pl-10 text-sm text-slate-900 shadow-sm outline-none transition-colors placeholder:text-slate-400 hover:bg-slate-100 focus:ring-2 focus:ring-brand-500 dark:border-slate-600 dark:bg-slate-700/50 dark:text-slate-100 dark:placeholder:text-slate-500 dark:hover:bg-slate-700"
+										placeholder="Buscar por nome, email, telefone..."
+										value={searchQuery}
+										onChange={(e) => setSearchQuery(e.target.value)}
+									/>
+									<MagnifyingGlassIcon className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+									{searchQuery && (
+										<button
+											type="button"
+											onClick={() => setSearchQuery("")}
+											className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-300"
+											aria-label="Limpar busca"
+										>
+											<svg
+												className="h-4 w-4"
+												fill="none"
+												viewBox="0 0 24 24"
+												stroke="currentColor"
+												aria-hidden="true"
 											>
-												<svg
-													className="h-4 w-4"
-													fill="none"
-													viewBox="0 0 24 24"
-													stroke="currentColor"
-													aria-hidden="true"
-												>
-													<path
-														strokeLinecap="round"
-														strokeLinejoin="round"
-														strokeWidth={2}
-														d="M6 18L18 6M6 6l12 12"
-													/>
-												</svg>
-											</button>
-										)}
+												<path
+													strokeLinecap="round"
+													strokeLinejoin="round"
+													strokeWidth={2}
+													d="M6 18L18 6M6 6l12 12"
+												/>
+											</svg>
+										</button>
+									)}
+								</div>
+
+								{/* Status Filter Chips */}
+								<div className="flex items-center gap-2">
+									<FunnelIcon className="h-4 w-4 text-slate-400 hidden sm:block" />
+									<div className="flex gap-1.5 p-1 rounded-xl bg-slate-100/80 dark:bg-slate-700/50">
+										<button
+											type="button"
+											onClick={() => {
+												setFilter("pending");
+												setPagination((prev) => ({ ...prev, page: 1 }));
+											}}
+											className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium transition-all ${
+												filter === "pending"
+													? "bg-warning-500 text-white shadow-md"
+													: "text-slate-600 hover:bg-slate-200 dark:text-slate-400 dark:hover:bg-slate-600"
+											}`}
+										>
+											<ClockIcon className="h-4 w-4" />
+											<span className="hidden sm:inline">Pendentes</span>
+										</button>
+										<button
+											type="button"
+											onClick={() => {
+												setFilter("approved");
+												setPagination((prev) => ({ ...prev, page: 1 }));
+											}}
+											className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium transition-all ${
+												filter === "approved"
+													? "bg-success-500 text-white shadow-md"
+													: "text-slate-600 hover:bg-slate-200 dark:text-slate-400 dark:hover:bg-slate-600"
+											}`}
+										>
+											<CheckCircleIcon className="h-4 w-4" />
+											<span className="hidden sm:inline">Aprovados</span>
+										</button>
+										<button
+											type="button"
+											onClick={() => {
+												setFilter("all");
+												setPagination((prev) => ({ ...prev, page: 1 }));
+											}}
+											className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium transition-all ${
+												filter === "all"
+													? "bg-brand-500 text-white shadow-md"
+													: "text-slate-600 hover:bg-slate-200 dark:text-slate-400 dark:hover:bg-slate-600"
+											}`}
+										>
+											<UserGroupIcon className="h-4 w-4" />
+											<span className="hidden sm:inline">Todos</span>
+										</button>
 									</div>
 								</div>
+
+								{/* New Button */}
 								<Button
-									className="bg-gradient-to-r from-emerald-500 to-teal-600 font-medium text-white shadow-lg shadow-emerald-500/30 hover:shadow-xl hover:shadow-emerald-500/40 transition-all hover:scale-[1.02]"
+									className="bg-brand-600 font-medium text-white shadow-lg shadow-brand-500/30 hover:bg-brand-700 transition-all"
 									startContent={<UserPlusIcon className="h-5 w-5" />}
 									onPress={onQuickCreateOpen}
 								>
@@ -450,13 +434,13 @@ export default function AdminUsersPage() {
 								</Button>
 							</div>
 
-							{/* Filters */}
-							<div className="flex flex-wrap items-end gap-3">
+							{/* Row 2: Sorting and Pagination Options */}
+							<div className="flex flex-wrap items-center gap-3 pt-3 border-t border-slate-200/60 dark:border-slate-700/60">
 								<Select
 									label="Ordenar por"
 									selectedKeys={[orderBy]}
 									onChange={(e) => setOrderBy(e.target.value)}
-									className="w-40"
+									className="w-36"
 									size="sm"
 									classNames={{
 										trigger:
@@ -478,7 +462,7 @@ export default function AdminUsersPage() {
 									label="Ordem"
 									selectedKeys={[order]}
 									onChange={(e) => setOrder(e.target.value as "asc" | "desc")}
-									className="w-36"
+									className="w-32"
 									size="sm"
 									classNames={{
 										trigger:
@@ -497,7 +481,7 @@ export default function AdminUsersPage() {
 									label="Por página"
 									selectedKeys={[pagination.limit.toString()]}
 									onChange={(e) => handleLimitChange(e.target.value)}
-									className="w-28"
+									className="w-24"
 									size="sm"
 									classNames={{
 										trigger:
@@ -517,40 +501,39 @@ export default function AdminUsersPage() {
 										100
 									</SelectItem>
 								</Select>
+
+								{/* Results count inline */}
+								<div className="ml-auto">
+									<Chip
+										size="sm"
+										variant="flat"
+										className="bg-slate-100 dark:bg-slate-700"
+									>
+										{loading ? (
+											<span className="flex items-center gap-1">
+												<Spinner size="sm" /> Carregando...
+											</span>
+										) : (
+											<span>
+												<strong>
+													{pagination.total === 0
+														? 0
+														: (pagination.page - 1) * pagination.limit + 1}
+													-
+													{Math.min(
+														pagination.page * pagination.limit,
+														pagination.total,
+													)}
+												</strong>{" "}
+												de <strong>{pagination.total}</strong>
+											</span>
+										)}
+									</Chip>
+								</div>
 							</div>
 						</div>
 					</CardBody>
 				</Card>
-
-				{/* Results Counter */}
-				<div className="mb-4 flex items-center gap-2">
-					<Chip
-						size="sm"
-						variant="flat"
-						className="bg-slate-100 dark:bg-slate-800"
-					>
-						{loading ? (
-							<span className="flex items-center gap-1">
-								<Spinner size="sm" /> Carregando...
-							</span>
-						) : (
-							<span>
-								Mostrando{" "}
-								<strong>
-									{pagination.total === 0
-										? 0
-										: (pagination.page - 1) * pagination.limit + 1}
-									-
-									{Math.min(
-										pagination.page * pagination.limit,
-										pagination.total,
-									)}
-								</strong>{" "}
-								de <strong>{pagination.total}</strong> usuários
-							</span>
-						)}
-					</Chip>
-				</div>
 
 				{/* Lista de usuários */}
 				{loading ? (
@@ -581,7 +564,7 @@ export default function AdminUsersPage() {
 								</p>
 								{!searchQuery && (
 									<Button
-										className="mt-6 bg-gradient-to-r from-emerald-500 to-teal-600 font-medium text-white shadow-lg"
+										className="mt-6 bg-brand-600 font-medium text-white shadow-lg shadow-brand-500/25 hover:bg-brand-700"
 										startContent={<UserPlusIcon className="h-5 w-5" />}
 										onPress={onQuickCreateOpen}
 									>
@@ -593,7 +576,7 @@ export default function AdminUsersPage() {
 					</Card>
 				) : (
 					<>
-						<div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2">
+						<div className="space-y-3">
 							{users.map((user) => {
 								const isAvulso = user.email.includes("@iron.local");
 								const initials = user.name
@@ -606,175 +589,173 @@ export default function AdminUsersPage() {
 								return (
 									<Card
 										key={user.id}
-										className="group border-0 bg-white/80 backdrop-blur-sm shadow-md transition-all hover:shadow-xl hover:scale-[1.01] dark:bg-slate-800/80"
+										className="group border-0 bg-white/80 backdrop-blur-sm shadow-md transition-all hover:shadow-xl dark:bg-slate-800/80"
 									>
-										<CardBody className="p-5">
-											{/* Header com Avatar e Status */}
-											<div className="flex items-start justify-between gap-4">
-												<div className="flex items-center gap-4">
-													<Avatar
-														name={initials}
-														size="lg"
-														classNames={{
-															base:
-																user.role === "ADMIN"
-																	? "bg-gradient-to-br from-brand-500 to-brand-700 text-white shadow-lg shadow-brand-500/30"
-																	: user.approved
-																		? "bg-gradient-to-br from-emerald-500 to-teal-600 text-white shadow-lg shadow-emerald-500/30"
-																		: "bg-gradient-to-br from-amber-500 to-orange-600 text-white shadow-lg shadow-amber-500/30",
-														}}
-													/>
-													<div className="min-w-0 flex-1">
-														<div className="flex items-center gap-2">
-															<h3 className="truncate text-lg font-semibold text-slate-900 dark:text-slate-100">
-																{user.name}
-															</h3>
-															{isAvulso && (
-																<Tooltip content="Cliente cadastrado rapidamente - email fictício">
-																	<Chip
-																		size="sm"
-																		variant="flat"
-																		color="warning"
-																		startContent={
-																			<ExclamationTriangleIcon className="h-3 w-3" />
-																		}
-																	>
-																		Avulso
-																	</Chip>
-																</Tooltip>
+										<CardBody className="p-4">
+											{/* Header: Avatar + Info + Status Badge */}
+											<div className="flex items-start gap-3">
+												<Avatar
+													name={initials}
+													size="lg"
+													classNames={{
+														base: "bg-brand-500 text-white shadow-lg shadow-brand-500/20 flex-shrink-0",
+													}}
+												/>
+												<div className="min-w-0 flex-1">
+													{/* Nome e badges */}
+													<div className="flex flex-wrap items-center gap-2">
+														<h3 className="font-semibold text-slate-900 dark:text-slate-100">
+															{user.name}
+														</h3>
+														{isAvulso && (
+															<Chip
+																size="sm"
+																variant="flat"
+																color="warning"
+																startContent={
+																	<ExclamationTriangleIcon className="h-3 w-3" />
+																}
+															>
+																Avulso
+															</Chip>
+														)}
+														{/* Status badge inline no mobile */}
+														<span className="ml-auto">
+															{user.role === "ADMIN" ? (
+																<Chip
+																	size="sm"
+																	variant="flat"
+																	startContent={
+																		<ShieldCheckIcon className="h-3 w-3" />
+																	}
+																	classNames={{
+																		base: "bg-brand-100 dark:bg-brand-900/30",
+																		content:
+																			"text-brand-700 dark:text-brand-300 font-medium text-xs",
+																	}}
+																>
+																	Admin
+																</Chip>
+															) : user.approved ? (
+																<Chip
+																	size="sm"
+																	variant="flat"
+																	color="success"
+																	startContent={
+																		<CheckCircleIcon className="h-3 w-3" />
+																	}
+																>
+																	Aprovado
+																</Chip>
+															) : (
+																<Chip
+																	size="sm"
+																	variant="flat"
+																	color="warning"
+																	startContent={
+																		<XCircleIcon className="h-3 w-3" />
+																	}
+																>
+																	Pendente
+																</Chip>
 															)}
-														</div>
-														<div className="mt-1 flex items-center gap-1.5 text-sm text-slate-500 dark:text-slate-400">
-															<EnvelopeIcon className="h-4 w-4 flex-shrink-0" />
-															<span className="truncate">{user.email}</span>
-														</div>
+														</span>
 													</div>
+													{/* Email */}
+													<p className="mt-1 text-sm text-slate-500 dark:text-slate-400 truncate">
+														{user.email}
+													</p>
 												</div>
-
-												{/* Badge de Role/Status */}
-												{user.role === "ADMIN" ? (
-													<Chip
-														variant="flat"
-														color="primary"
-														startContent={
-															<ShieldCheckIcon className="h-4 w-4" />
-														}
-														classNames={{
-															base: "bg-gradient-to-r from-brand-100 to-brand-200 dark:from-brand-900/30 dark:to-brand-800/30",
-															content:
-																"text-brand-700 dark:text-brand-300 font-medium",
-														}}
-													>
-														Admin
-													</Chip>
-												) : user.approved ? (
-													<Chip
-														variant="flat"
-														color="success"
-														startContent={
-															<CheckCircleIcon className="h-4 w-4" />
-														}
-														classNames={{
-															base: "bg-gradient-to-r from-emerald-100 to-teal-100 dark:from-emerald-900/30 dark:to-teal-900/30",
-														}}
-													>
-														Aprovado
-													</Chip>
-												) : (
-													<Chip
-														variant="flat"
-														color="warning"
-														startContent={<XCircleIcon className="h-4 w-4" />}
-														classNames={{
-															base: "bg-gradient-to-r from-amber-100 to-orange-100 dark:from-amber-900/30 dark:to-orange-900/30",
-														}}
-													>
-														Pendente
-													</Chip>
-												)}
 											</div>
 
-											{/* Informações adicionais */}
-											<div className="mt-4 flex flex-wrap gap-x-4 gap-y-2 text-sm text-slate-600 dark:text-slate-400">
-												{user.phone && (
-													<div className="flex items-center gap-1.5">
-														<PhoneIcon className="h-4 w-4 text-slate-400" />
-														<span>{user.phone}</span>
-													</div>
-												)}
-												{user.storeName && (
-													<div className="flex items-center gap-1.5">
-														<BuildingStorefrontIcon className="h-4 w-4 text-slate-400" />
-														<span>{user.storeName}</span>
-													</div>
-												)}
-												{user.docNumber && (
-													<div className="flex items-center gap-1.5">
-														<IdentificationIcon className="h-4 w-4 text-slate-400" />
-														<span>{user.docNumber}</span>
-													</div>
-												)}
-											</div>
+											{/* Informações adicionais - Grid vertical no mobile */}
+											{(user.phone || user.storeName || user.docNumber) && (
+												<div className="mt-3 grid grid-cols-1 gap-2 rounded-lg bg-slate-50 dark:bg-slate-700/30 p-3 text-sm">
+													{user.phone && (
+														<div className="flex items-center gap-2 text-slate-600 dark:text-slate-400">
+															<PhoneIcon className="h-4 w-4 text-slate-400 flex-shrink-0" />
+															<span>{user.phone}</span>
+														</div>
+													)}
+													{user.docNumber && (
+														<div className="flex items-center gap-2 text-slate-600 dark:text-slate-400">
+															<IdentificationIcon className="h-4 w-4 text-slate-400 flex-shrink-0" />
+															<span>{user.docNumber}</span>
+														</div>
+													)}
+													{user.storeName && (
+														<div className="flex items-center gap-2 text-slate-600 dark:text-slate-400">
+															<BuildingStorefrontIcon className="h-4 w-4 text-slate-400 flex-shrink-0" />
+															<span>{user.storeName}</span>
+														</div>
+													)}
+												</div>
+											)}
 
-											{/* Footer com data e ações */}
-											<div className="mt-4 flex items-center justify-between border-t border-slate-200/60 pt-4 dark:border-slate-700/60">
-												<span className="text-xs text-slate-400 flex items-center gap-1">
-													<ClockIcon className="h-3.5 w-3.5" />
-													{new Date(user.createdAt).toLocaleDateString("pt-BR")}
-												</span>
-
-												<div className="flex items-center gap-2">
+											{/* Footer: Data + Ações */}
+											<div className="mt-3 flex flex-col gap-3 border-t border-slate-200/60 pt-3 dark:border-slate-700/60">
+												{/* Data e botão editar */}
+												<div className="flex items-center justify-between">
+													<span className="text-xs text-slate-400 flex items-center gap-1">
+														<ClockIcon className="h-3.5 w-3.5" />
+														{new Date(user.createdAt).toLocaleDateString(
+															"pt-BR",
+														)}
+													</span>
 													{user.role === "USER" && (
-														<Tooltip content="Editar dados do usuário">
-															<Button
-																isIconOnly
-																variant="flat"
-																size="sm"
-																onPress={() => handleOpenEdit(user)}
-																className="bg-slate-100 text-slate-600 hover:bg-slate-200 dark:bg-slate-700 dark:text-slate-400 dark:hover:bg-slate-600"
-															>
-																<PencilSquareIcon className="h-4 w-4" />
-															</Button>
-														</Tooltip>
-													)}
-
-													{!user.approved && user.role === "USER" && (
-														<>
-															<Button
-																size="sm"
-																className="bg-gradient-to-r from-emerald-500 to-teal-600 text-white shadow-md shadow-emerald-500/20"
-																startContent={
-																	<CheckCircleIcon className="h-4 w-4" />
-																}
-																onPress={() => handleApprove(user.id, true)}
-															>
-																Aprovar
-															</Button>
-															<Button
-																size="sm"
-																color="danger"
-																variant="flat"
-																startContent={
-																	<XCircleIcon className="h-4 w-4" />
-																}
-																onPress={() => handleApprove(user.id, false)}
-															>
-																Rejeitar
-															</Button>
-														</>
-													)}
-
-													{user.approved && user.role === "USER" && (
 														<Button
+															isIconOnly
+															variant="flat"
 															size="sm"
-															color="danger"
-															variant="light"
-															onPress={() => handleApprove(user.id, false)}
+															onPress={() => handleOpenEdit(user)}
+															className="bg-slate-100 text-slate-600 hover:bg-slate-200 dark:bg-slate-700 dark:text-slate-400 dark:hover:bg-slate-600"
 														>
-															Revogar
+															<PencilSquareIcon className="h-4 w-4" />
 														</Button>
 													)}
 												</div>
+
+												{/* Botões de ação - Full width no mobile */}
+												{user.role === "USER" && (
+													<div className="flex gap-2">
+														{!user.approved ? (
+															<>
+																<Button
+																	size="sm"
+																	className="flex-1 bg-brand-600 text-white shadow-md shadow-brand-500/20 hover:bg-brand-700"
+																	startContent={
+																		<CheckCircleIcon className="h-4 w-4" />
+																	}
+																	onPress={() => handleApprove(user.id, true)}
+																>
+																	Aprovar
+																</Button>
+																<Button
+																	size="sm"
+																	color="danger"
+																	variant="flat"
+																	className="flex-1"
+																	startContent={
+																		<XCircleIcon className="h-4 w-4" />
+																	}
+																	onPress={() => handleApprove(user.id, false)}
+																>
+																	Rejeitar
+																</Button>
+															</>
+														) : (
+															<Button
+																size="sm"
+																color="danger"
+																variant="light"
+																className="ml-auto"
+																onPress={() => handleApprove(user.id, false)}
+															>
+																Revogar Acesso
+															</Button>
+														)}
+													</div>
+												)}
 											</div>
 										</CardBody>
 									</Card>
@@ -817,7 +798,7 @@ export default function AdminUsersPage() {
 					<ModalContent>
 						<ModalHeader>
 							<div className="flex items-center gap-3">
-								<div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-blue-500 to-cyan-600 shadow-lg shadow-blue-500/30">
+								<div className="flex h-10 w-10 items-center justify-center rounded-xl bg-brand-500 shadow-lg shadow-brand-500/20">
 									<PencilSquareIcon className="h-5 w-5 text-white" />
 								</div>
 								<div>
@@ -891,7 +872,7 @@ export default function AdminUsersPage() {
 								Cancelar
 							</Button>
 							<Button
-								className="bg-gradient-to-r from-blue-500 to-cyan-600 text-white shadow-md"
+								className="bg-brand-600 text-white shadow-md shadow-brand-500/20 hover:bg-brand-700"
 								onPress={handleSaveEdit}
 								isLoading={saving}
 							>
@@ -914,7 +895,7 @@ export default function AdminUsersPage() {
 					<ModalContent>
 						<ModalHeader>
 							<div className="flex items-center gap-3">
-								<div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-emerald-500 to-teal-600 shadow-lg shadow-emerald-500/30">
+								<div className="flex h-10 w-10 items-center justify-center rounded-xl bg-brand-500 shadow-lg shadow-brand-500/20">
 									<UserPlusIcon className="h-5 w-5 text-white" />
 								</div>
 								<div>
@@ -942,8 +923,8 @@ export default function AdminUsersPage() {
 									inputWrapper: "bg-slate-50 dark:bg-slate-700/50",
 								}}
 							/>
-							<div className="mt-2 rounded-lg bg-amber-50 dark:bg-amber-900/20 px-3 py-2">
-								<p className="text-xs text-amber-700 dark:text-amber-300 flex items-start gap-2">
+							<div className="mt-2 rounded-lg bg-slate-100 dark:bg-slate-800 px-3 py-2">
+								<p className="text-xs text-slate-600 dark:text-slate-400 flex items-start gap-2">
 									<ExclamationTriangleIcon className="h-4 w-4 mt-0.5 flex-shrink-0" />
 									O usuário será criado com um email temporário que pode ser
 									atualizado depois através da edição.
@@ -955,7 +936,7 @@ export default function AdminUsersPage() {
 								Cancelar
 							</Button>
 							<Button
-								className="bg-gradient-to-r from-emerald-500 to-teal-600 text-white shadow-md"
+								className="bg-brand-600 text-white shadow-md shadow-brand-500/20 hover:bg-brand-700"
 								onPress={handleCreateQuickUser}
 								isLoading={creatingQuickUser}
 								isDisabled={quickUserName.trim().length < 2}

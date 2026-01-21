@@ -20,6 +20,7 @@ export async function GET() {
       },
       include: {
         items: true,
+        feedback: true,
       },
       orderBy: {
         createdAt: "desc",

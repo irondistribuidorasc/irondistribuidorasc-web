@@ -2,6 +2,15 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Utility to hide scrollbar while keeping scroll functionality */
+.scrollbar-none {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+
 :root {
   color-scheme: light;
 }
@@ -37,7 +46,7 @@ a {
   input[type="datetime-local"],
   textarea,
   select {
-    font-size: 16px !important;
+    font-size: 16px;
   }
 }
 
@@ -50,11 +59,11 @@ a {
   /* Reset everything for print */
   html,
   body {
-    background: white !important;
-    background-color: white !important;
-    background-image: none !important;
-    min-height: auto !important;
-    height: auto !important;
+    background: white;
+    background-color: white;
+    background-image: none;
+    min-height: auto;
+    height: auto;
     print-color-adjust: exact;
     -webkit-print-color-adjust: exact;
   }
@@ -68,45 +77,45 @@ a {
   [class*="bg-slate-8"],
   [class*="bg-gray-9"],
   [class*="bg-gray-8"] {
-    background: white !important;
-    background-color: white !important;
+    background: white;
+    background-color: white;
   }
 
   /* Ensure print:hidden elements are truly hidden */
   .print\:hidden {
-    display: none !important;
-    visibility: hidden !important;
-    height: 0 !important;
-    width: 0 !important;
-    overflow: hidden !important;
-    position: absolute !important;
-    margin: 0 !important;
-    padding: 0 !important;
-    border: none !important;
+    display: none;
+    visibility: hidden;
+    height: 0;
+    width: 0;
+    overflow: hidden;
+    position: absolute;
+    margin: 0;
+    padding: 0;
+    border: none;
   }
 
   /* Hide all fixed positioned elements */
   .fixed {
-    display: none !important;
+    display: none;
   }
 
   /* But show the print content that uses fixed for layout */
   .print\:block.fixed,
   .print\:flex.fixed {
-    display: block !important;
-    position: static !important;
+    display: block;
+    position: static;
   }
 
   /* Remove gradients and patterns */
   [class*="bg-gradient"],
   [class*="backdrop-blur"] {
-    background: transparent !important;
-    background-image: none !important;
-    backdrop-filter: none !important;
+    background: transparent;
+    background-image: none;
+    backdrop-filter: none;
   }
 
   /* Reset min-height on containers */
   .min-h-screen {
-    min-height: auto !important;
+    min-height: auto;
   }
 }

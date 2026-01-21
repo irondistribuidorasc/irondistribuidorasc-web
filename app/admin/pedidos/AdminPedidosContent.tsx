@@ -210,12 +210,12 @@ export function AdminPedidosContent() {
 					{/* Header Card */}
 					<div className="mb-8 overflow-hidden rounded-3xl bg-gradient-to-r from-slate-50 via-white to-slate-100 p-6 shadow-2xl dark:from-slate-800 dark:via-slate-900 dark:to-slate-800 md:p-8">
 						{/* Decorative Elements */}
-						<div className="absolute -right-10 -top-10 h-40 w-40 rounded-full bg-gradient-to-br from-brand-500/20 to-brand-600/20 blur-3xl" />
-						<div className="absolute -bottom-10 -left-10 h-40 w-40 rounded-full bg-gradient-to-br from-amber-500/20 to-orange-500/20 blur-3xl" />
+						<div className="absolute -right-10 -top-10 h-40 w-40 rounded-full bg-gradient-to-br from-brand-500/10 to-brand-600/10 blur-3xl" />
+						<div className="absolute -bottom-10 -left-10 h-40 w-40 rounded-full bg-gradient-to-br from-slate-500/10 to-slate-400/10 blur-3xl" />
 
 						<div className="relative flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
 							<div className="flex items-center gap-4">
-								<div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-brand-500 to-brand-600 shadow-lg shadow-brand-500/30">
+								<div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-brand-500 shadow-lg shadow-brand-500/30">
 									<ShoppingBagIcon className="h-7 w-7 text-white" />
 								</div>
 								<div>
@@ -232,7 +232,7 @@ export function AdminPedidosContent() {
 								<Button
 									as={Link}
 									href="/admin/pedidos/novo"
-									className="bg-gradient-to-r from-emerald-500 to-teal-600 font-semibold shadow-lg shadow-emerald-500/25 hover:shadow-emerald-500/40 [&]:text-white"
+									className="bg-brand-600 font-semibold text-white shadow-lg shadow-brand-500/25 hover:bg-brand-700"
 									startContent={<PlusIcon className="h-5 w-5 text-white" />}
 								>
 									<span className="text-white">Novo Pedido</span>
@@ -241,12 +241,12 @@ export function AdminPedidosContent() {
 									as={Link}
 									href="/admin"
 									variant="flat"
-									className="bg-slate-100 font-medium text-slate-700 shadow-lg hover:bg-slate-200 dark:bg-slate-700 dark:text-white dark:hover:bg-slate-600 [&]:text-slate-700 dark:[&]:text-white"
+									className="bg-slate-100 font-medium text-slate-700 shadow-sm hover:bg-slate-200 dark:bg-slate-700 dark:text-white dark:hover:bg-slate-600"
 									startContent={
 										<ArrowLeftIcon className="h-4 w-4 text-slate-700 dark:text-white" />
 									}
 								>
-									<span className="text-slate-700 dark:text-white">Voltar</span>
+									Voltar
 								</Button>
 							</div>
 						</div>
@@ -254,9 +254,9 @@ export function AdminPedidosContent() {
 
 					{/* Stats Cards */}
 					<div className="mb-8 grid grid-cols-2 gap-4 md:grid-cols-4">
-						<Card className="border-none bg-gradient-to-br from-amber-50 to-orange-50 shadow-md dark:from-amber-900/20 dark:to-orange-900/20">
+						<Card className="border border-slate-200 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-900">
 							<CardBody className="flex flex-row items-center gap-3 p-4">
-								<div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-amber-500 to-orange-600 shadow-md">
+								<div className="flex h-10 w-10 items-center justify-center rounded-xl bg-brand-500 shadow-md shadow-brand-500/20">
 									<ClockIcon className="h-5 w-5 text-white" />
 								</div>
 								<div>
@@ -270,9 +270,9 @@ export function AdminPedidosContent() {
 							</CardBody>
 						</Card>
 
-						<Card className="border-none bg-gradient-to-br from-blue-50 to-cyan-50 shadow-md dark:from-blue-900/20 dark:to-cyan-900/20">
+						<Card className="border border-slate-200 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-900">
 							<CardBody className="flex flex-row items-center gap-3 p-4">
-								<div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-blue-500 to-cyan-600 shadow-md">
+								<div className="flex h-10 w-10 items-center justify-center rounded-xl bg-brand-500 shadow-md shadow-brand-500/20">
 									<TruckIcon className="h-5 w-5 text-white" />
 								</div>
 								<div>
@@ -286,9 +286,9 @@ export function AdminPedidosContent() {
 							</CardBody>
 						</Card>
 
-						<Card className="border-none bg-gradient-to-br from-emerald-50 to-teal-50 shadow-md dark:from-emerald-900/20 dark:to-teal-900/20">
+						<Card className="border border-slate-200 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-900">
 							<CardBody className="flex flex-row items-center gap-3 p-4">
-								<div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-emerald-500 to-teal-600 shadow-md">
+								<div className="flex h-10 w-10 items-center justify-center rounded-xl bg-brand-500 shadow-md shadow-brand-500/20">
 									<CheckCircleIcon className="h-5 w-5 text-white" />
 								</div>
 								<div>
@@ -302,9 +302,9 @@ export function AdminPedidosContent() {
 							</CardBody>
 						</Card>
 
-						<Card className="border-none bg-gradient-to-br from-brand-50 to-brand-100 shadow-md dark:from-brand-900/20 dark:to-brand-900/30">
+						<Card className="border border-slate-200 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-900">
 							<CardBody className="flex flex-row items-center gap-3 p-4">
-								<div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-brand-500 to-brand-600 shadow-md">
+								<div className="flex h-10 w-10 items-center justify-center rounded-xl bg-brand-500 shadow-md shadow-brand-500/20">
 									<DocumentTextIcon className="h-5 w-5 text-white" />
 								</div>
 								<div>
@@ -323,48 +323,57 @@ export function AdminPedidosContent() {
 					<Card className="border-none bg-white/80 shadow-xl backdrop-blur-sm dark:bg-slate-800/80">
 						<CardBody className="p-0">
 							{/* Status Filter Tabs */}
-							<div className="border-b border-slate-200 px-6 pt-6 dark:border-slate-700">
-								<Tabs
-									selectedKey={statusFilter}
-									onSelectionChange={(key) => {
-										const newStatus = key as typeof statusFilter;
-										setStatusFilter(newStatus);
-										setPagination((prev) => ({ ...prev, page: 1 }));
-										// Atualiza a URL
-										const params = new URLSearchParams(searchParams.toString());
-										if (newStatus === "all") {
-											params.delete("status");
-										} else {
-											params.set("status", newStatus);
-										}
-										router.push(
-											`/admin/pedidos${params.toString() ? `?${params.toString()}` : ""}`,
-										);
-									}}
-									color="primary"
-									variant="underlined"
-									classNames={{
-										tabList:
-											"gap-6 w-full relative rounded-none p-0 overflow-x-auto",
-										cursor:
-											"w-full bg-gradient-to-r from-brand-500 to-brand-600",
-										tab: "max-w-fit px-0 h-12",
-										tabContent:
-											"group-data-[selected=true]:text-brand-600 dark:group-data-[selected=true]:text-brand-400",
-									}}
-								>
-									{Object.entries(statusConfig).map(([key, config]) => (
-										<Tab
-											key={key}
-											title={
-												<div className="flex items-center gap-2">
-													<config.icon className="h-4 w-4" />
-													<span>{config.label}</span>
-												</div>
-											}
-										/>
-									))}
-								</Tabs>
+							<div className="border-b border-slate-200 dark:border-slate-700">
+								<div className="scrollbar-none overflow-x-auto">
+									<div className="px-4 pt-4 sm:px-6 sm:pt-6">
+										<Tabs
+											selectedKey={statusFilter}
+											onSelectionChange={(key) => {
+												const newStatus = key as typeof statusFilter;
+												setStatusFilter(newStatus);
+												setPagination((prev) => ({ ...prev, page: 1 }));
+												// Atualiza a URL
+												const params = new URLSearchParams(
+													searchParams.toString(),
+												);
+												if (newStatus === "all") {
+													params.delete("status");
+												} else {
+													params.set("status", newStatus);
+												}
+												router.push(
+													`/admin/pedidos${params.toString() ? `?${params.toString()}` : ""}`,
+												);
+											}}
+											color="primary"
+											variant="underlined"
+											classNames={{
+												base: "w-full min-w-max",
+												tabList:
+													"gap-1 sm:gap-4 w-full relative rounded-none p-0 border-b-0",
+												cursor:
+													"w-full bg-gradient-to-r from-brand-500 to-brand-600",
+												tab: "px-2 sm:px-3 h-10 sm:h-12 data-[hover=true]:opacity-100",
+												tabContent:
+													"text-xs sm:text-sm font-medium group-data-[selected=true]:text-brand-600 dark:group-data-[selected=true]:text-brand-400",
+											}}
+										>
+											{Object.entries(statusConfig).map(([key, config]) => (
+												<Tab
+													key={key}
+													title={
+														<div className="flex items-center gap-1 sm:gap-2">
+															<config.icon className="h-3.5 w-3.5 sm:h-4 sm:w-4 flex-shrink-0" />
+															<span className="whitespace-nowrap">
+																{config.label}
+															</span>
+														</div>
+													}
+												/>
+											))}
+										</Tabs>
+									</div>
+								</div>
 							</div>
 
 							{/* Toolbar */}

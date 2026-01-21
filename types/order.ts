@@ -1,3 +1,5 @@
+import type { OrderFeedback } from "./feedback";
+
 export type OrderStatus =
   | "PENDING"
   | "CONFIRMED"
@@ -34,6 +36,7 @@ export interface Order {
   notes?: string | null;
   whatsappMessageSent: boolean;
   items: OrderItem[];
+  feedback?: OrderFeedback | null;
   createdAt: string;
   updatedAt: string;
 }

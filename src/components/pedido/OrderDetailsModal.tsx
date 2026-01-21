@@ -1,5 +1,6 @@
 "use client";
 
+import { FeedbackDisplay } from "@/src/components/feedback";
 import { formatCurrency } from "@/src/lib/utils";
 import { Order, OrderStatus } from "@/types/order";
 import {
@@ -8,6 +9,7 @@ import {
   IdentificationIcon,
   MapPinIcon,
   PhoneIcon,
+  StarIcon,
 } from "@heroicons/react/24/outline";
 import {
   Button,
@@ -225,6 +227,20 @@ export function OrderDetailsModal({
                 <p className="text-slate-700 dark:text-slate-300">
                   {order.notes}
                 </p>
+              </section>
+            </>
+          )}
+
+          {/* Avaliação do pedido */}
+          {order.feedback && (
+            <>
+              <Divider />
+              <section>
+                <h3 className="mb-3 flex items-center gap-2 text-lg font-semibold text-slate-900 dark:text-slate-100">
+                  <StarIcon className="h-5 w-5" />
+                  Sua Avaliação
+                </h3>
+                <FeedbackDisplay feedback={order.feedback} />
               </section>
             </>
           )}

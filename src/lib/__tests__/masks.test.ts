@@ -5,6 +5,7 @@ import {
 	maskCPF,
 	maskCPFOrCNPJ,
 	maskPhone,
+	maskUF,
 	unmask,
 } from "../masks";
 
@@ -103,6 +104,30 @@ describe("masks", () => {
 		it("deve formatar como CNPJ quando tem mais de 11 dígitos", () => {
 			expect(maskCPFOrCNPJ("12345678000190")).toBe("12.345.678/0001-90");
 			expect(maskCPFOrCNPJ("123456780001")).toBe("12.345.678/0001");
+		});
+	});
+
+	describe("maskUF", () => {
+		it("deve formatar UF corretamente", () => {
+			expect(maskUF("sc")).toBe("SC");
+			expect(maskUF("SP")).toBe("SP");
+			expect(maskUF("rj")).toBe("RJ");
+		});
+
+		it("deve limitar a 2 caracteres", () => {
+			expect(maskUF("Santa Catarina")).toBe("SA");
+			expect(maskUF("SCX")).toBe("SC");
+		});
+
+		it("deve remover caracteres não alfabéticos", () => {
+			expect(maskUF("S1C2")).toBe("SC");
+			expect(maskUF("123")).toBe("");
+			expect(maskUF("S-C")).toBe("SC");
+		});
+
+		it("deve converter para maiúsculas", () => {
+			expect(maskUF("sc")).toBe("SC");
+			expect(maskUF("Sc")).toBe("SC");
 		});
 	});
 

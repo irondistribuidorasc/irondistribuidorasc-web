@@ -1,19 +1,17 @@
 "use client";
 
-import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 import {
-  Button,
-  Card,
-  CardBody,
-  Input,
-  Pagination,
-  Spinner,
-  Table,
-  TableBody,
-  TableCell,
-  TableColumn,
-  TableHeader,
-  TableRow,
+	ExclamationTriangleIcon,
+	MagnifyingGlassIcon,
+	PencilSquareIcon,
+} from "@heroicons/react/24/outline";
+import {
+	Button,
+	Card,
+	CardBody,
+	Input,
+	Pagination,
+	Spinner,
 } from "@heroui/react";
 import { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
@@ -143,124 +141,187 @@ export default function StockManager() {
     }
   };
 
-  const hasChanges = Object.keys(changes).length > 0;
+	const hasChanges = Object.keys(changes).length > 0;
 
-  return (
-    <div className="space-y-4">
-      <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-        <Input
-          className="max-w-xs"
-          placeholder="Buscar produto..."
-          startContent={<MagnifyingGlassIcon className="h-5 w-5" />}
-          value={searchQuery}
-          onValueChange={setSearchQuery}
-          isClearable
-          onClear={() => setSearchQuery("")}
-        />
-        <Button
-          color="primary"
-          isLoading={saving}
-          isDisabled={!hasChanges}
-          onPress={handleSave}
-        >
-          Salvar Alterações ({Object.keys(changes).length})
-        </Button>
-      </div>
+	return (
+		<div className="space-y-4">
+			{/* Header com busca e botão salvar */}
+			<Card className="border-0 shadow-md bg-white/80 backdrop-blur-sm dark:bg-slate-800/80">
+				<CardBody className="p-4">
+					<div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+						<Input
+							className="w-full sm:max-w-xs"
+							placeholder="Buscar produto..."
+							startContent={
+								<MagnifyingGlassIcon className="h-5 w-5 text-slate-400" />
+							}
+							value={searchQuery}
+							onValueChange={setSearchQuery}
+							isClearable
+							onClear={() => setSearchQuery("")}
+							classNames={{
+								inputWrapper:
+									"bg-slate-100 dark:bg-slate-700/50 border-0 shadow-sm",
+							}}
+						/>
+						<Button
+							color="primary"
+							isLoading={saving}
+							isDisabled={!hasChanges}
+							onPress={handleSave}
+							className="w-full sm:w-auto bg-brand-500 font-semibold shadow-md"
+						>
+							Salvar Alterações ({Object.keys(changes).length})
+						</Button>
+					</div>
+				</CardBody>
+			</Card>
 
-      {loading ? (
-        <div className="flex justify-center py-8">
-          <Spinner color="primary" />
-        </div>
-      ) : products.length === 0 ? (
-        <Card>
-          <CardBody className="py-8 text-center text-slate-500">
-            Nenhum produto encontrado
-          </CardBody>
-        </Card>
-      ) : (
-        <>
-          <Table aria-label="Gerenciador de Estoque">
-            <TableHeader>
-              <TableColumn>PRODUTO</TableColumn>
-              <TableColumn>ESTOQUE ATUAL</TableColumn>
-              <TableColumn>ESTOQUE MÍNIMO</TableColumn>
-              <TableColumn>STATUS</TableColumn>
-            </TableHeader>
-            <TableBody>
-              {products.map((product) => {
-                const currentStock =
-                  changes[product.id]?.stockQuantity ?? product.stockQuantity;
-                const currentThreshold =
-                  changes[product.id]?.minStockThreshold ??
-                  product.minStockThreshold;
-                const isLowStock = currentStock <= currentThreshold;
-                const isChanged = !!changes[product.id];
+			{/* Contador de resultados */}
+			<div className="flex items-center justify-between px-1">
+				<p className="text-sm text-slate-500 dark:text-slate-400">
+					{pagination.total} produto{pagination.total !== 1 ? "s" : ""}{" "}
+					encontrado{pagination.total !== 1 ? "s" : ""}
+				</p>
+				{hasChanges && (
+					<span className="text-xs font-medium text-brand-600 dark:text-brand-400">
+						{Object.keys(changes).length} alteração
+						{Object.keys(changes).length !== 1 ? "ões" : ""} pendente
+						{Object.keys(changes).length !== 1 ? "s" : ""}
+					</span>
+				)}
+			</div>
 
-                return (
-                  <TableRow key={product.id}>
-                    <TableCell>
-                      <div className="flex flex-col">
-                        <span className="font-bold">{product.name}</span>
-                        <span className="text-xs text-slate-500">
-                          {product.code}
-                        </span>
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <Input
-                        type="number"
-                        size="sm"
-                        className="w-32"
-                        min={0}
-                        value={currentStock.toString()}
-                        onValueChange={(v) => handleStockChange(product.id, v)}
-                      />
-                    </TableCell>
-                    <TableCell>
-                      <Input
-                        type="number"
-                        size="sm"
-                        className="w-32"
-                        value={currentThreshold.toString()}
-                        onValueChange={(v) =>
-                          handleThresholdChange(product.id, v)
-                        }
-                      />
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex items-center gap-2">
-                        {isLowStock && (
-                          <span className="text-xs font-medium text-warning-600 bg-warning-50 px-2 py-1 rounded-full border border-warning-200">
-                            Estoque Baixo
-                          </span>
-                        )}
-                        {isChanged && (
-                          <span className="text-xs font-medium text-primary-600 bg-primary-50 px-2 py-1 rounded-full border border-primary-200">
-                            Modificado
-                          </span>
-                        )}
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                );
-              })}
-            </TableBody>
-          </Table>
+			{loading ? (
+				<div className="flex justify-center py-12">
+					<Spinner color="primary" size="lg" />
+				</div>
+			) : products.length === 0 ? (
+				<Card className="border-0 shadow-md">
+					<CardBody className="py-12 text-center text-slate-500">
+						<p>Nenhum produto encontrado</p>
+					</CardBody>
+				</Card>
+			) : (
+				<>
+					{/* Lista de produtos em cards */}
+					<div className="space-y-3">
+						{products.map((product) => {
+							const currentStock =
+								changes[product.id]?.stockQuantity ?? product.stockQuantity;
+							const currentThreshold =
+								changes[product.id]?.minStockThreshold ??
+								product.minStockThreshold;
+							const isLowStock = currentStock <= currentThreshold;
+							const isChanged = !!changes[product.id];
 
-          {pagination.totalPages > 1 && (
-            <div className="flex justify-center mt-4">
-              <Pagination
-                total={pagination.totalPages}
-                page={pagination.page}
-                onChange={(page) =>
-                  setPagination((prev) => ({ ...prev, page }))
-                }
-                color="primary"
-              />
-            </div>
-          )}
-        </>
-      )}
-    </div>
-  );
+							return (
+								<Card
+									key={product.id}
+									className={`border-0 shadow-sm transition-all ${
+										isChanged
+											? "ring-2 ring-brand-500/50 bg-brand-50/50 dark:bg-brand-900/20"
+											: "bg-white dark:bg-slate-800"
+									} ${isLowStock ? "border-l-4 border-l-warning-500" : ""}`}
+								>
+									<CardBody className="p-4">
+										{/* Cabeçalho do card: nome + badges */}
+										<div className="flex items-start justify-between gap-2 mb-4">
+											<div className="flex-1 min-w-0">
+												<h3 className="font-semibold text-slate-900 dark:text-white truncate">
+													{product.name}
+												</h3>
+												<p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+													{product.code}
+												</p>
+											</div>
+											<div className="flex flex-wrap gap-1.5 flex-shrink-0">
+												{isLowStock && (
+													<span className="inline-flex items-center gap-1 text-xs font-medium text-warning-700 bg-warning-100 dark:text-warning-400 dark:bg-warning-900/30 px-2 py-1 rounded-full">
+														<ExclamationTriangleIcon className="h-3 w-3" />
+														Baixo
+													</span>
+												)}
+												{isChanged && (
+													<span className="inline-flex items-center gap-1 text-xs font-medium text-brand-700 bg-brand-100 dark:text-brand-400 dark:bg-brand-900/30 px-2 py-1 rounded-full">
+														<PencilSquareIcon className="h-3 w-3" />
+														Editado
+													</span>
+												)}
+											</div>
+										</div>
+
+										{/* Campos de estoque */}
+										<div className="grid grid-cols-2 gap-3">
+											<div>
+												<Input
+													id={`stock-${product.id}`}
+													type="number"
+													size="sm"
+													min={0}
+													label="Estoque Atual"
+													labelPlacement="outside"
+													value={currentStock.toString()}
+													onValueChange={(v) =>
+														handleStockChange(product.id, v)
+													}
+													classNames={{
+														label:
+															"text-xs font-medium text-slate-500 dark:text-slate-400",
+														inputWrapper:
+															"bg-slate-100 dark:bg-slate-700/50 border-0 shadow-sm h-10",
+														input: "text-center font-semibold",
+													}}
+												/>
+											</div>
+											<div>
+												<Input
+													id={`threshold-${product.id}`}
+													type="number"
+													size="sm"
+													label="Estoque Mínimo"
+													labelPlacement="outside"
+													value={currentThreshold.toString()}
+													onValueChange={(v) =>
+														handleThresholdChange(product.id, v)
+													}
+													classNames={{
+														label:
+															"text-xs font-medium text-slate-500 dark:text-slate-400",
+														inputWrapper:
+															"bg-slate-100 dark:bg-slate-700/50 border-0 shadow-sm h-10",
+														input: "text-center font-semibold",
+													}}
+												/>
+											</div>
+										</div>
+									</CardBody>
+								</Card>
+							);
+						})}
+					</div>
+
+					{/* Paginação */}
+					{pagination.totalPages > 1 && (
+						<div className="flex justify-center pt-4">
+							<Pagination
+								total={pagination.totalPages}
+								page={pagination.page}
+								onChange={(page) =>
+									setPagination((prev) => ({ ...prev, page }))
+								}
+								color="primary"
+								showControls
+								classNames={{
+									wrapper: "gap-1",
+									item: "bg-slate-100 dark:bg-slate-700/50",
+									cursor: "bg-brand-500 shadow-md",
+								}}
+							/>
+						</div>
+					)}
+				</>
+			)}
+		</div>
+	);
 }

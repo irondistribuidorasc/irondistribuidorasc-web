@@ -1,11 +1,12 @@
 "use client";
 
+import { InputInteractionFix } from "@/src/components/layout/InputInteractionFix";
 import { CartProvider } from "@/src/contexts/CartContext";
 import { NotificationProvider } from "@/src/contexts/NotificationContext";
 import { HeroUIProvider } from "@heroui/react";
 import { SessionProvider } from "next-auth/react";
 import { ThemeProvider } from "next-themes";
-import { ReactNode } from "react";
+import { type ReactNode } from "react";
 import { Toaster } from "sonner";
 
 type ProvidersProps = {
@@ -22,9 +23,11 @@ export function Providers({ children }: ProvidersProps) {
     >
       <SessionProvider>
         <HeroUIProvider>
-          <NotificationProvider>
-            <CartProvider>{children}</CartProvider>
-          </NotificationProvider>
+          <InputInteractionFix>
+            <NotificationProvider>
+              <CartProvider>{children}</CartProvider>
+            </NotificationProvider>
+          </InputInteractionFix>
           <Toaster richColors position="top-right" />
         </HeroUIProvider>
       </SessionProvider>

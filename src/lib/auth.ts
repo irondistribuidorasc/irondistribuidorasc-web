@@ -7,7 +7,7 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import GoogleProvider from "next-auth/providers/google";
 import { logger } from "@/src/lib/logger";
 import { db } from "@/src/lib/prisma";
-import { checkRateLimit } from "@/src/lib/rate-limit";
+import { checkRateLimit, RateLimitError } from "@/src/lib/rate-limit";
 import { isValidEmail, normalizeEmail } from "@/src/lib/validation";
 
 type AuthUser = NextAuthUser & {
@@ -70,12 +70,18 @@ export const authOptions: NextAuthOptions = {
           return null;
         }
 
-        // Rate limit por email — CredentialsProvider não expõe o Request,
-        // então IP não está disponível aqui. Para rate limit por IP no login,
-        // usar middleware/proxy (ex: middleware.ts ou Vercel WAF).
-        const rateLimitResult = await checkRateLimit(normalizedEmail, "auth");
-        if (rateLimitResult && !rateLimitResult.success) {
-          throw new Error("Muitas tentativas de login. Tente novamente em alguns minutos.");
+        try {
+          const rateLimitResult = await checkRateLimit(normalizedEmail, "auth");
+          if (rateLimitResult && !rateLimitResult.success) {
+            throw new RateLimitError("Muitas tentativas de login. Tente novamente em alguns minutos.");
+          }
+        } catch (error) {
+          if (error instanceof RateLimitError) {
+            throw error;
+          }
+          logger.error("auth:authorize - Erro no rate limiting, permitindo login", {
+            error: error instanceof Error ? error.message : String(error),
+          });
         }
 
         const user = await db.user.findUnique({

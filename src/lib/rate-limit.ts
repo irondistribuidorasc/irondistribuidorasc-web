@@ -3,10 +3,18 @@ import { NextResponse } from "next/server";
 import { logger } from "@/src/lib/logger";
 import { isRedisAvailable, redis } from "./redis";
 
-// Tipos de rate limiters disponíveis
 type RateLimiterType = "auth" | "api" | "forgotPassword" | "sensitiveAction";
 
-// Configurações de limite por tipo
+/** Erro lançado quando o rate limit é excedido */
+export class RateLimitError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = "RateLimitError";
+  }
+}
+
+const CRITICAL_TYPES: ReadonlySet<RateLimiterType> = new Set(["auth", "forgotPassword"]);
+
 const RATE_LIMIT_CONFIG: Record<
   RateLimiterType,
   { requests: number; window: `${number} ${"s" | "m" | "h" | "d"}` }
@@ -41,6 +49,67 @@ function getRateLimiter(type: RateLimiterType): Ratelimit | null {
   return rateLimiters[type]!;
 }
 
+function maskIdentifier(id: string): string {
+  if (id.includes("@")) {
+    return id.replace(/(.{2}).*(@.*)/, "$1***$2");
+  }
+  return id;
+}
+
+function parseWindow(window: string): number {
+  const [amount, unit] = window.split(" ");
+  const value = parseInt(amount, 10);
+  const multipliers: Record<string, number> = { s: 1_000, m: 60_000, h: 3_600_000, d: 86_400_000 };
+  return value * (multipliers[unit] ?? 60_000);
+}
+
+// Fallback in-memory para quando Redis está indisponível.
+// Em ambientes serverless (Vercel Functions, Lambda), cada cold start
+// cria um Map independente — o rate limiting é por-instância, não global.
+const inMemoryStore = new Map<string, { count: number; resetAt: number }>();
+const IN_MEMORY_CLEANUP_INTERVAL = 5 * 60_000;
+const MAX_IN_MEMORY_ENTRIES = 10_000;
+let lastCleanup = Date.now();
+
+function cleanupInMemoryStore(): void {
+  const now = Date.now();
+  if (now - lastCleanup < IN_MEMORY_CLEANUP_INTERVAL) return;
+  lastCleanup = now;
+  for (const [key, entry] of inMemoryStore) {
+    if (now > entry.resetAt) {
+      inMemoryStore.delete(key);
+    }
+  }
+}
+
+function inMemoryRateLimit(identifier: string, type: RateLimiterType): RateLimitResult {
+  cleanupInMemoryStore();
+  const config = RATE_LIMIT_CONFIG[type];
+  const key = `${type}:${identifier}`;
+  const now = Date.now();
+  const windowMs = parseWindow(config.window);
+  const entry = inMemoryStore.get(key);
+
+  if (!entry || now > entry.resetAt) {
+    if (inMemoryStore.size >= MAX_IN_MEMORY_ENTRIES) {
+      cleanupInMemoryStore();
+      if (inMemoryStore.size >= MAX_IN_MEMORY_ENTRIES) {
+        return { success: false, limit: config.requests, remaining: 0, reset: now + windowMs };
+      }
+    }
+    const resetAt = now + windowMs;
+    inMemoryStore.set(key, { count: 1, resetAt });
+    return { success: true, limit: config.requests, remaining: config.requests - 1, reset: resetAt };
+  }
+
+  entry.count++;
+  if (entry.count > config.requests) {
+    return { success: false, limit: config.requests, remaining: 0, reset: entry.resetAt };
+  }
+
+  return { success: true, limit: config.requests, remaining: config.requests - entry.count, reset: entry.resetAt };
+}
+
 /**
  * Resultado do check de rate limit
  */
@@ -65,8 +134,12 @@ export async function checkRateLimit(
 
   if (!limiter) {
     if (process.env.NODE_ENV === "production") {
-      logger.error("rate-limit - Redis indisponível em produção, bloqueando request (fail-closed)", { type });
-      return { success: false, limit: 0, remaining: 0, reset: Date.now() + 60_000 };
+      const masked = maskIdentifier(identifier);
+      if (CRITICAL_TYPES.has(type)) {
+        logger.error("rate-limit - Redis indisponível em produção, usando fallback in-memory (fail-closed)", { type, identifier: masked });
+        return inMemoryRateLimit(identifier, type);
+      }
+      logger.warn("rate-limit - Redis indisponível em produção, permitindo request (fail-open)", { type, identifier: masked });
     }
     return null;
   }

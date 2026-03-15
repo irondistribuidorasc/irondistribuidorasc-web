@@ -1,9 +1,17 @@
-import { describe, expect, it, vi, beforeEach } from "vitest";
+import { describe, expect, it, vi, beforeEach, afterEach } from "vitest";
 
-// Mock do redis - sempre indisponível para testes básicos
 vi.mock("../redis", () => ({
   redis: null,
   isRedisAvailable: vi.fn(() => false),
+}));
+
+vi.mock("@/src/lib/logger", () => ({
+  logger: {
+    error: vi.fn(),
+    warn: vi.fn(),
+    info: vi.fn(),
+    debug: vi.fn(),
+  },
 }));
 
 describe("rate-limit", () => {
@@ -161,5 +169,174 @@ describe("RateLimitResult interface", () => {
 
     // Deve ser null porque Redis está mockado como indisponível
     expect(result).toBeNull();
+  });
+});
+
+describe("RateLimitError", () => {
+  it("é instância de Error com name correto", async () => {
+    const { RateLimitError } = await import("../rate-limit");
+    const error = new RateLimitError("test message");
+
+    expect(error).toBeInstanceOf(Error);
+    expect(error.name).toBe("RateLimitError");
+    expect(error.message).toBe("test message");
+  });
+});
+
+describe("produção com Redis indisponível", () => {
+  beforeEach(() => {
+    vi.stubEnv("NODE_ENV", "production");
+    vi.resetModules();
+    vi.clearAllMocks();
+  });
+
+  afterEach(() => {
+    vi.unstubAllEnvs();
+  });
+
+  describe("tipos críticos (fallback in-memory)", () => {
+    it("auth - retorna resultado com success: true na primeira tentativa", async () => {
+      const { checkRateLimit } = await import("../rate-limit");
+
+      const result = await checkRateLimit("test@example.com", "auth");
+
+      expect(result).not.toBeNull();
+      expect(result!.success).toBe(true);
+      expect(result!.remaining).toBe(4);
+      expect(result!.limit).toBe(5);
+    });
+
+    it("auth - bloqueia após exceder limite de 5 tentativas", async () => {
+      const { checkRateLimit } = await import("../rate-limit");
+
+      for (let i = 0; i < 5; i++) {
+        await checkRateLimit("brute@example.com", "auth");
+      }
+
+      const result = await checkRateLimit("brute@example.com", "auth");
+      expect(result).not.toBeNull();
+      expect(result!.success).toBe(false);
+      expect(result!.remaining).toBe(0);
+    });
+
+    it("forgotPassword - retorna resultado com success: true (não null)", async () => {
+      const { checkRateLimit } = await import("../rate-limit");
+
+      const result = await checkRateLimit("192.168.1.1", "forgotPassword");
+
+      expect(result).not.toBeNull();
+      expect(result!.success).toBe(true);
+      expect(result!.limit).toBe(3);
+    });
+
+    it("forgotPassword - bloqueia após 3 tentativas", async () => {
+      const { checkRateLimit } = await import("../rate-limit");
+
+      for (let i = 0; i < 3; i++) {
+        await checkRateLimit("192.168.1.1", "forgotPassword");
+      }
+
+      const result = await checkRateLimit("192.168.1.1", "forgotPassword");
+      expect(result!.success).toBe(false);
+    });
+
+    it("identifica diferentes usuários separadamente", async () => {
+      const { checkRateLimit } = await import("../rate-limit");
+
+      for (let i = 0; i < 5; i++) {
+        await checkRateLimit("a@example.com", "auth");
+      }
+
+      const result = await checkRateLimit("b@example.com", "auth");
+      expect(result!.success).toBe(true);
+      expect(result!.remaining).toBe(4);
+    });
+  });
+
+  describe("tipos não-críticos (fail-open)", () => {
+    it("api - retorna null", async () => {
+      const { checkRateLimit } = await import("../rate-limit");
+
+      const result = await checkRateLimit("192.168.1.1", "api");
+      expect(result).toBeNull();
+    });
+
+    it("sensitiveAction - retorna null", async () => {
+      const { checkRateLimit } = await import("../rate-limit");
+
+      const result = await checkRateLimit("192.168.1.1", "sensitiveAction");
+      expect(result).toBeNull();
+    });
+  });
+
+  describe("logging", () => {
+    it("usa logger.error para tipos críticos", async () => {
+      const { logger } = await import("@/src/lib/logger");
+      const { checkRateLimit } = await import("../rate-limit");
+
+      await checkRateLimit("test@example.com", "auth");
+
+      expect(logger.error).toHaveBeenCalledWith(
+        expect.stringContaining("fail-closed"),
+        expect.objectContaining({ type: "auth" })
+      );
+    });
+
+    it("usa logger.warn para tipos não-críticos", async () => {
+      const { logger } = await import("@/src/lib/logger");
+      const { checkRateLimit } = await import("../rate-limit");
+
+      await checkRateLimit("192.168.1.1", "api");
+
+      expect(logger.warn).toHaveBeenCalledWith(
+        expect.stringContaining("fail-open"),
+        expect.objectContaining({ type: "api" })
+      );
+    });
+
+    it("mascara email no log (PII)", async () => {
+      const { logger } = await import("@/src/lib/logger");
+      const { checkRateLimit } = await import("../rate-limit");
+
+      await checkRateLimit("usuario@example.com", "auth");
+
+      expect(logger.error).toHaveBeenCalledWith(
+        expect.any(String),
+        expect.objectContaining({ identifier: "us***@example.com" })
+      );
+    });
+
+    it("não mascara IP no log", async () => {
+      const { logger } = await import("@/src/lib/logger");
+      const { checkRateLimit } = await import("../rate-limit");
+
+      await checkRateLimit("192.168.1.1", "api");
+
+      expect(logger.warn).toHaveBeenCalledWith(
+        expect.any(String),
+        expect.objectContaining({ identifier: "192.168.1.1" })
+      );
+    });
+  });
+
+  describe("withRateLimit para tipos críticos", () => {
+    it("retorna null quando dentro do limite", async () => {
+      const { withRateLimit } = await import("../rate-limit");
+
+      const result = await withRateLimit("192.168.1.1", "auth");
+      expect(result).toBeNull();
+    });
+
+    it("retorna 429 quando limite excedido", async () => {
+      const { withRateLimit, checkRateLimit } = await import("../rate-limit");
+
+      for (let i = 0; i < 5; i++) {
+        await checkRateLimit("192.168.1.1", "auth");
+      }
+
+      const result = await withRateLimit("192.168.1.1", "auth");
+      expect(result).not.toBeNull();
+      expect(result!.status).toBe(429);
+    });
   });
 });

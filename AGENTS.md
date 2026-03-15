@@ -13,6 +13,14 @@
 
 Qualquer implementação que desvie dessas diretrizes deve ser justificada e aprovada. O Brand Book é a fonte de verdade para decisões visuais.
 
+### Qualidade Estética (Frontend Design)
+Para diretrizes de qualidade estética e design thinking, consulte `.cursor/skills/frontend-design/SKILL.md`. Este skill define:
+
+- **O que é fixo:** Cores, fonte (Inter), tokens, espaçamento, componentes HeroUI e tom de voz — sempre seguir o Brand Book.
+- **O que é livre:** Layouts, composição espacial, animações, gradientes, efeitos visuais e decorações — criatividade encorajada dentro da identidade da marca.
+- **Anti-patterns:** Lista de padrões genéricos a evitar (fundos planos, hex hardcoded, sombras uniformes, etc.).
+- **Checklists:** Exemplos comparativos de design genérico vs. design alinhado ao Brand Book em `.cursor/skills/frontend-design/checklists.md`.
+
 ## Project Structure & Module Organization
 The app router lives in `app/`, with `app/page.tsx` as the primary screen and `app/layout.tsx` providing shared metadata and shell components. Global theming and Tailwind tokens are centralized in `app/globals.css`; prefer colocated component styles only when a pattern cannot be expressed with utilities. Static assets (logos, favicons, mock data) belong in `public/` to benefit from Next.js static routing. Cross-cutting configuration is split across `next.config.ts`, `tsconfig.json`, `eslint.config.mjs`, and `postcss.config.mjs`, so update those files together when introducing new tooling. Use the `@/*` path alias from `tsconfig.json` for shared modules to avoid brittle relative imports.
 

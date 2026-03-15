@@ -1,11 +1,12 @@
+import { randomBytes } from "node:crypto";
+import { addHours } from "date-fns";
+import { NextResponse } from "next/server";
+import { Resend } from "resend";
 import { logger } from "@/src/lib/logger";
 import { db } from "@/src/lib/prisma";
 import { getClientIP, withRateLimit } from "@/src/lib/rate-limit";
+import { forgotPasswordSchema } from "@/src/lib/schemas";
 import { normalizeEmail } from "@/src/lib/validation";
-import { addHours } from "date-fns";
-import { NextResponse } from "next/server";
-import { randomBytes } from "node:crypto";
-import { Resend } from "resend";
 
 export async function POST(request: Request) {
   try {
@@ -19,16 +20,17 @@ export async function POST(request: Request) {
       return rateLimitResponse;
     }
 
-    const { email } = await request.json();
+    const body = await request.json();
+    const validation = forgotPasswordSchema.safeParse(body);
 
-    if (!email) {
+    if (!validation.success) {
       return NextResponse.json(
-        { message: "E-mail é obrigatório." },
+        { message: "E-mail inválido." },
         { status: 400 }
       );
     }
 
-    const normalizedEmail = normalizeEmail(email);
+    const normalizedEmail = normalizeEmail(validation.data.email);
 
     const user = await db.user.findUnique({
       where: { email: normalizedEmail },

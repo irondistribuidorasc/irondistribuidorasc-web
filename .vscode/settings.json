@@ -1,7 +1,13 @@
 {
   "kiroAgent.configureMCP": "Disabled",
   "editor.formatOnSave": false,
-  "editor.codeActionsOnSave": {},
+  "editor.defaultFormatter": null,
+  "editor.codeActionsOnSave": {
+    "quickfix.biome": "never",
+    "source.organizeImports.biome": "never",
+    "source.organizeImports": "never",
+    "source.fixAll": "never"
+  },
   "[typescript]": {
     "editor.defaultFormatter": null
   },

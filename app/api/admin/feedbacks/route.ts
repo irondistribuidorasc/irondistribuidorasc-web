@@ -1,6 +1,7 @@
 import type { Prisma } from "@prisma/client";
 import { type NextRequest, NextResponse } from "next/server";
 import { auth } from "@/src/lib/auth";
+import { logger } from "@/src/lib/logger";
 import { db } from "@/src/lib/prisma";
 
 /**
@@ -122,7 +123,9 @@ export async function GET(req: NextRequest) {
 			},
 		});
 	} catch (error) {
-		console.error("Error fetching feedbacks:", error);
+		logger.error("admin/feedbacks:GET - Erro ao buscar avaliações", {
+			error: error instanceof Error ? error.message : String(error),
+		});
 		return NextResponse.json(
 			{ error: "Erro ao buscar avaliações" },
 			{ status: 500 },

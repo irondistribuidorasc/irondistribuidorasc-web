@@ -28,8 +28,12 @@ export async function GET(req: NextRequest) {
     const search = searchParams.get("search") || "";
     const page = parseInt(searchParams.get("page") || "1");
     const limit = Math.min(parseInt(searchParams.get("limit") || "20"), 100);
-    const orderBy = searchParams.get("orderBy") || "createdAt";
-    const order = searchParams.get("order") || "desc";
+    const ALLOWED_ORDER_FIELDS = ["createdAt", "orderNumber", "total", "status", "customerName"] as const;
+    const rawOrderBy = searchParams.get("orderBy") || "createdAt";
+    const orderBy = ALLOWED_ORDER_FIELDS.includes(rawOrderBy as typeof ALLOWED_ORDER_FIELDS[number])
+      ? rawOrderBy
+      : "createdAt";
+    const order = searchParams.get("order") === "asc" ? "asc" : "desc";
 
     // Construir filtros
     const where: Prisma.OrderWhereInput = {};

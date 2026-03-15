@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/src/lib/auth";
+import { logger } from "@/src/lib/logger";
 import { db } from "@/src/lib/prisma";
 import { z } from "zod";
 
@@ -16,7 +17,7 @@ export async function PATCH(
 		const { id } = await params;
 
 		if (!session || session.user.role !== "ADMIN") {
-			return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+			return NextResponse.json({ error: "Não autorizado" }, { status: 403 });
 		}
 
 		const body = await req.json();
@@ -24,7 +25,7 @@ export async function PATCH(
 
 		if (!validation.success) {
 			return NextResponse.json(
-				{ error: "Invalid payment method" },
+				{ error: "Método de pagamento inválido" },
 				{ status: 400 },
 			);
 		}
@@ -38,9 +39,11 @@ export async function PATCH(
 
 		return NextResponse.json(order);
 	} catch (error) {
-		console.error("Error updating payment method:", error);
+		logger.error("admin/orders/[id]/payment:PATCH - Erro ao atualizar método de pagamento", {
+			error: error instanceof Error ? error.message : String(error),
+		});
 		return NextResponse.json(
-			{ error: "Internal Server Error" },
+			{ error: "Erro ao atualizar método de pagamento" },
 			{ status: 500 },
 		);
 	}

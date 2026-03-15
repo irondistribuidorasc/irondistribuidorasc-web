@@ -1,14 +1,14 @@
-import { authOptions } from "@/src/lib/auth";
+import { auth } from "@/src/lib/auth";
+import { logger } from "@/src/lib/logger";
 import { db } from "@/src/lib/prisma";
-import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
 
 export async function GET() {
   try {
-    const session = await getServerSession(authOptions);
+    const session = await auth();
 
     if (!session || session.user.role !== "ADMIN") {
-      return new NextResponse("Unauthorized", { status: 401 });
+      return NextResponse.json({ error: "Não autorizado" }, { status: 403 });
     }
 
     const [pendingOrdersCount, lowStockResult, latestOrder] = await Promise.all(
@@ -40,7 +40,9 @@ export async function GET() {
       latestOrderId: latestOrder?.id || null,
     });
   } catch (error) {
-    console.error("Error fetching admin notifications:", error);
-    return new NextResponse("Internal Server Error", { status: 500 });
+    logger.error("admin/notifications:GET - Erro ao buscar notificações admin", {
+      error: error instanceof Error ? error.message : String(error),
+    });
+    return NextResponse.json({ error: "Erro ao buscar notificações" }, { status: 500 });
   }
 }

@@ -1,57 +1,66 @@
-import { authOptions } from "@/src/lib/auth";
+import { auth } from "@/src/lib/auth";
+import { logger } from "@/src/lib/logger";
 import { db } from "@/src/lib/prisma";
-import { getServerSession } from "next-auth";
+import { getClientIP, withRateLimit } from "@/src/lib/rate-limit";
+import { productSchema } from "@/src/lib/schemas";
 import { NextResponse } from "next/server";
 
 export async function PUT(
   request: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  const session = await getServerSession(authOptions);
+  const session = await auth();
 
   if (!session || session.user?.role !== "ADMIN") {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    return NextResponse.json({ error: "Não autorizado" }, { status: 403 });
   }
+
+  const clientIP = getClientIP(request);
+  const rateLimitResponse = await withRateLimit(clientIP, "api");
+  if (rateLimitResponse) return rateLimitResponse;
 
   try {
     const body = await request.json();
     const { id } = await params;
 
+    const parsed = productSchema.safeParse(body);
+    if (!parsed.success) {
+      return NextResponse.json(
+        { error: "Dados inválidos", details: parsed.error.flatten() },
+        { status: 400 }
+      );
+    }
+
+    const data = parsed.data;
     const product = await db.product.update({
       where: { id },
       data: {
-        code: body.code,
-        name: body.name,
-        brand: body.brand,
-        category: body.category,
-        model: body.model,
-        imageUrl: body.imageUrl,
-
-        inStock: (body.stockQuantity ?? 0) > 0,
-        stockQuantity: Number.isNaN(Number(body.stockQuantity))
-          ? undefined
-          : Number(body.stockQuantity),
-        minStockThreshold: Number.isNaN(Number(body.minStockThreshold))
-          ? undefined
-          : Number(body.minStockThreshold),
-        restockDate: body.restockDate ? new Date(body.restockDate) : null,
-        price: Number.isNaN(Number(body.price))
-          ? undefined
-          : Number(body.price),
-        description: body.description,
-        tags: body.tags,
-        popularity: Number.isNaN(Number(body.popularity))
-          ? undefined
-          : Number(body.popularity),
+        code: data.code,
+        name: data.name,
+        brand: data.brand,
+        category: data.category,
+        model: data.model,
+        imageUrl: data.imageUrl,
+        inStock: data.stockQuantity > 0,
+        stockQuantity: data.stockQuantity,
+        minStockThreshold: data.minStockThreshold,
+        restockDate: data.restockDate ? new Date(data.restockDate) : null,
+        price: data.price,
+        description: data.description,
+        tags: data.tags,
+        popularity: data.popularity,
       },
     });
 
     return NextResponse.json(product);
   } catch (error: unknown) {
-    console.error("Error updating product:", error);
-    const message =
-      error instanceof Error ? error.message : "Failed to update product";
-    return NextResponse.json({ error: message }, { status: 500 });
+    logger.error("admin/products/[id]:PUT - Erro ao atualizar produto", {
+      error: error instanceof Error ? error.message : String(error),
+    });
+    return NextResponse.json(
+      { error: "Erro ao atualizar produto" },
+      { status: 500 }
+    );
   }
 }
 
@@ -59,11 +68,15 @@ export async function DELETE(
   request: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  const session = await getServerSession(authOptions);
+  const session = await auth();
 
   if (!session || session.user?.role !== "ADMIN") {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    return NextResponse.json({ error: "Não autorizado" }, { status: 403 });
   }
+
+  const clientIP = getClientIP(request);
+  const rateLimitResponse = await withRateLimit(clientIP, "sensitiveAction");
+  if (rateLimitResponse) return rateLimitResponse;
 
   try {
     const { id } = await params;
@@ -72,11 +85,13 @@ export async function DELETE(
       where: { id },
     });
 
-    return NextResponse.json({ message: "Product deleted successfully" });
+    return NextResponse.json({ message: "Produto excluído com sucesso" });
   } catch (error) {
-    console.error("Error deleting product:", error);
+    logger.error("admin/products/[id]:DELETE - Erro ao excluir produto", {
+      error: error instanceof Error ? error.message : String(error),
+    });
     return NextResponse.json(
-      { error: "Failed to delete product" },
+      { error: "Erro ao excluir produto" },
       { status: 500 }
     );
   }

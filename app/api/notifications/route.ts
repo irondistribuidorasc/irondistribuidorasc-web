@@ -1,14 +1,14 @@
-import { authOptions } from "@/src/lib/auth";
+import { auth } from "@/src/lib/auth";
+import { logger } from "@/src/lib/logger";
 import { db } from "@/src/lib/prisma";
-import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
 
 export async function GET() {
   try {
-    const session = await getServerSession(authOptions);
+    const session = await auth();
 
     if (!session?.user?.id) {
-      return new NextResponse("Unauthorized", { status: 401 });
+      return NextResponse.json({ error: "Não autenticado" }, { status: 401 });
     }
 
     const [notifications, unreadCount, user] = await Promise.all([
@@ -39,7 +39,9 @@ export async function GET() {
       userApproved: user?.approved ?? false,
     });
   } catch (error) {
-    console.error("Error fetching notifications:", error);
-    return new NextResponse("Internal Server Error", { status: 500 });
+    logger.error("notifications:GET - Erro ao buscar notificações", {
+      error: error instanceof Error ? error.message : String(error),
+    });
+    return NextResponse.json({ error: "Erro ao buscar notificações" }, { status: 500 });
   }
 }

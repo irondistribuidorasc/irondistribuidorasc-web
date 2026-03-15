@@ -1,5 +1,6 @@
 "use server";
 
+import { logger } from "@/src/lib/logger";
 import { db } from "@/src/lib/prisma";
 
 export type SearchResult = {
@@ -38,7 +39,9 @@ export async function searchProducts(query: string): Promise<SearchResult[]> {
     });
     return products;
   } catch (error) {
-    console.error("Error searching products:", error);
+    logger.error("actions/search-products - Erro ao buscar produtos", {
+      error: error instanceof Error ? error.message : String(error),
+    });
     return [];
   }
 }

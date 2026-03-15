@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/src/lib/auth";
+import { logger } from "@/src/lib/logger";
 import { db } from "@/src/lib/prisma";
 
 /**
@@ -42,7 +43,7 @@ export async function GET(
 
 		return NextResponse.json(order);
 	} catch (error) {
-		console.error("Error fetching order:", error);
+		logger.error("orders/[id]:GET - Erro ao buscar pedido", { error: error instanceof Error ? error.message : String(error) });
 		return NextResponse.json(
 			{ error: "Erro ao buscar pedido" },
 			{ status: 500 },

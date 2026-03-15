@@ -9,7 +9,7 @@ export async function GET(request: NextRequest) {
 
   // Verificar se é admin
   if (session?.user?.role !== "ADMIN") {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
+    return NextResponse.json({ error: "Não autorizado" }, { status: 403 });
   }
 
   const { searchParams } = new URL(request.url);
@@ -17,8 +17,12 @@ export async function GET(request: NextRequest) {
   const page = parseInt(searchParams.get("page") || "1");
   const limit = Math.min(parseInt(searchParams.get("limit") || "20"), 100);
   const search = searchParams.get("search") || "";
-  const orderBy = searchParams.get("orderBy") || "createdAt";
-  const order = searchParams.get("order") || "desc";
+  const ALLOWED_ORDER_FIELDS = ["createdAt", "name", "email", "approved", "role", "storeName"] as const;
+  const rawOrderBy = searchParams.get("orderBy") || "createdAt";
+  const orderBy = ALLOWED_ORDER_FIELDS.includes(rawOrderBy as typeof ALLOWED_ORDER_FIELDS[number])
+    ? rawOrderBy
+    : "createdAt";
+  const order = searchParams.get("order") === "asc" ? "asc" : "desc";
 
   const skip = (page - 1) * limit;
 
@@ -86,7 +90,7 @@ export async function GET(request: NextRequest) {
       error: error instanceof Error ? error.message : String(error),
     });
     return NextResponse.json(
-      { error: "Failed to fetch users" },
+      { error: "Erro ao buscar usuários" },
       { status: 500 }
     );
   }
@@ -97,7 +101,7 @@ export async function PATCH(request: NextRequest) {
 
   // Verificar se é admin
   if (session?.user?.role !== "ADMIN") {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
+    return NextResponse.json({ error: "Não autorizado" }, { status: 403 });
   }
 
   try {
@@ -106,7 +110,7 @@ export async function PATCH(request: NextRequest) {
 
     if (!userId || typeof approved !== "boolean") {
       return NextResponse.json(
-        { error: "Invalid request body" },
+        { error: "Dados inválidos" },
         { status: 400 }
       );
     }
@@ -140,7 +144,7 @@ export async function PATCH(request: NextRequest) {
       error: error instanceof Error ? error.message : String(error),
     });
     return NextResponse.json(
-      { error: "Failed to update user" },
+      { error: "Erro ao atualizar usuário" },
       { status: 500 }
     );
   }
@@ -151,7 +155,7 @@ export async function PUT(request: NextRequest) {
 
   // Verificar se é admin
   if (session?.user?.role !== "ADMIN") {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
+    return NextResponse.json({ error: "Não autorizado" }, { status: 403 });
   }
 
   try {

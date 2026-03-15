@@ -1,16 +1,14 @@
-import { db } from "@/src/lib/prisma";
-import { isValidEmail, normalizeEmail } from "@/src/lib/validation";
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import { compare } from "bcrypt";
-import type {
-  DefaultSession,
-  NextAuthOptions,
-  User as NextAuthUser,
-} from "next-auth";
+import type { DefaultSession, NextAuthOptions, User as NextAuthUser } from "next-auth";
 import { getServerSession } from "next-auth";
 import type { Adapter } from "next-auth/adapters";
 import CredentialsProvider from "next-auth/providers/credentials";
 import GoogleProvider from "next-auth/providers/google";
+import { logger } from "@/src/lib/logger";
+import { db } from "@/src/lib/prisma";
+import { checkRateLimit } from "@/src/lib/rate-limit";
+import { isValidEmail, normalizeEmail } from "@/src/lib/validation";
 
 type AuthUser = NextAuthUser & {
   role?: string;
@@ -51,9 +49,6 @@ const googleProvider =
       })
     : null;
 
-// TODO: Implementar rate limiting para tentativas de login
-// Sugestão: usar middleware ou biblioteca como @upstash/ratelimit
-// Proteger contra ataques de brute force
 export const authOptions: NextAuthOptions = {
   adapter: PrismaAdapter(db) as Adapter,
   session: { strategy: "jwt" },
@@ -73,6 +68,14 @@ export const authOptions: NextAuthOptions = {
         const normalizedEmail = normalizeEmail(credentials.email);
         if (!isValidEmail(normalizedEmail)) {
           return null;
+        }
+
+        // Rate limit por email — CredentialsProvider não expõe o Request,
+        // então IP não está disponível aqui. Para rate limit por IP no login,
+        // usar middleware/proxy (ex: middleware.ts ou Vercel WAF).
+        const rateLimitResult = await checkRateLimit(normalizedEmail, "auth");
+        if (rateLimitResult && !rateLimitResult.success) {
+          throw new Error("Muitas tentativas de login. Tente novamente em alguns minutos.");
         }
 
         const user = await db.user.findUnique({
@@ -175,7 +178,9 @@ export const authOptions: NextAuthOptions = {
             token.tradeLicense = dbUser.tradeLicense;
           }
         } catch (error) {
-          console.error("Error refreshing user data in JWT:", error);
+          logger.error("auth:jwt - Erro ao atualizar dados do usuário no JWT", {
+            error: error instanceof Error ? error.message : String(error),
+          });
         }
       }
 

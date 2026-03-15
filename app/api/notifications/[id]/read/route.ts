@@ -1,6 +1,6 @@
-import { authOptions } from "@/src/lib/auth";
+import { auth } from "@/src/lib/auth";
+import { logger } from "@/src/lib/logger";
 import { db } from "@/src/lib/prisma";
-import { getServerSession } from "next-auth";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function PATCH(
@@ -9,10 +9,10 @@ export async function PATCH(
 ) {
   try {
     const { id } = await params;
-    const session = await getServerSession(authOptions);
+    const session = await auth();
 
     if (!session?.user?.id) {
-      return new NextResponse("Unauthorized", { status: 401 });
+      return NextResponse.json({ error: "Não autenticado" }, { status: 401 });
     }
 
     // Verify notification belongs to user
@@ -21,11 +21,11 @@ export async function PATCH(
     });
 
     if (!notification) {
-      return new NextResponse("Notification not found", { status: 404 });
+      return NextResponse.json({ error: "Notificação não encontrada" }, { status: 404 });
     }
 
     if (notification.userId !== session.user.id) {
-      return new NextResponse("Forbidden", { status: 403 });
+      return NextResponse.json({ error: "Acesso negado" }, { status: 403 });
     }
 
     const updatedNotification = await db.notification.update({
@@ -35,7 +35,9 @@ export async function PATCH(
 
     return NextResponse.json(updatedNotification);
   } catch (error) {
-    console.error("Error updating notification:", error);
-    return new NextResponse("Internal Server Error", { status: 500 });
+    logger.error("notifications/[id]/read:PATCH - Erro ao marcar notificação como lida", {
+      error: error instanceof Error ? error.message : String(error),
+    });
+    return NextResponse.json({ error: "Erro ao atualizar notificação" }, { status: 500 });
   }
 }

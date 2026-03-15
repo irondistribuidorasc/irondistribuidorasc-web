@@ -1,6 +1,6 @@
-import { authOptions } from "@/src/lib/auth";
+import { auth } from "@/src/lib/auth";
+import { logger } from "@/src/lib/logger";
 import { db } from "@/src/lib/prisma";
-import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
 
 export async function POST(
@@ -8,10 +8,10 @@ export async function POST(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const session = await getServerSession(authOptions);
+    const session = await auth();
 
-    if (!session?.user?.email) {
-      return new NextResponse("Unauthorized", { status: 401 });
+    if (!session?.user?.id) {
+      return NextResponse.json({ error: "Não autenticado" }, { status: 401 });
     }
 
     const { id } = await params;
@@ -24,17 +24,17 @@ export async function POST(
     });
 
     if (!order) {
-      return new NextResponse("Order not found", { status: 404 });
+      return NextResponse.json({ error: "Pedido não encontrado" }, { status: 404 });
     }
 
     // Verify ownership
-    if (order.customerEmail !== session.user.email) {
-      return new NextResponse("Unauthorized", { status: 401 });
+    if (order.userId !== session.user.id) {
+      return NextResponse.json({ error: "Não autorizado" }, { status: 403 });
     }
 
     // Verify status
     if (order.status !== "PENDING") {
-      return new NextResponse("Order cannot be cancelled", { status: 400 });
+      return NextResponse.json({ error: "Apenas pedidos pendentes podem ser cancelados" }, { status: 400 });
     }
 
     // Update order status
@@ -50,7 +50,7 @@ export async function POST(
 
     return NextResponse.json(updatedOrder);
   } catch (error) {
-    console.error("[ORDER_CANCEL]", error);
-    return new NextResponse("Internal Error", { status: 500 });
+    logger.error("orders/cancel - Erro ao cancelar pedido", { error: error instanceof Error ? error.message : String(error) });
+    return NextResponse.json({ error: "Erro ao cancelar pedido" }, { status: 500 });
   }
 }

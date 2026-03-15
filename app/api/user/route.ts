@@ -1,14 +1,14 @@
+import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/src/lib/auth";
 import { logger } from "@/src/lib/logger";
 import { db } from "@/src/lib/prisma";
 import { userProfileSchema } from "@/src/lib/schemas/user";
-import { NextRequest, NextResponse } from "next/server";
 
 export async function GET() {
   const session = await auth();
 
   if (!session?.user?.email) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    return NextResponse.json({ error: "Não autenticado" }, { status: 401 });
   }
 
   try {
@@ -34,7 +34,7 @@ export async function GET() {
     });
 
     if (!user) {
-      return NextResponse.json({ error: "User not found" }, { status: 404 });
+      return NextResponse.json({ error: "Usuário não encontrado" }, { status: 404 });
     }
 
     return NextResponse.json(user);
@@ -43,7 +43,7 @@ export async function GET() {
       error: error instanceof Error ? error.message : String(error),
     });
     return NextResponse.json(
-      { error: "Failed to fetch user profile" },
+      { error: "Erro ao buscar perfil do usuário" },
       { status: 500 }
     );
   }
@@ -53,18 +53,18 @@ export async function PATCH(request: NextRequest) {
   const session = await auth();
 
   if (!session?.user?.email) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    return NextResponse.json({ error: "Não autenticado" }, { status: 401 });
   }
 
   try {
     const body = await request.json();
 
-    // Validate request body
     const result = userProfileSchema.safeParse(body);
 
     if (!result.success) {
+      const firstError = result.error.issues[0];
       return NextResponse.json(
-        { error: "Validation failed", details: result.error.flatten() },
+        { error: firstError.message },
         { status: 400 }
       );
     }
@@ -121,7 +121,7 @@ export async function PATCH(request: NextRequest) {
       error: error instanceof Error ? error.message : String(error),
     });
     return NextResponse.json(
-      { error: "Failed to update user profile" },
+      { error: "Erro ao atualizar perfil do usuário" },
       { status: 500 }
     );
   }

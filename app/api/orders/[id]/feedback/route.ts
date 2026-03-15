@@ -1,7 +1,9 @@
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 import { auth } from "@/src/lib/auth";
+import { logger } from "@/src/lib/logger";
 import { db } from "@/src/lib/prisma";
+import { orderFeedbackSchema } from "@/src/lib/schemas";
 
 /**
  * GET /api/orders/[id]/feedback
@@ -41,7 +43,7 @@ export async function GET(
 
 		return NextResponse.json(order.feedback);
 	} catch (error) {
-		console.error("Error fetching feedback:", error);
+		logger.error("orders/[id]/feedback:GET - Erro ao buscar avaliação", { error: error instanceof Error ? error.message : String(error) });
 		return NextResponse.json(
 			{ error: "Erro ao buscar avaliação" },
 			{ status: 500 },
@@ -66,31 +68,17 @@ export async function POST(
 		}
 
 		const body = await req.json();
-		const { rating, comment } = body;
+		const validation = orderFeedbackSchema.safeParse(body);
 
-		// Validar rating (aceita string ou number do JSON)
-		const ratingNum = Number(rating);
-		if (!Number.isInteger(ratingNum) || ratingNum < 1 || ratingNum > 5) {
+		if (!validation.success) {
+			const firstError = validation.error.issues[0];
 			return NextResponse.json(
-				{ error: "Avaliação deve ser um número inteiro entre 1 e 5" },
+				{ error: firstError.message },
 				{ status: 400 },
 			);
 		}
 
-		// Validar comentário
-		if (comment && typeof comment !== "string") {
-			return NextResponse.json(
-				{ error: "Comentário deve ser uma string" },
-				{ status: 400 },
-			);
-		}
-
-		if (comment && comment.length > 500) {
-			return NextResponse.json(
-				{ error: "Comentário deve ter no máximo 500 caracteres" },
-				{ status: 400 },
-			);
-		}
+		const { rating: ratingNum, comment } = validation.data;
 
 		// Buscar pedido
 		const order = await db.order.findUnique({
@@ -139,7 +127,7 @@ export async function POST(
 
 		return NextResponse.json(feedback, { status: 201 });
 	} catch (error) {
-		console.error("Error creating feedback:", error);
+		logger.error("orders/[id]/feedback:POST - Erro ao enviar avaliação", { error: error instanceof Error ? error.message : String(error) });
 		return NextResponse.json(
 			{ error: "Erro ao enviar avaliação" },
 			{ status: 500 },

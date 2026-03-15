@@ -1,6 +1,7 @@
 import { Ratelimit } from "@upstash/ratelimit";
 import { NextResponse } from "next/server";
-import { redis, isRedisAvailable } from "./redis";
+import { logger } from "@/src/lib/logger";
+import { isRedisAvailable, redis } from "./redis";
 
 // Tipos de rate limiters disponíveis
 type RateLimiterType = "auth" | "api" | "forgotPassword" | "sensitiveAction";
@@ -63,8 +64,10 @@ export async function checkRateLimit(
   const limiter = getRateLimiter(type);
 
   if (!limiter) {
-    // Redis não disponível - permitir request (fail open)
-    // Em produção, considere fail closed
+    if (process.env.NODE_ENV === "production") {
+      logger.error("rate-limit - Redis indisponível em produção, bloqueando request (fail-closed)", { type });
+      return { success: false, limit: 0, remaining: 0, reset: Date.now() + 60_000 };
+    }
     return null;
   }
 

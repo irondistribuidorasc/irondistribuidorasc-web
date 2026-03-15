@@ -1,33 +1,9 @@
 import { auth } from "@/src/lib/auth";
 import { logger } from "@/src/lib/logger";
 import { db } from "@/src/lib/prisma";
+import { createOrderSchema } from "@/src/lib/schemas";
 import { Prisma } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
-
-interface CreateOrderItem {
-  productId: string;
-  productCode: string;
-  productName: string;
-  quantity: number;
-  price: number;
-}
-
-interface CreateOrderPayload {
-  items: CreateOrderItem[];
-  customer: {
-    name: string;
-    email: string;
-    phone: string;
-    docNumber?: string;
-    addressLine1: string;
-    addressLine2?: string;
-    city: string;
-    state: string;
-    postalCode: string;
-  };
-  notes?: string;
-  paymentMethod?: string;
-}
 
 /**
  * POST /api/orders/create
@@ -49,22 +25,18 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const payload: CreateOrderPayload = await req.json();
+    const body = await req.json();
+    const validation = createOrderSchema.safeParse(body);
 
-    // Validações básicas
-    if (!payload.items || payload.items.length === 0) {
+    if (!validation.success) {
+      const firstError = validation.error.issues[0];
       return NextResponse.json(
-        { error: "Pedido deve conter ao menos um item" },
+        { error: firstError.message },
         { status: 400 }
       );
     }
 
-    if (!payload.customer) {
-      return NextResponse.json(
-        { error: "Dados do cliente são obrigatórios" },
-        { status: 400 }
-      );
-    }
+    const payload = validation.data;
 
     // Buscar produtos no banco para garantir preços corretos e validar estoque
     const productIds = payload.items.map((item) => item.productId);
@@ -231,7 +203,7 @@ export async function POST(req: NextRequest) {
     });
     return NextResponse.json(
       {
-        error: error instanceof Error ? error.message : "Erro ao criar pedido",
+        error: "Erro ao criar pedido",
       },
       { status: 500 }
     );

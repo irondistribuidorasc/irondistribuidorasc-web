@@ -1,4 +1,5 @@
 import { auth } from "@/src/lib/auth";
+import { logger } from "@/src/lib/logger";
 import { db } from "@/src/lib/prisma";
 import { OrderStatus } from "@/types/order";
 import { NextRequest, NextResponse } from "next/server";
@@ -63,38 +64,35 @@ export async function PATCH(
         });
 
         for (const item of orderItems) {
-          // Verificar se o produto ainda existe
-          const productExists = await tx.product.findUnique({
+          const product = await tx.product.findUnique({
             where: { id: item.productId },
-            select: { id: true },
+            select: { id: true, stockQuantity: true },
           });
 
-          if (!productExists) {
-            console.warn(
-              `Product ${item.productId} not found for order item ${item.id}. Skipping stock update.`
-            );
+          if (!product) {
+            logger.warn("admin/orders/[id]:PATCH - Produto não encontrado para item do pedido, pulando atualização de estoque", {
+              productId: item.productId,
+              orderItemId: item.id,
+            });
             continue;
           }
 
-          const updatedProduct = await tx.product.update({
-            where: { id: item.productId },
-            data: {
-              stockQuantity: {
-                decrement: item.quantity,
-              },
-            },
-            select: {
-              stockQuantity: true,
-            },
-          });
-
-          // Se o estoque zerou ou ficou negativo, marcar como sem estoque
-          if (updatedProduct.stockQuantity <= 0) {
-            await tx.product.update({
-              where: { id: item.productId },
-              data: { inStock: false },
+          if (product.stockQuantity < item.quantity) {
+            logger.warn("admin/orders/[id]:PATCH - Estoque insuficiente para dedução completa", {
+              productId: item.productId,
+              currentStock: product.stockQuantity,
+              requestedQuantity: item.quantity,
             });
           }
+
+          const newStock = Math.max(0, product.stockQuantity - item.quantity);
+          await tx.product.update({
+            where: { id: item.productId },
+            data: {
+              stockQuantity: newStock,
+              inStock: newStock > 0,
+            },
+          });
         }
       }
 
@@ -129,7 +127,9 @@ export async function PATCH(
 
     return NextResponse.json(updatedOrder);
   } catch (error) {
-    console.error("Error updating order status:", error);
+    logger.error("admin/orders/[id]:PATCH - Erro ao atualizar status do pedido", {
+      error: error instanceof Error ? error.message : String(error),
+    });
     return NextResponse.json(
       { error: "Erro ao atualizar status do pedido" },
       { status: 500 }

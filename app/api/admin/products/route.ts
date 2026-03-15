@@ -1,15 +1,15 @@
-import { authOptions } from "@/src/lib/auth";
+import { auth } from "@/src/lib/auth";
 import { logger } from "@/src/lib/logger";
 import { db } from "@/src/lib/prisma";
+import { productSchema } from "@/src/lib/schemas";
 import { Prisma } from "@prisma/client";
-import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
 
 export async function GET(request: Request) {
-  const session = await getServerSession(authOptions);
+  const session = await auth();
 
   if (!session || session.user?.role !== "ADMIN") {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    return NextResponse.json({ error: "Não autorizado" }, { status: 403 });
   }
 
   const { searchParams } = new URL(request.url);
@@ -210,52 +210,46 @@ export async function GET(request: Request) {
       error: error instanceof Error ? error.message : String(error),
     });
     return NextResponse.json(
-      { error: "Failed to fetch products" },
+      { error: "Erro ao buscar produtos" },
       { status: 500 }
     );
   }
 }
 
 export async function POST(request: Request) {
-  const session = await getServerSession(authOptions);
+  const session = await auth();
 
   if (!session || session.user?.role !== "ADMIN") {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    return NextResponse.json({ error: "Não autorizado" }, { status: 403 });
   }
 
   try {
     const body = await request.json();
 
-    // Basic validation
-    if (!body.code || !body.name || !body.price) {
+    const parsed = productSchema.safeParse(body);
+    if (!parsed.success) {
       return NextResponse.json(
-        { error: "Missing required fields" },
+        { error: "Dados inválidos", details: parsed.error.flatten() },
         { status: 400 }
       );
     }
 
+    const data = parsed.data;
     const product = await db.product.create({
       data: {
-        code: body.code,
-        name: body.name,
-        brand: body.brand,
-        category: body.category,
-        model: body.model,
-        imageUrl: body.imageUrl || "/logo-iron.png",
-
-        inStock: (body.stockQuantity || 0) > 0,
-        stockQuantity: Number.isNaN(Number(body.stockQuantity))
-          ? 0
-          : Number(body.stockQuantity),
-        minStockThreshold: Number.isNaN(Number(body.minStockThreshold))
-          ? 10
-          : Number(body.minStockThreshold),
-        price: Number.isNaN(Number(body.price)) ? 0 : Number(body.price),
-        description: body.description,
-        tags: body.tags || [],
-        popularity: Number.isNaN(Number(body.popularity))
-          ? 0
-          : Number(body.popularity),
+        code: data.code,
+        name: data.name,
+        brand: data.brand,
+        category: data.category,
+        model: data.model,
+        imageUrl: data.imageUrl,
+        inStock: data.stockQuantity > 0,
+        stockQuantity: data.stockQuantity,
+        minStockThreshold: data.minStockThreshold,
+        price: data.price,
+        description: data.description,
+        tags: data.tags,
+        popularity: data.popularity,
       },
     });
 
@@ -270,12 +264,12 @@ export async function POST(request: Request) {
       error.code === "P2002"
     ) {
       return NextResponse.json(
-        { error: "Product with this code already exists" },
+        { error: "Já existe um produto com este código" },
         { status: 409 }
       );
     }
     return NextResponse.json(
-      { error: "Failed to create product" },
+      { error: "Erro ao criar produto" },
       { status: 500 }
     );
   }

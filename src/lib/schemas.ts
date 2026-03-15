@@ -57,7 +57,72 @@ export const resetPasswordSchema = z
     path: ["confirmPassword"],
   });
 
+export const createOrderItemSchema = z.object({
+  productId: z.string().min(1),
+  productCode: z.string().min(1),
+  productName: z.string().min(1),
+  quantity: z.number().int().positive(),
+  price: z.number().nonnegative(),
+});
+
+export const createOrderCustomerSchema = z.object({
+  name: z.string().min(1, "Nome do cliente é obrigatório"),
+  email: z.string().email("Email do cliente inválido"),
+  phone: z.string().min(1, "Telefone do cliente é obrigatório"),
+  docNumber: z.string().optional(),
+  addressLine1: z.string().min(1, "Endereço é obrigatório"),
+  addressLine2: z.string().optional(),
+  city: z.string().min(1, "Cidade é obrigatória"),
+  state: z.string().min(2, "Estado é obrigatório"),
+  postalCode: z.string().min(1, "CEP é obrigatório"),
+});
+
+export const createOrderSchema = z.object({
+  items: z.array(createOrderItemSchema).min(1, "Pedido deve conter ao menos um item"),
+  customer: createOrderCustomerSchema,
+  notes: z.string().max(500).optional(),
+  paymentMethod: z.enum(["PIX", "CREDIT_CARD", "DEBIT_CARD", "CASH", "OTHER"]).optional(),
+});
+
+export const productSchema = z.object({
+  code: z.string().min(1, "Código é obrigatório"),
+  name: z.string().min(1, "Nome é obrigatório"),
+  brand: z.string().default(""),
+  category: z.string().default("other"),
+  model: z.string().default(""),
+  imageUrl: z.string().default("/logo-iron.png"),
+  stockQuantity: z.coerce.number().int().nonnegative().default(0),
+  minStockThreshold: z.coerce.number().int().nonnegative().default(10),
+  restockDate: z
+    .string()
+    .refine((val) => !Number.isNaN(Date.parse(val)), "Data de reposição inválida")
+    .optional()
+    .nullable(),
+  price: z.coerce.number().nonnegative("Preço deve ser positivo"),
+  description: z.string().optional(),
+  tags: z.array(z.string()).default([]),
+  popularity: z.coerce.number().int().nonnegative().default(0),
+});
+
+export const bulkUpdateItemSchema = z.object({
+  id: z.string().min(1, "ID do produto é obrigatório"),
+  stockQuantity: z.coerce.number().int().nonnegative().optional(),
+  minStockThreshold: z.coerce.number().int().nonnegative().optional(),
+});
+
+export const bulkUpdateSchema = z.object({
+  updates: z.array(bulkUpdateItemSchema).min(1, "Pelo menos uma atualização é necessária").max(100, "Máximo de 100 atualizações por vez"),
+});
+
+export const orderFeedbackSchema = z.object({
+  rating: z.coerce.number().int().min(1, "Avaliação mínima é 1").max(5, "Avaliação máxima é 5"),
+  comment: z.string().max(500, "Comentário deve ter no máximo 500 caracteres").optional().nullable(),
+});
+
 export type LoginSchema = z.infer<typeof loginSchema>;
 export type RegisterSchema = z.infer<typeof registerSchema>;
 export type ForgotPasswordSchema = z.infer<typeof forgotPasswordSchema>;
 export type ResetPasswordSchema = z.infer<typeof resetPasswordSchema>;
+export type CreateOrderSchema = z.infer<typeof createOrderSchema>;
+export type ProductSchema = z.infer<typeof productSchema>;
+export type OrderFeedbackSchema = z.infer<typeof orderFeedbackSchema>;

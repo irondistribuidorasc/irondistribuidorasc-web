@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/src/lib/auth";
+import { logger } from "@/src/lib/logger";
 import { db } from "@/src/lib/prisma";
 import { startOfDay, endOfDay, parseISO } from "date-fns";
 
@@ -8,7 +9,7 @@ export async function GET(req: NextRequest) {
 		const session = await auth();
 
 		if (!session || session.user.role !== "ADMIN") {
-			return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+			return NextResponse.json({ error: "Não autorizado" }, { status: 403 });
 		}
 
 		const { searchParams } = new URL(req.url);
@@ -77,9 +78,11 @@ export async function GET(req: NextRequest) {
 			summary,
 		});
 	} catch (error) {
-		console.error("Error fetching financial data:", error);
+		logger.error("admin/finance:GET - Erro ao buscar dados financeiros", {
+			error: error instanceof Error ? error.message : String(error),
+		});
 		return NextResponse.json(
-			{ error: "Internal Server Error" },
+			{ error: "Erro ao buscar dados financeiros" },
 			{ status: 500 },
 		);
 	}

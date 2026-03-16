@@ -23,19 +23,20 @@ function SearchInput() {
   const containerRef = useRef<HTMLDivElement>(null);
   const { status, data: session } = useSession();
 
-  // Close dropdown when clicking outside
   useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
     const handleClickOutside = (event: MouseEvent) => {
-      if (
-        containerRef.current &&
-        !containerRef.current.contains(event.target as Node)
-      ) {
+      if (!el.contains(event.target as Node)) {
         setIsOpen(false);
       }
     };
+    const stopNavbarKeyCapture = (e: KeyboardEvent) => e.stopPropagation();
     document.addEventListener("mousedown", handleClickOutside);
+    el.addEventListener("keydown", stopNavbarKeyCapture);
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
+      el.removeEventListener("keydown", stopNavbarKeyCapture);
     };
   }, []);
 

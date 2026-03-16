@@ -1,6 +1,6 @@
 import type { Brand, Category, Product } from "@/src/data/products";
 
-const validBrands: Brand[] = ["Samsung", "Xiaomi", "Motorola", "iPhone", "LG"];
+const validBrands: Brand[] = ["Samsung", "Xiaomi", "Motorola", "iPhone", "LG", "Nokia", "Zenfone"];
 const validCategories: Category[] = [
   "display",
   "battery",

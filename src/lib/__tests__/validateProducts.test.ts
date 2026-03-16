@@ -250,12 +250,12 @@ describe("validateProducts", () => {
 	});
 
 	it("aceita todas as brands válidas", () => {
-		const brands = ["Samsung", "Xiaomi", "Motorola", "iPhone", "LG"] as const;
+		const brands = ["Samsung", "Xiaomi", "Motorola", "iPhone", "LG", "Nokia", "Zenfone"] as const;
 		const products = brands.map((brand, i) =>
 			makeValidProduct({ id: `p${i}`, brand }),
 		);
 		const result = validateProducts(products);
-		expect(result).toHaveLength(5);
+		expect(result).toHaveLength(brands.length);
 	});
 
 	it("aceita todas as categories válidas", () => {

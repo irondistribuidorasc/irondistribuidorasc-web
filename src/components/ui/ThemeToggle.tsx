@@ -35,14 +35,14 @@ export function ThemeToggle({ label }: { label?: string }) {
       className={label ? "w-full justify-between px-0" : ""}
     >
       {label && (
-        <span className="text-sm font-medium text-slate-700 dark:text-slate-300">
+        <span className="text-sm font-medium text-default-600">
           {label}
         </span>
       )}
       {isDark ? (
-        <SunIcon className="h-6 w-6 text-slate-900 dark:text-slate-100" />
+        <SunIcon className="h-6 w-6 text-foreground" />
       ) : (
-        <MoonIcon className="h-6 w-6 text-slate-900 dark:text-slate-100" />
+        <MoonIcon className="h-6 w-6 text-foreground" />
       )}
     </Button>
   );

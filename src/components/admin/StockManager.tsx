@@ -146,14 +146,14 @@ export default function StockManager() {
 	return (
 		<div className="space-y-4">
 			{/* Header com busca e botão salvar */}
-			<Card className="border-0 shadow-md bg-white/80 backdrop-blur-sm dark:bg-slate-800/80">
+			<Card className="border-0 shadow-md bg-background/80 backdrop-blur-sm">
 				<CardBody className="p-4">
 					<div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
 						<Input
 							className="w-full sm:max-w-xs"
 							placeholder="Buscar produto..."
 							startContent={
-								<MagnifyingGlassIcon className="h-5 w-5 text-slate-400" />
+								<MagnifyingGlassIcon className="h-5 w-5 text-default-400" />
 							}
 							value={searchQuery}
 							onValueChange={setSearchQuery}
@@ -161,8 +161,8 @@ export default function StockManager() {
 							onClear={() => setSearchQuery("")}
 							classNames={{
 								inputWrapper:
-									"bg-slate-100 dark:bg-slate-700/50 border-0 shadow-sm",
-							}}
+								"bg-default-100 border-0 shadow-sm",
+						}}
 						/>
 						<Button
 							color="primary"
@@ -179,7 +179,7 @@ export default function StockManager() {
 
 			{/* Contador de resultados */}
 			<div className="flex items-center justify-between px-1">
-				<p className="text-sm text-slate-500 dark:text-slate-400">
+				<p className="text-sm text-default-400">
 					{pagination.total} produto{pagination.total !== 1 ? "s" : ""}{" "}
 					encontrado{pagination.total !== 1 ? "s" : ""}
 				</p>
@@ -198,7 +198,7 @@ export default function StockManager() {
 				</div>
 			) : products.length === 0 ? (
 				<Card className="border-0 shadow-md">
-					<CardBody className="py-12 text-center text-slate-500">
+					<CardBody className="py-12 text-center text-default-400">
 						<p>Nenhum produto encontrado</p>
 					</CardBody>
 				</Card>
@@ -221,17 +221,17 @@ export default function StockManager() {
 									className={`border-0 shadow-sm transition-all ${
 										isChanged
 											? "ring-2 ring-brand-500/50 bg-brand-50/50 dark:bg-brand-900/20"
-											: "bg-white dark:bg-slate-800"
+											: "bg-background"
 									} ${isLowStock ? "border-l-4 border-l-warning-500" : ""}`}
 								>
 									<CardBody className="p-4">
 										{/* Cabeçalho do card: nome + badges */}
 										<div className="flex items-start justify-between gap-2 mb-4">
 											<div className="flex-1 min-w-0">
-												<h3 className="font-semibold text-slate-900 dark:text-white truncate">
+												<h3 className="font-semibold text-foreground truncate">
 													{product.name}
 												</h3>
-												<p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+												<p className="text-xs text-default-400 mt-0.5">
 													{product.code}
 												</p>
 											</div>
@@ -267,29 +267,29 @@ export default function StockManager() {
 													}
 													classNames={{
 														label:
-															"text-xs font-medium text-slate-500 dark:text-slate-400",
-														inputWrapper:
-															"bg-slate-100 dark:bg-slate-700/50 border-0 shadow-sm h-10",
-														input: "text-center font-semibold",
-													}}
-												/>
-											</div>
-											<div>
-												<Input
-													id={`threshold-${product.id}`}
-													type="number"
-													size="sm"
-													label="Estoque Mínimo"
-													labelPlacement="outside"
-													value={currentThreshold.toString()}
-													onValueChange={(v) =>
-														handleThresholdChange(product.id, v)
-													}
-													classNames={{
-														label:
-															"text-xs font-medium text-slate-500 dark:text-slate-400",
-														inputWrapper:
-															"bg-slate-100 dark:bg-slate-700/50 border-0 shadow-sm h-10",
+"text-xs font-medium text-default-400",
+													inputWrapper:
+														"bg-default-100 border-0 shadow-sm h-10",
+													input: "text-center font-semibold",
+												}}
+											/>
+										</div>
+										<div>
+											<Input
+												id={`threshold-${product.id}`}
+												type="number"
+												size="sm"
+												label="Estoque Mínimo"
+												labelPlacement="outside"
+												value={currentThreshold.toString()}
+												onValueChange={(v) =>
+													handleThresholdChange(product.id, v)
+												}
+												classNames={{
+													label:
+														"text-xs font-medium text-default-400",
+													inputWrapper:
+														"bg-default-100 border-0 shadow-sm h-10",
 														input: "text-center font-semibold",
 													}}
 												/>
@@ -314,7 +314,7 @@ export default function StockManager() {
 								showControls
 								classNames={{
 									wrapper: "gap-1",
-									item: "bg-slate-100 dark:bg-slate-700/50",
+									item: "bg-default-100",
 									cursor: "bg-brand-500 shadow-md",
 								}}
 							/>

@@ -1,8 +1,10 @@
 "use client";
 
+import { logger } from "@/src/lib/logger";
 import { supabase } from "@/src/lib/supabase";
 import { PhotoIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import { Button, Progress } from "@heroui/react";
+import NextImage from "next/image";
 import { useRef, useState } from "react";
 import { toast } from "sonner";
 
@@ -10,12 +12,14 @@ interface ImageUploadProps {
   value: string;
   onChange: (url: string) => void;
   disabled?: boolean;
+  altText?: string;
 }
 
 export default function ImageUpload({
   value,
   onChange,
   disabled,
+  altText = "Imagem do produto",
 }: ImageUploadProps) {
   const [uploading, setUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -99,7 +103,7 @@ export default function ImageUpload({
       onChange(data.publicUrl);
       toast.success("Imagem enviada com sucesso!");
     } catch (error) {
-      console.error("Error uploading image:", error);
+      logger.error("Error uploading image", { error });
       toast.error("Erro ao enviar imagem");
     } finally {
       setUploading(false);
@@ -117,32 +121,35 @@ export default function ImageUpload({
     <div className="flex flex-col gap-4">
       <div className="flex items-center gap-4">
         {value ? (
-          <div className="relative h-40 w-40 overflow-hidden rounded-lg border border-slate-200 dark:border-slate-700">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
+          <div className="relative h-40 w-40 overflow-hidden rounded-lg border border-divider">
+            <NextImage
               src={value}
-              alt="Product"
-              className="h-full w-full object-cover"
+              alt={altText}
+              fill
+              className="object-cover"
             />
             <button
               type="button"
               onClick={handleRemove}
               className="absolute right-2 top-2 rounded-full bg-danger p-1 text-white shadow-sm hover:bg-danger-600"
               disabled={disabled}
+              aria-label="Remover imagem"
             >
               <XMarkIcon className="h-4 w-4" />
             </button>
           </div>
         ) : (
-          <div
+          <button
+            type="button"
             onClick={() => fileInputRef.current?.click()}
-            className="flex h-40 w-40 cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed border-slate-300 bg-slate-50 hover:bg-slate-100 dark:border-slate-700 dark:bg-slate-800/50 dark:hover:bg-slate-800"
+            className="flex h-40 w-40 cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed border-divider bg-content1 hover:bg-default-100 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:ring-offset-2"
+            disabled={disabled || uploading}
           >
-            <PhotoIcon className="h-8 w-8 text-slate-400" />
-            <span className="mt-2 text-xs text-slate-500">
+            <PhotoIcon className="h-8 w-8 text-default-400" />
+            <span className="mt-2 text-xs text-default-400">
               Clique para enviar
             </span>
-          </div>
+          </button>
         )}
 
         <div className="flex flex-col gap-2">
@@ -163,7 +170,7 @@ export default function ImageUpload({
           >
             Selecionar Imagem
           </Button>
-          <p className="text-xs text-slate-500">
+          <p className="text-xs text-default-400">
             JPG, PNG ou WEBP. Max 800x800px.
           </p>
         </div>

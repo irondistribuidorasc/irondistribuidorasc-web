@@ -91,11 +91,11 @@ export function GarantiaWizard() {
     <div className="space-y-8">
       <Stepper steps={steps} currentStep={activeStep} />
 
-      <Card className="w-full max-w-4xl mx-auto shadow-lg border border-slate-200 dark:border-slate-700">
-        <CardHeader className="bg-gradient-to-r from-slate-50 to-white dark:from-slate-800 dark:to-slate-900">
-          <div className="flex items-center gap-3">
+      <Card className="w-full max-w-4xl mx-auto shadow-lg border border-divider">
+        <CardHeader className="bg-gradient-to-r from-content1 to-background">
+          <div className="flex items-center gap-4">
             <div className="h-2 w-2 rounded-full bg-brand-600 animate-pulse"></div>
-            <p className="text-xl font-bold text-slate-900 dark:text-slate-100">
+            <p className="text-xl font-bold text-foreground">
               {steps[activeStep]}
             </p>
           </div>
@@ -174,7 +174,7 @@ export function GarantiaWizard() {
           )}
 
           {activeStep === 3 && (
-            <div className="space-y-4 text-sm text-slate-600 dark:text-slate-400">
+            <div className="space-y-4 text-sm text-default-500">
               <p>
                 Nossa política de trocas garante análise em até 5 dias úteis
                 após recebimento da peça. O envio de fotos ajuda a acelerar o
@@ -195,34 +195,34 @@ export function GarantiaWizard() {
 
           {activeStep === 4 && (
             <div className="space-y-6">
-              <Card className="w-full border border-slate-200 dark:border-slate-700 shadow-md">
-                <CardHeader className="bg-slate-50 dark:bg-slate-800/50">
-                  <p className="text-lg font-bold text-slate-900 dark:text-slate-100">
+              <Card className="w-full border border-divider shadow-md">
+                <CardHeader className="bg-content1">
+                  <p className="text-lg font-bold text-foreground">
                     📋 Revise os dados
                   </p>
                 </CardHeader>
                 <Divider />
-                <CardBody className="space-y-4 text-sm text-slate-600 dark:text-slate-400 p-6">
+                <CardBody className="space-y-4 text-sm text-default-500 p-6">
                   <p>
-                    <span className="font-semibold text-slate-800 dark:text-slate-200">
+                    <span className="font-semibold text-foreground">
                       Tipo de solicitação:
                     </span>{" "}
                     {requestType}
                   </p>
                   <p>
-                    <span className="font-semibold text-slate-800 dark:text-slate-200">
+                    <span className="font-semibold text-foreground">
                       Item:
                     </span>{" "}
                     {selectedItemsLabel}
                   </p>
                   <p>
-                    <span className="font-semibold text-slate-800 dark:text-slate-200">
+                    <span className="font-semibold text-foreground">
                       Modelo:
                     </span>{" "}
                     {model || "-"}
                   </p>
                   <p>
-                    <span className="font-semibold text-slate-800 dark:text-slate-200">
+                    <span className="font-semibold text-foreground">
                       Descrição:
                     </span>{" "}
                     {description || "-"}
@@ -237,7 +237,7 @@ export function GarantiaWizard() {
                 </CardBody>
               </Card>
 
-              <div className="flex flex-col gap-3 sm:flex-row sm:justify-end">
+              <div className="flex flex-col gap-4 sm:flex-row sm:justify-end">
                 <Button
                   color="primary"
                   className="bg-gradient-to-r from-brand-600 to-brand-700 hover:from-brand-700 hover:to-brand-800 text-white shadow-lg hover:shadow-xl transition-all duration-200 font-semibold"
@@ -261,12 +261,12 @@ export function GarantiaWizard() {
         </CardBody>
       </Card>
 
-      <div className="flex flex-col gap-3 sm:flex-row sm:justify-between max-w-4xl mx-auto">
+      <div className="flex flex-col gap-4 sm:flex-row sm:justify-between max-w-4xl mx-auto">
         <Button
           variant="bordered"
           onPress={handlePrev}
           isDisabled={activeStep === 0}
-          className="sm:w-auto border-2 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors font-semibold"
+          className="sm:w-auto border-2 hover:bg-default-100 transition-colors font-semibold"
           size="lg"
         >
           ← Voltar

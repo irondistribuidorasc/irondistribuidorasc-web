@@ -3,6 +3,7 @@
 import { useCart } from "@/src/contexts/CartContext";
 import type { Product } from "@/src/data/products";
 import { formatPrice, formatRestockDate } from "@/src/lib/productUtils";
+import { Button } from "@heroui/react";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
@@ -45,10 +46,10 @@ export function ProductInfo({ product }: ProductInfoProps) {
   };
 
   return (
-    <div className="flex flex-col gap-6 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-700 dark:bg-slate-800">
+    <div className="flex flex-col gap-6 rounded-2xl border border-divider bg-content1 p-6 shadow-sm">
       {/* Price Section */}
       <div className="space-y-2">
-        <p className="text-sm font-medium text-slate-500 dark:text-slate-400">
+        <p className="text-sm font-medium text-default-400">
           Preço Unitário
         </p>
         {canViewPrices ? (
@@ -57,7 +58,7 @@ export function ProductInfo({ product }: ProductInfoProps) {
               {formatPrice(product.price)}
             </span>
             {product.inStock && (
-              <span className="rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-800 dark:bg-green-900/30 dark:text-green-400">
+              <span className="rounded-full bg-green-100 px-2 py-0.5 text-xs font-medium text-green-800 dark:bg-green-900/30 dark:text-green-400">
                 Em estoque
               </span>
             )}
@@ -71,8 +72,8 @@ export function ProductInfo({ product }: ProductInfoProps) {
             </p>
           </div>
         ) : (
-          <div className="rounded-lg bg-slate-50 p-4 dark:bg-slate-700/50">
-            <p className="mb-3 text-sm text-slate-600 dark:text-slate-300">
+          <div className="rounded-lg bg-content2 p-4">
+            <p className="mb-4 text-sm text-default-500">
               Faça login para ver preços e comprar
             </p>
             <Link
@@ -87,9 +88,9 @@ export function ProductInfo({ product }: ProductInfoProps) {
 
       {/* Stock Status & Actions */}
       {canViewPrices && (
-        <div className="space-y-6 border-t border-slate-100 pt-6 dark:border-slate-700">
+        <div className="space-y-6 border-t border-divider pt-6">
           {!product.inStock ? (
-            <div className="space-y-3">
+            <div className="space-y-4">
               <div className="flex items-center text-error-600 dark:text-error-400">
                 <svg
                   className="mr-2 h-5 w-5"
@@ -107,27 +108,29 @@ export function ProductInfo({ product }: ProductInfoProps) {
                 <span className="font-medium">Fora de estoque</span>
               </div>
               {product.restockDate && (
-                <p className="text-sm text-slate-500 dark:text-slate-400">
+                <p className="text-sm text-default-400">
                   Previsão de reposição:{" "}
-                  <span className="font-medium text-slate-900 dark:text-slate-200">
+                  <span className="font-medium text-foreground">
                     {formatRestockDate(product.restockDate)}
                   </span>
                 </p>
               )}
             </div>
           ) : (
-            <button
-              type="button"
-              onClick={handleAddToCart}
-              disabled={isAdding}
-              className="w-full rounded-xl bg-brand-600 px-6 py-4 text-center font-bold text-white shadow-lg shadow-brand-600/20 transition-all hover:-translate-y-0.5 hover:bg-brand-700 hover:shadow-xl disabled:cursor-not-allowed disabled:opacity-75"
+            <Button
+              fullWidth
+              size="lg"
+              color="primary"
+              onPress={handleAddToCart}
+              isDisabled={isAdding}
+              className="bg-brand-600 font-bold text-white shadow-lg shadow-brand-600/20 transition-all hover:-translate-y-0.5 hover:bg-brand-700 hover:shadow-xl"
             >
               {isAdding ? "Adicionado ao Carrinho!" : "Adicionar ao Carrinho"}
-            </button>
+            </Button>
           )}
 
           {/* Additional Info / Benefits */}
-          <div className="grid grid-cols-2 gap-4 text-xs text-slate-500 dark:text-slate-400">
+          <div className="grid grid-cols-2 gap-4 text-xs text-default-400">
             <div className="flex items-center gap-2">
               <svg
                 className="h-4 w-4 text-brand-600 dark:text-brand-400"

@@ -62,7 +62,7 @@ export function CookieConsent() {
 
   return (
     <div
-      className="fixed inset-x-0 bottom-0 z-50 bg-white/95 backdrop-blur-sm shadow-[0_-4px_20px_rgba(0,0,0,0.1)] print:hidden dark:bg-slate-900/95 dark:shadow-[0_-4px_20px_rgba(0,0,0,0.3)]"
+      className="fixed inset-x-0 bottom-0 z-50 bg-background/95 backdrop-blur-sm shadow-[0_-4px_20px_rgba(0,0,0,0.1)] print:hidden"
       role="dialog"
       aria-modal="true"
       aria-labelledby="cookie-consent-title"
@@ -72,11 +72,11 @@ export function CookieConsent() {
           <div className="flex-1">
             <h2
               id="cookie-consent-title"
-              className="text-base font-semibold text-slate-900 dark:text-slate-100"
+              className="text-base font-semibold text-foreground"
             >
               Utilizamos cookies
             </h2>
-            <p className="mt-1 text-sm text-slate-600 dark:text-slate-400">
+            <p className="mt-1 text-sm text-default-500">
               Usamos cookies para melhorar sua experiência de navegação,
               personalizar conteúdo e analisar nosso tráfego. Ao clicar em
               &quot;Aceitar todos&quot;, você concorda com o uso de todos os

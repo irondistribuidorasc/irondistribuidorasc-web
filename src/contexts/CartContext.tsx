@@ -148,6 +148,8 @@ export function CartProvider({ children }: CartProviderProps) {
       return;
     }
 
+    if (hasAutoFilledRef.current) return;
+
     const sessionData: Partial<CustomerDetails> = {
       name: session.user.name ?? "",
       phone: session.user.phone ?? "",
@@ -159,15 +161,13 @@ export function CartProvider({ children }: CartProviderProps) {
       postalCode: session.user.postalCode ?? "",
     };
 
-    // Build updates object with all session data that differs from current state
     const updates: Partial<CustomerDetails> = {};
 
     for (const [key, value] of Object.entries(sessionData) as [
       keyof CustomerDetails,
       string | undefined
     ][]) {
-      // Update if session has value and it's different from current state, or if current state is empty
-      if (value && (!state.customer[key] || state.customer[key] !== value)) {
+      if (value) {
         updates[key] = value;
       }
     }
@@ -176,7 +176,7 @@ export function CartProvider({ children }: CartProviderProps) {
       dispatch({ type: "UPDATE_CUSTOMER", updates });
       hasAutoFilledRef.current = true;
     }
-  }, [session?.user, state.customer]);
+  }, [session?.user]);
 
   const value = useMemo<CartContextValue>(() => {
     const totalItems = state.items.reduce(

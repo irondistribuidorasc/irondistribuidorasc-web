@@ -17,13 +17,13 @@ export function OrderConfirmationContent({
         <CheckCircleIcon className="h-16 w-16 text-green-600 dark:text-green-400" />
       </div>
 
-      <h1 className="mb-2 text-3xl font-bold text-slate-900 dark:text-slate-100">
+      <h1 className="mb-2 text-3xl font-bold text-foreground">
         Obrigado pelo seu pedido!
       </h1>
 
-      <p className="mb-8 max-w-md text-slate-600 dark:text-slate-400">
+      <p className="mb-8 max-w-md text-default-500">
         Seu pedido{" "}
-        <span className="font-semibold text-slate-900 dark:text-slate-100">
+        <span className="font-semibold text-foreground">
           #{orderNumber}
         </span>{" "}
         foi realizado com sucesso. Você receberá atualizações sobre o status do

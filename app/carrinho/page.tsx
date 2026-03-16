@@ -16,10 +16,10 @@ export default function CarrinhoPage() {
         <p className="text-xs uppercase tracking-[0.3em] text-brand-600">
           Finalizar pedido
         </p>
-        <h1 className="text-3xl font-semibold text-slate-900 dark:text-slate-100 md:text-4xl">
+        <h1 className="text-3xl font-semibold text-foreground md:text-4xl">
           Carrinho de Compras
         </h1>
-        <p className="text-sm text-slate-500 dark:text-slate-400">
+        <p className="text-sm text-default-400">
           Revise os itens, complete seus dados e finalize o pedido via WhatsApp.
         </p>
       </div>

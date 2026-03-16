@@ -91,7 +91,7 @@ export default async function ProductPage({ params }: Props) {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-950">
+    <div className="min-h-screen bg-content1">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
@@ -104,27 +104,27 @@ export default async function ProductPage({ params }: Props) {
             <li>
               <Link
                 href="/"
-                className="text-slate-500 hover:text-brand-600 dark:text-slate-400 dark:hover:text-brand-400"
+                className="text-default-400 transition-colors hover:text-brand-600 dark:hover:text-brand-400"
               >
                 Início
               </Link>
             </li>
             <li>
-              <span className="text-slate-300 dark:text-slate-600">/</span>
+              <span className="text-default-300">/</span>
             </li>
             <li>
               <Link
                 href="/produtos"
-                className="text-slate-500 hover:text-brand-600 dark:text-slate-400 dark:hover:text-brand-400"
+                className="text-default-400 transition-colors hover:text-brand-600 dark:hover:text-brand-400"
               >
                 Produtos
               </Link>
             </li>
             <li>
-              <span className="text-slate-300 dark:text-slate-600">/</span>
+              <span className="text-default-300">/</span>
             </li>
             <li>
-              <span className="font-medium text-slate-900 dark:text-slate-100">
+              <span className="font-medium text-foreground">
                 {product.name}
               </span>
             </li>
@@ -134,7 +134,7 @@ export default async function ProductPage({ params }: Props) {
         <div className="grid gap-8 lg:grid-cols-12 lg:gap-12">
           {/* Product Image Column */}
           <div className="lg:col-span-7">
-            <div className="relative aspect-square overflow-hidden rounded-2xl border border-slate-100 bg-white p-12 shadow-sm dark:border-slate-800 dark:bg-slate-900">
+            <div className="relative aspect-square overflow-hidden rounded-2xl border border-divider bg-background p-12 shadow-sm">
               <Image
                 src={product.imageUrl}
                 alt={product.name}
@@ -149,15 +149,15 @@ export default async function ProductPage({ params }: Props) {
           {/* Product Info Column */}
           <div className="flex flex-col gap-8 lg:col-span-5">
             <div>
-              <div className="mb-4 flex items-center gap-3">
+              <div className="mb-4 flex items-center gap-4">
                 <span className="inline-flex items-center rounded-full bg-brand-50 px-3 py-1 text-xs font-bold uppercase tracking-wide text-brand-700 dark:bg-brand-900/30 dark:text-brand-400">
                   {product.brand}
                 </span>
-                <span className="text-sm font-medium text-slate-500 dark:text-slate-400">
+                <span className="text-sm font-medium text-default-400">
                   Cód: {product.code}
                 </span>
               </div>
-              <h1 className="text-3xl font-bold leading-tight text-slate-900 dark:text-white sm:text-4xl">
+              <h1 className="text-3xl font-bold leading-tight text-foreground sm:text-4xl">
                 {product.name}
               </h1>
             </div>
@@ -165,10 +165,10 @@ export default async function ProductPage({ params }: Props) {
             <ProductInfo product={mappedProduct} />
 
             <div className="prose prose-slate max-w-none dark:prose-invert">
-              <h3 className="text-lg font-semibold text-slate-900 dark:text-white">
+              <h3 className="text-lg font-semibold text-foreground">
                 Descrição
               </h3>
-              <p className="text-slate-600 dark:text-slate-400">
+              <p className="text-default-500">
                 {product.description}
               </p>
             </div>

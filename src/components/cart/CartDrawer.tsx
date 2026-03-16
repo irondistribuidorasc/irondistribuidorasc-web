@@ -1,7 +1,12 @@
 "use client";
 
 import { useCart } from "@/src/contexts/CartContext";
-import { MinusIcon, PlusIcon, TrashIcon } from "@heroicons/react/24/outline";
+import {
+  MinusIcon,
+  PlusIcon,
+  ShoppingCartIcon,
+  TrashIcon,
+} from "@heroicons/react/24/outline";
 import {
   Button,
   Divider,
@@ -59,24 +64,42 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
           <>
             <DrawerHeader className="flex flex-col items-start gap-1">
               <p className="text-lg font-semibold">Carrinho de pedidos</p>
-              <p className="text-sm text-slate-500 dark:text-slate-400">
+              <p className="text-sm text-default-400">
                 Revise os itens antes de finalizar via WhatsApp.
               </p>
             </DrawerHeader>
             <DrawerBody className="space-y-4">
               {!hasItems ? (
-                <p className="text-sm text-slate-500 dark:text-slate-400">
-                  Seu carrinho está vazio. Adicione produtos para criar o
-                  pedido.
-                </p>
+                <div className="flex flex-col items-center justify-center gap-4 py-12">
+                  <ShoppingCartIcon className="h-16 w-16 text-default-300" />
+                  <div className="text-center">
+                    <p className="text-sm font-medium text-foreground">
+                      Seu carrinho está vazio
+                    </p>
+                    <p className="mt-1 text-xs text-default-400">
+                      Adicione produtos para montar seu pedido.
+                    </p>
+                  </div>
+                  <Button
+                    variant="flat"
+                    color="primary"
+                    size="sm"
+                    onPress={() => {
+                      router.push("/produtos");
+                      handleClose();
+                    }}
+                  >
+                    Ver produtos
+                  </Button>
+                </div>
               ) : (
                 <ul className="space-y-4">
                   {items.map(({ product, quantity }) => (
                     <li
                       key={product.id}
-                      className="flex gap-4 rounded-lg border border-slate-200 p-4 dark:border-slate-800"
+                      className="flex gap-4 rounded-lg border border-divider p-4"
                     >
-                      <div className="relative h-16 w-16 overflow-hidden rounded bg-slate-100 dark:bg-slate-800">
+                      <div className="relative h-16 w-16 overflow-hidden rounded bg-default-100">
                         <Image
                           src={product.imageUrl || "/logo-iron.png"}
                           alt={product.name}
@@ -86,10 +109,10 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                       </div>
                       <div className="flex flex-1 flex-col gap-2">
                         <div>
-                          <p className="text-sm font-semibold text-slate-900 dark:text-slate-100">
+                          <p className="text-sm font-semibold text-foreground">
                             {product.name}
                           </p>
-                          <p className="text-xs text-slate-500 dark:text-slate-400">
+                          <p className="text-xs text-default-400">
                             {product.brand} · {product.model.toUpperCase()}
                           </p>
                         </div>

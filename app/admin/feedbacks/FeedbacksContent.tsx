@@ -132,16 +132,16 @@ export function FeedbacksContent() {
 			{/* Stats Cards */}
 			<div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
 				{/* Total Feedbacks */}
-				<Card className="border border-slate-200 dark:border-slate-800">
+				<Card className="border border-divider">
 					<CardBody className="flex flex-row items-center gap-4">
 						<div className="flex h-12 w-12 items-center justify-center rounded-xl bg-brand-100 dark:bg-brand-900/30">
 							<ChatBubbleLeftIcon className="h-6 w-6 text-brand-600 dark:text-brand-400" />
 						</div>
 						<div>
-							<p className="text-sm text-slate-500 dark:text-slate-400">
+							<p className="text-sm text-default-400">
 								Total de Avaliações
 							</p>
-							<p className="text-2xl font-bold text-slate-900 dark:text-slate-100">
+							<p className="text-2xl font-bold text-foreground">
 								{stats.totalFeedbacks}
 							</p>
 						</div>
@@ -149,17 +149,17 @@ export function FeedbacksContent() {
 				</Card>
 
 				{/* Average Rating */}
-				<Card className="border border-slate-200 dark:border-slate-800">
+				<Card className="border border-divider">
 					<CardBody className="flex flex-row items-center gap-4">
 						<div className="flex h-12 w-12 items-center justify-center rounded-xl bg-yellow-100 dark:bg-yellow-900/30">
 							<StarIcon className="h-6 w-6 text-yellow-600 dark:text-yellow-400" />
 						</div>
 						<div>
-							<p className="text-sm text-slate-500 dark:text-slate-400">
+							<p className="text-sm text-default-400">
 								Média Geral
 							</p>
 							<div className="flex items-center gap-2">
-								<p className="text-2xl font-bold text-slate-900 dark:text-slate-100">
+								<p className="text-2xl font-bold text-foreground">
 									{stats.averageRating}
 								</p>
 								<StarRating
@@ -173,18 +173,18 @@ export function FeedbacksContent() {
 				</Card>
 
 				{/* 5 Stars */}
-				<Card className="border border-slate-200 dark:border-slate-800">
+				<Card className="border border-divider">
 					<CardBody className="flex flex-row items-center gap-4">
 						<div className="flex h-12 w-12 items-center justify-center rounded-xl bg-green-100 dark:bg-green-900/30">
 							<ChartBarIcon className="h-6 w-6 text-green-600 dark:text-green-400" />
 						</div>
 						<div>
-							<p className="text-sm text-slate-500 dark:text-slate-400">
+							<p className="text-sm text-default-400">
 								5 Estrelas
 							</p>
-							<p className="text-2xl font-bold text-slate-900 dark:text-slate-100">
+							<p className="text-2xl font-bold text-foreground">
 								{stats.distribution.find((d) => d.rating === 5)?.count || 0}
-								<span className="ml-1 text-sm font-normal text-slate-500">
+								<span className="ml-1 text-sm font-normal text-default-400">
 									(
 									{stats.distribution
 										.find((d) => d.rating === 5)
@@ -197,16 +197,16 @@ export function FeedbacksContent() {
 				</Card>
 
 				{/* 1-2 Stars */}
-				<Card className="border border-slate-200 dark:border-slate-800">
+				<Card className="border border-divider">
 					<CardBody className="flex flex-row items-center gap-4">
 						<div className="flex h-12 w-12 items-center justify-center rounded-xl bg-red-100 dark:bg-red-900/30">
 							<ChartBarIcon className="h-6 w-6 text-red-600 dark:text-red-400" />
 						</div>
 						<div>
-							<p className="text-sm text-slate-500 dark:text-slate-400">
+							<p className="text-sm text-default-400">
 								1-2 Estrelas
 							</p>
-							<p className="text-2xl font-bold text-slate-900 dark:text-slate-100">
+							<p className="text-2xl font-bold text-foreground">
 								{(stats.distribution.find((d) => d.rating === 1)?.count || 0) +
 									(stats.distribution.find((d) => d.rating === 2)?.count || 0)}
 							</p>
@@ -216,9 +216,9 @@ export function FeedbacksContent() {
 			</div>
 
 			{/* Distribution Chart */}
-			<Card className="border border-slate-200 dark:border-slate-800">
+			<Card className="border border-divider">
 				<CardBody>
-					<h3 className="mb-4 text-lg font-semibold text-slate-900 dark:text-slate-100">
+					<h3 className="mb-4 text-lg font-semibold text-foreground">
 						Distribuição de Avaliações
 					</h3>
 					<div className="space-y-3">
@@ -230,18 +230,18 @@ export function FeedbacksContent() {
 							return (
 								<div key={rating} className="flex items-center gap-3">
 									<div className="flex w-24 items-center gap-1">
-										<span className="text-sm font-medium text-slate-700 dark:text-slate-300">
+										<span className="text-sm font-medium text-default-600">
 											{rating}
 										</span>
 										<StarIcon className="h-4 w-4 text-brand-500" />
 									</div>
-									<div className="h-3 flex-1 overflow-hidden rounded-full bg-slate-200 dark:bg-slate-700">
+									<div className="h-3 flex-1 overflow-hidden rounded-full bg-default-200">
 										<div
 											className="h-full rounded-full bg-brand-500 transition-all duration-500"
 											style={{ width: `${percentage}%` }}
 										/>
 									</div>
-									<span className="w-16 text-right text-sm text-slate-500 dark:text-slate-400">
+									<span className="w-16 text-right text-sm text-default-400">
 										{count} ({percentage.toFixed(0)}%)
 									</span>
 								</div>
@@ -312,7 +312,7 @@ export function FeedbacksContent() {
 			</div>
 
 			{/* Feedbacks Table */}
-			<Card className="border border-slate-200 dark:border-slate-800">
+			<Card className="border border-divider">
 				<CardBody className="p-0">
 					<Table
 						aria-label="Tabela de avaliações"
@@ -341,12 +341,12 @@ export function FeedbacksContent() {
 										>
 											#{feedback.order.orderNumber}
 										</Link>
-										<p className="text-xs text-slate-500 dark:text-slate-400">
+										<p className="text-xs text-default-400">
 											{formatCurrency(feedback.order.total)}
 										</p>
 									</TableCell>
 									<TableCell>
-										<p className="font-medium text-slate-900 dark:text-slate-100">
+										<p className="font-medium text-foreground">
 											{feedback.order.customerName}
 										</p>
 									</TableCell>
@@ -370,17 +370,17 @@ export function FeedbacksContent() {
 									</TableCell>
 									<TableCell>
 										{feedback.comment ? (
-											<p className="max-w-xs truncate text-sm text-slate-600 dark:text-slate-400">
+											<p className="max-w-xs truncate text-sm text-default-500">
 												{feedback.comment}
 											</p>
 										) : (
-											<span className="text-sm text-slate-400 dark:text-slate-500">
+											<span className="text-sm text-default-400">
 												Sem comentário
 											</span>
 										)}
 									</TableCell>
 									<TableCell>
-										<p className="text-sm text-slate-600 dark:text-slate-400">
+										<p className="text-sm text-default-500">
 											{format(new Date(feedback.createdAt), "dd/MM/yyyy", {
 												locale: ptBR,
 											})}

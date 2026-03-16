@@ -164,7 +164,7 @@ export default function NotificationBell({ label }: { label?: string }) {
           }`}
         >
           {label && (
-            <span className="text-sm font-medium text-slate-900 dark:text-slate-100">
+            <span className="text-sm font-medium text-foreground">
               {label}
             </span>
           )}
@@ -174,7 +174,7 @@ export default function NotificationBell({ label }: { label?: string }) {
             shape="circle"
             isInvisible={totalNotifications === 0}
           >
-            <BellIcon className="h-6 w-6 text-slate-600 dark:text-slate-300" />
+            <BellIcon className="h-6 w-6 text-default-500" />
           </Badge>
         </div>
       </DropdownTrigger>

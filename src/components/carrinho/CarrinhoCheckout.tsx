@@ -4,7 +4,12 @@ import { type CustomerDetails, useCart } from "@/src/contexts/CartContext";
 import { logger } from "@/src/lib/logger";
 import { maskCEP, maskCPFOrCNPJ, maskPhone } from "@/src/lib/masks";
 import { buildOrderWhatsAppMessage, getWhatsAppUrl } from "@/src/lib/whatsapp";
-import { MinusIcon, PlusIcon, TrashIcon } from "@heroicons/react/24/outline";
+import {
+  MinusIcon,
+  PlusIcon,
+  ShoppingCartIcon,
+  TrashIcon,
+} from "@heroicons/react/24/outline";
 import {
   Button,
   Card,
@@ -309,7 +314,7 @@ export function CarrinhoCheckout() {
         order.orderNumber
       );
       const whatsappUrl = getWhatsAppUrl(message);
-      window.open(whatsappUrl, "_blank");
+      window.open(whatsappUrl, "_blank", "noopener,noreferrer");
 
       router.push(`/pedido-confirmado/${order.id}`);
     } catch (error) {
@@ -364,9 +369,9 @@ export function CarrinhoCheckout() {
   return (
     <div className="space-y-6">
       {/* Dados do cliente - Agora no topo */}
-      <Card className="border border-slate-200 dark:border-slate-800">
+      <Card className="border border-divider">
         <CardHeader className="flex items-center justify-between">
-          <p className="text-base font-semibold text-slate-900 dark:text-slate-100">
+          <p className="text-base font-semibold text-foreground">
             Dados do cliente
           </p>
           {!isEditingCustomer && (
@@ -385,34 +390,34 @@ export function CarrinhoCheckout() {
           {!isEditingCustomer ? (
             <div className="flex flex-col gap-4 md:flex-row md:justify-between">
               <div className="space-y-1">
-                <p className="text-sm font-medium text-slate-900 dark:text-slate-100">
+                <p className="text-sm font-medium text-foreground">
                   {customer.name}
                 </p>
-                <p className="text-sm text-slate-500 dark:text-slate-400">
+                <p className="text-sm text-default-400">
                   {customer.phone} • {customer.docNumber}
                 </p>
               </div>
               <div className="space-y-1 md:text-right">
-                <p className="text-sm text-slate-700 dark:text-slate-300">
+                <p className="text-sm text-default-600">
                   {customer.addressLine1}
                   {customer.addressLine2 ? `, ${customer.addressLine2}` : ""}
                 </p>
-                <p className="text-sm text-slate-500 dark:text-slate-400">
+                <p className="text-sm text-default-400">
                   {customer.city} - {customer.state}, {customer.postalCode}
                 </p>
               </div>
               {customer.notes && (
-                <div className="mt-2 w-full rounded-md bg-slate-50 p-3 dark:bg-slate-800/50 md:mt-0 md:w-auto md:max-w-xs">
-                  <p className="text-xs font-medium text-slate-500 dark:text-slate-400">
+                <div className="mt-2 w-full rounded-md bg-content2 p-4 md:mt-0 md:w-auto md:max-w-xs">
+                  <p className="text-xs font-medium text-default-400">
                     Observações:
                   </p>
-                  <p className="text-sm text-slate-700 dark:text-slate-300">
+                  <p className="text-sm text-default-600">
                     {customer.notes}
                   </p>
                 </div>
               )}
               {customer.paymentMethod && (
-                <div className="mt-2 w-full rounded-md bg-brand-50 p-3 dark:bg-brand-900/20 md:mt-0 md:w-auto">
+                <div className="mt-2 w-full rounded-md bg-brand-50 p-4 dark:bg-brand-900/20 md:mt-0 md:w-auto">
                   <p className="text-xs font-medium text-brand-600 dark:text-brand-400">
                     Forma de pagamento:
                   </p>
@@ -590,7 +595,7 @@ export function CarrinhoCheckout() {
               </Select>
               <div className="flex flex-col justify-between gap-4 md:col-span-2 md:flex-row md:items-center">
                 {session?.user && (
-                  <p className="text-xs text-slate-500">
+                  <p className="text-xs text-default-400">
                     {profileSyncStatus === "saving" &&
                       "Salvando dados na sua conta..."}
                     {profileSyncStatus === "saved" &&
@@ -615,35 +620,42 @@ export function CarrinhoCheckout() {
       </Card>
 
       {/* Itens do carrinho */}
-      <Card className="border border-slate-200 dark:border-slate-800">
+      <Card className="border border-divider">
         <CardHeader className="flex items-center justify-between">
-          <p className="text-base font-semibold text-slate-900 dark:text-slate-100">
+          <p className="text-base font-semibold text-foreground">
             Itens do carrinho ({totalItems})
           </p>
         </CardHeader>
         <Divider />
         <CardBody className="space-y-4">
           {items.length === 0 ? (
-            <div className="py-8 text-center">
-              <p className="text-sm text-slate-500 dark:text-slate-400">
-                Seu carrinho está vazio. Adicione produtos da{" "}
-                <Link
-                  href="/produtos"
-                  className="font-medium text-brand-600 hover:text-brand-700 dark:text-brand-400"
-                >
-                  página de produtos
-                </Link>{" "}
-                antes de finalizar.
-              </p>
+            <div className="flex flex-col items-center gap-4 py-12 text-center">
+              <ShoppingCartIcon className="h-12 w-12 text-default-300" />
+              <div>
+                <p className="text-lg font-semibold text-foreground">
+                  Seu carrinho está vazio
+                </p>
+                <p className="mt-1 text-sm text-default-400">
+                  Adicione produtos antes de finalizar o pedido.
+                </p>
+              </div>
+              <Button
+                as={Link}
+                href="/produtos"
+                color="primary"
+                className="bg-brand-600 font-semibold text-white"
+              >
+                Ver catálogo de peças
+              </Button>
             </div>
           ) : (
             <ul className="space-y-4">
               {items.map(({ product, quantity }) => (
                 <li
                   key={product.id}
-                  className="flex gap-4 rounded-lg border border-slate-200 p-4 dark:border-slate-800"
+                  className="flex gap-4 rounded-lg border border-divider p-4"
                 >
-                  <div className="relative h-20 w-20 flex-shrink-0 overflow-hidden rounded bg-slate-100 dark:bg-slate-800">
+                  <div className="relative h-20 w-20 flex-shrink-0 overflow-hidden rounded bg-default-100">
                     <Image
                       src={product.imageUrl || "/logo-iron.png"}
                       alt={product.name}
@@ -651,12 +663,12 @@ export function CarrinhoCheckout() {
                       className="object-cover"
                     />
                   </div>
-                  <div className="flex flex-1 flex-col gap-3">
+                  <div className="flex flex-1 flex-col gap-4">
                     <div>
-                      <p className="text-sm font-semibold text-slate-900 dark:text-slate-100">
+                      <p className="text-sm font-semibold text-foreground">
                         {product.name}
                       </p>
-                      <p className="text-xs text-slate-500 dark:text-slate-400">
+                      <p className="text-xs text-default-400">
                         {product.brand} · {product.model.toUpperCase()}
                       </p>
                     </div>
@@ -712,7 +724,7 @@ export function CarrinhoCheckout() {
       </Card>
 
       {/* Botão finalizar */}
-      <div className="flex flex-col gap-3 sm:flex-row sm:justify-end">
+      <div className="flex flex-col gap-4 sm:flex-row sm:justify-end">
         <Button
           color="primary"
           size="lg"

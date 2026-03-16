@@ -185,10 +185,10 @@ export function AdminPedidosContent() {
 
 	if (status === "loading" || status === "unauthenticated") {
 		return (
-			<div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-slate-50 via-white to-slate-100 dark:from-slate-900 dark:via-slate-900 dark:to-slate-800">
+			<div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-content1 via-background to-default-100">
 				<div className="text-center">
 					<Spinner size="lg" color="primary" />
-					<p className="mt-4 text-sm text-slate-500 dark:text-slate-400">
+					<p className="mt-4 text-sm text-default-400">
 						Carregando pedidos...
 					</p>
 				</div>
@@ -201,17 +201,17 @@ export function AdminPedidosContent() {
 	}
 
 	return (
-		<div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100 dark:from-slate-900 dark:via-slate-900 dark:to-slate-800">
+		<div className="min-h-screen bg-gradient-to-br from-content1 via-background to-default-100">
 			{/* Background Pattern */}
 			<div className="pointer-events-none absolute inset-0 -z-10 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiM5Qzk0OTQiIGZpbGwtb3BhY2l0eT0iMC4wMyI+PHBhdGggZD0iTTM2IDM0djItSDI0di0yaDEyek0zNiAyNHYySDI0di0yaDEyeiIvPjwvZz48L2c+PC9zdmc+')] opacity-50 dark:opacity-20" />
 
 			<div className="relative px-4 py-8">
 				<div className="mx-auto w-full max-w-7xl">
 					{/* Header Card */}
-					<div className="mb-8 overflow-hidden rounded-3xl bg-gradient-to-r from-slate-50 via-white to-slate-100 p-6 shadow-2xl dark:from-slate-800 dark:via-slate-900 dark:to-slate-800 md:p-8">
+					<div className="mb-8 overflow-hidden rounded-3xl bg-gradient-to-r from-content1 via-background to-default-100 p-6 shadow-2xl md:p-8">
 						{/* Decorative Elements */}
 						<div className="absolute -right-10 -top-10 h-40 w-40 rounded-full bg-gradient-to-br from-brand-500/10 to-brand-600/10 blur-3xl" />
-						<div className="absolute -bottom-10 -left-10 h-40 w-40 rounded-full bg-gradient-to-br from-slate-500/10 to-slate-400/10 blur-3xl" />
+						<div className="absolute -bottom-10 -left-10 h-40 w-40 rounded-full bg-gradient-to-br from-default-400/10 to-default-300/10 blur-3xl" />
 
 						<div className="relative flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
 							<div className="flex items-center gap-4">
@@ -219,10 +219,10 @@ export function AdminPedidosContent() {
 									<ShoppingBagIcon className="h-7 w-7 text-white" />
 								</div>
 								<div>
-									<h1 className="text-2xl font-bold text-slate-900 dark:text-white md:text-3xl">
+									<h1 className="text-2xl font-bold text-foreground md:text-3xl">
 										Gerenciar Pedidos
 									</h1>
-									<p className="mt-1 text-slate-600 dark:text-slate-400">
+									<p className="mt-1 text-default-500">
 										Visualize e gerencie todos os pedidos
 									</p>
 								</div>
@@ -241,9 +241,9 @@ export function AdminPedidosContent() {
 									as={Link}
 									href="/admin"
 									variant="flat"
-									className="bg-slate-100 font-medium text-slate-700 shadow-sm hover:bg-slate-200 dark:bg-slate-700 dark:text-white dark:hover:bg-slate-600"
+									className="bg-default-100 font-medium text-foreground shadow-sm hover:bg-default-200"
 									startContent={
-										<ArrowLeftIcon className="h-4 w-4 text-slate-700 dark:text-white" />
+										<ArrowLeftIcon className="h-4 w-4 text-foreground" />
 									}
 								>
 									Voltar
@@ -254,64 +254,64 @@ export function AdminPedidosContent() {
 
 					{/* Stats Cards */}
 					<div className="mb-8 grid grid-cols-2 gap-4 md:grid-cols-4">
-						<Card className="border border-slate-200 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-900">
+						<Card className="border border-divider bg-background shadow-sm">
 							<CardBody className="flex flex-row items-center gap-3 p-4">
 								<div className="flex h-10 w-10 items-center justify-center rounded-xl bg-brand-500 shadow-md shadow-brand-500/20">
 									<ClockIcon className="h-5 w-5 text-white" />
 								</div>
 								<div>
-									<p className="text-xs text-slate-500 dark:text-slate-400">
+									<p className="text-xs text-default-400">
 										Pendentes
 									</p>
-									<p className="text-xl font-bold text-slate-800 dark:text-slate-100">
+									<p className="text-xl font-bold text-foreground">
 										{orders.filter((o) => o.status === "PENDING").length}
 									</p>
 								</div>
 							</CardBody>
 						</Card>
 
-						<Card className="border border-slate-200 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-900">
+						<Card className="border border-divider bg-background shadow-sm">
 							<CardBody className="flex flex-row items-center gap-3 p-4">
 								<div className="flex h-10 w-10 items-center justify-center rounded-xl bg-brand-500 shadow-md shadow-brand-500/20">
 									<TruckIcon className="h-5 w-5 text-white" />
 								</div>
 								<div>
-									<p className="text-xs text-slate-500 dark:text-slate-400">
+									<p className="text-xs text-default-400">
 										Em Trânsito
 									</p>
-									<p className="text-xl font-bold text-slate-800 dark:text-slate-100">
+									<p className="text-xl font-bold text-foreground">
 										{orders.filter((o) => o.status === "SHIPPED").length}
 									</p>
 								</div>
 							</CardBody>
 						</Card>
 
-						<Card className="border border-slate-200 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-900">
+						<Card className="border border-divider bg-background shadow-sm">
 							<CardBody className="flex flex-row items-center gap-3 p-4">
 								<div className="flex h-10 w-10 items-center justify-center rounded-xl bg-brand-500 shadow-md shadow-brand-500/20">
 									<CheckCircleIcon className="h-5 w-5 text-white" />
 								</div>
 								<div>
-									<p className="text-xs text-slate-500 dark:text-slate-400">
+									<p className="text-xs text-default-400">
 										Entregues
 									</p>
-									<p className="text-xl font-bold text-slate-800 dark:text-slate-100">
+									<p className="text-xl font-bold text-foreground">
 										{orders.filter((o) => o.status === "DELIVERED").length}
 									</p>
 								</div>
 							</CardBody>
 						</Card>
 
-						<Card className="border border-slate-200 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-900">
+						<Card className="border border-divider bg-background shadow-sm">
 							<CardBody className="flex flex-row items-center gap-3 p-4">
 								<div className="flex h-10 w-10 items-center justify-center rounded-xl bg-brand-500 shadow-md shadow-brand-500/20">
 									<DocumentTextIcon className="h-5 w-5 text-white" />
 								</div>
 								<div>
-									<p className="text-xs text-slate-500 dark:text-slate-400">
+									<p className="text-xs text-default-400">
 										Total
 									</p>
-									<p className="text-xl font-bold text-slate-800 dark:text-slate-100">
+									<p className="text-xl font-bold text-foreground">
 										{pagination.total}
 									</p>
 								</div>
@@ -320,10 +320,10 @@ export function AdminPedidosContent() {
 					</div>
 
 					{/* Main Content Card */}
-					<Card className="border-none bg-white/80 shadow-xl backdrop-blur-sm dark:bg-slate-800/80">
+					<Card className="border-none bg-background/80 shadow-xl backdrop-blur-sm">
 						<CardBody className="p-0">
 							{/* Status Filter Tabs */}
-							<div className="border-b border-slate-200 dark:border-slate-700">
+							<div className="border-b border-divider">
 								<div className="scrollbar-none overflow-x-auto">
 									<div className="px-4 pt-4 sm:px-6 sm:pt-6">
 										<Tabs
@@ -377,21 +377,21 @@ export function AdminPedidosContent() {
 							</div>
 
 							{/* Toolbar */}
-							<div className="flex flex-col gap-4 border-b border-slate-200 p-6 dark:border-slate-700 sm:flex-row sm:items-center sm:justify-between">
+							<div className="flex flex-col gap-4 border-b border-divider p-6 sm:flex-row sm:items-center sm:justify-between">
 								<div className="relative">
 									<input
 										type="text"
-										className="w-full rounded-xl bg-slate-100 px-4 py-2 pl-10 text-sm text-slate-900 shadow-sm outline-none transition-colors placeholder:text-slate-400 focus:ring-2 focus:ring-brand-500 dark:bg-slate-700/50 dark:text-slate-100 dark:placeholder:text-slate-500 sm:w-80"
+										className="w-full rounded-xl bg-default-100 px-4 py-2 pl-10 text-sm text-foreground shadow-sm outline-none transition-colors placeholder:text-default-400 focus:ring-2 focus:ring-brand-500 sm:w-80"
 										placeholder="Buscar por pedido, cliente, email..."
 										value={searchQuery}
 										onChange={(e) => setSearchQuery(e.target.value)}
 									/>
-									<MagnifyingGlassIcon className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-slate-400" />
+									<MagnifyingGlassIcon className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-default-400" />
 									{searchQuery && (
 										<button
 											type="button"
 											onClick={() => setSearchQuery("")}
-											className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-300"
+											className="absolute right-3 top-1/2 -translate-y-1/2 text-default-400 hover:text-default-500"
 											aria-label="Limpar busca"
 										>
 											<svg
@@ -420,7 +420,7 @@ export function AdminPedidosContent() {
 										className="w-36"
 										size="sm"
 										classNames={{
-											trigger: "bg-slate-100 dark:bg-slate-700/50 shadow-sm",
+											trigger: "bg-default-100 shadow-sm",
 										}}
 									>
 										<SelectItem key="createdAt" value="createdAt">
@@ -444,7 +444,7 @@ export function AdminPedidosContent() {
 										className="w-32"
 										size="sm"
 										classNames={{
-											trigger: "bg-slate-100 dark:bg-slate-700/50 shadow-sm",
+											trigger: "bg-default-100 shadow-sm",
 										}}
 									>
 										<SelectItem key="desc" value="desc">
@@ -462,7 +462,7 @@ export function AdminPedidosContent() {
 										className="w-24"
 										size="sm"
 										classNames={{
-											trigger: "bg-slate-100 dark:bg-slate-700/50 shadow-sm",
+											trigger: "bg-default-100 shadow-sm",
 										}}
 									>
 										<SelectItem key="10" value="10">
@@ -482,8 +482,8 @@ export function AdminPedidosContent() {
 							</div>
 
 							{/* Results Counter */}
-							<div className="flex items-center justify-between border-b border-slate-200 px-6 py-3 dark:border-slate-700">
-								<div className="text-sm text-slate-600 dark:text-slate-400">
+							<div className="flex items-center justify-between border-b border-divider px-6 py-3">
+								<div className="text-sm text-default-500">
 									{loading ? (
 										<span className="flex items-center gap-2">
 											<Spinner size="sm" />
@@ -492,7 +492,7 @@ export function AdminPedidosContent() {
 									) : (
 										<>
 											Mostrando{" "}
-											<span className="font-semibold text-slate-800 dark:text-slate-200">
+											<span className="font-semibold text-foreground">
 												{pagination.total === 0
 													? 0
 													: (pagination.page - 1) * pagination.limit + 1}
@@ -503,7 +503,7 @@ export function AdminPedidosContent() {
 												)}
 											</span>{" "}
 											de{" "}
-											<span className="font-semibold text-slate-800 dark:text-slate-200">
+											<span className="font-semibold text-foreground">
 												{pagination.total}
 											</span>{" "}
 											pedidos
@@ -541,7 +541,7 @@ export function AdminPedidosContent() {
 
 							{/* Pagination */}
 							{pagination.totalPages > 1 && !loading && (
-								<div className="flex justify-center border-t border-slate-200 p-6 dark:border-slate-700">
+								<div className="flex justify-center border-t border-divider p-6">
 									<Pagination
 										total={pagination.totalPages}
 										page={pagination.page}
@@ -550,7 +550,7 @@ export function AdminPedidosContent() {
 										color="primary"
 										classNames={{
 											wrapper: "gap-2",
-											item: "bg-slate-100 dark:bg-slate-700/50",
+											item: "bg-default-100",
 											cursor:
 												"bg-gradient-to-r from-brand-500 to-brand-600 shadow-lg shadow-brand-500/25",
 										}}

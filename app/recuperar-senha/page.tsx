@@ -50,14 +50,14 @@ export default function ForgotPasswordPage() {
   }
 
   return (
-    <section className="flex min-h-[calc(100vh-120px)] items-center justify-center bg-white px-4 py-16 dark:bg-slate-900">
-      <Card className="w-full max-w-md border border-slate-200 shadow-xl dark:border-slate-800 dark:bg-slate-900">
+    <section className="flex min-h-[calc(100vh-120px)] items-center justify-center bg-gradient-to-b from-background to-content1 px-4 py-16">
+      <Card className="w-full max-w-md border border-divider shadow-xl">
         <CardBody className="space-y-8">
-          <div className="space-y-3 text-center">
-            <h1 className="text-2xl font-semibold text-slate-900 dark:text-slate-100">
+          <div className="space-y-4 text-center">
+            <h1 className="text-2xl font-semibold text-foreground">
               Recuperar Senha
             </h1>
-            <p className="text-sm text-slate-600 dark:text-slate-400">
+            <p className="text-sm text-default-500">
               Digite seu e-mail para receber um link de redefinição de senha.
             </p>
           </div>
@@ -67,7 +67,7 @@ export default function ForgotPasswordPage() {
               <div className="rounded-lg bg-emerald-50 p-4 text-sm text-emerald-700 dark:bg-emerald-900/20 dark:text-emerald-400">
                 {successMessage}
               </div>
-              <p className="text-xs text-slate-500">
+              <p className="text-xs text-default-400">
                 Verifique sua caixa de entrada (e spam). O link expira em 1
                 hora.
               </p>
@@ -93,7 +93,7 @@ export default function ForgotPasswordPage() {
                 errorMessage={errors.email?.message}
               />
 
-              <div className="space-y-3">
+              <div className="space-y-4">
                 <Button
                   type="submit"
                   color="primary"

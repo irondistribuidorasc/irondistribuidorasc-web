@@ -51,7 +51,7 @@ export function AdminOrdersTable({
 		return (
 			<Card>
 				<CardBody className="py-12 text-center">
-					<p className="text-slate-600 dark:text-slate-400">
+					<p className="text-default-500">
 						Nenhum pedido encontrado
 					</p>
 				</CardBody>
@@ -65,7 +65,7 @@ export function AdminOrdersTable({
 			<div className="hidden md:block">
 				<Table
 					aria-label="Admin orders table"
-					className="dark:rounded-lg dark:border dark:border-slate-800"
+					className="dark:rounded-lg dark:border dark:border-divider"
 				>
 					<TableHeader>
 						<TableColumn>PEDIDO</TableColumn>
@@ -89,19 +89,19 @@ export function AdminOrdersTable({
 								</TableCell>
 								<TableCell>
 									<div className="flex flex-col">
-										<span className="font-medium text-slate-900 dark:text-slate-100">
+										<span className="font-medium text-foreground">
 											{order.customerName}
 										</span>
 									</div>
 								</TableCell>
 								<TableCell>
-									<div className="flex flex-col text-sm text-slate-600 dark:text-slate-400">
+									<div className="flex flex-col text-sm text-default-500">
 										<span>{order.customerEmail}</span>
 										<span>{order.customerPhone}</span>
 									</div>
 								</TableCell>
 								<TableCell>
-									<span className="font-semibold text-slate-900 dark:text-slate-100">
+									<span className="font-semibold text-foreground">
 										{formatCurrency(order.total)}
 									</span>
 								</TableCell>
@@ -109,7 +109,7 @@ export function AdminOrdersTable({
 									<OrderStatusBadge status={order.status} />
 								</TableCell>
 								<TableCell>
-									<span className="text-sm text-slate-600 dark:text-slate-400">
+									<span className="text-sm text-default-500">
 										{formatDate(order.createdAt)}
 									</span>
 								</TableCell>
@@ -131,7 +131,7 @@ export function AdminOrdersTable({
 				{orders.map((order) => (
 					<Card
 						key={order.id}
-						className="border border-slate-200 dark:border-slate-800"
+						className="border border-divider"
 					>
 						<CardBody className="gap-3">
 							<div className="flex items-start justify-between">
@@ -145,22 +145,22 @@ export function AdminOrdersTable({
 							</div>
 
 							<div>
-								<p className="font-medium text-slate-900 dark:text-slate-100">
+								<p className="font-medium text-foreground">
 									{order.customerName}
 								</p>
-								<p className="text-sm text-slate-600 dark:text-slate-400">
+								<p className="text-sm text-default-500">
 									{order.customerEmail}
 								</p>
-								<p className="text-sm text-slate-600 dark:text-slate-400">
+								<p className="text-sm text-default-500">
 									{order.customerPhone}
 								</p>
 							</div>
 
 							<div className="flex items-center justify-between">
-								<span className="text-lg font-semibold text-slate-900 dark:text-slate-100">
+								<span className="text-lg font-semibold text-foreground">
 									{formatCurrency(order.total)}
 								</span>
-								<span className="text-sm text-slate-600 dark:text-slate-400">
+								<span className="text-sm text-default-500">
 									{formatDate(order.createdAt)}
 								</span>
 							</div>

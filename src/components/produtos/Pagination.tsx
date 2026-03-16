@@ -1,6 +1,7 @@
 "use client";
 
 import { getPageRange } from "@/src/lib/productUtils";
+import { Button } from "@heroui/react";
 
 type PaginationProps = {
   currentPage: number;
@@ -38,11 +39,11 @@ export function Pagination({
 
   return (
     <nav
-      className="flex flex-col items-center gap-4 border-t border-slate-200 px-4 py-6 dark:border-slate-700 sm:px-6"
+      className="flex flex-col items-center gap-4 border-t border-divider px-4 py-6 sm:px-6"
       aria-label="Navegação de páginas"
     >
       {/* Informação de itens */}
-      <div className="text-sm text-slate-700 dark:text-slate-300">
+      <div className="text-sm text-default-600">
         Mostrando{" "}
         <span className="font-semibold">
           {startItem}-{endItem}
@@ -53,11 +54,14 @@ export function Pagination({
       {/* Botões de navegação */}
       <div className="flex items-center gap-2">
         {/* Primeira página */}
-        <button
-          onClick={onFirstPage}
-          disabled={currentPage === 1}
-          className="rounded-md border border-slate-300 bg-white px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-brand-500 disabled:cursor-not-allowed disabled:opacity-50 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700"
+        <Button
+          isIconOnly
+          variant="bordered"
+          size="sm"
+          onPress={onFirstPage}
+          isDisabled={currentPage === 1}
           aria-label="Primeira página"
+          className="min-w-10 border-divider text-default-600"
         >
           <svg
             className="h-5 w-5"
@@ -73,14 +77,17 @@ export function Pagination({
               d="M11 19l-7-7 7-7m8 14l-7-7 7-7"
             />
           </svg>
-        </button>
+        </Button>
 
         {/* Página anterior */}
-        <button
-          onClick={onPreviousPage}
-          disabled={currentPage === 1}
-          className="rounded-md border border-slate-300 bg-white px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-brand-500 disabled:cursor-not-allowed disabled:opacity-50 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700"
+        <Button
+          isIconOnly
+          variant="bordered"
+          size="sm"
+          onPress={onPreviousPage}
+          isDisabled={currentPage === 1}
           aria-label="Página anterior"
+          className="min-w-10 border-divider text-default-600"
         >
           <svg
             className="h-5 w-5"
@@ -96,54 +103,63 @@ export function Pagination({
               d="M15 19l-7-7 7-7"
             />
           </svg>
-        </button>
+        </Button>
 
         {/* Números de página - Desktop */}
         <div className="hidden items-center gap-2 sm:flex">
           {desktopPages.map((page) => (
-            <button
+            <Button
               key={page}
-              onClick={() => onPageChange(page)}
-              disabled={page === currentPage}
-              className={`min-w-[40px] rounded-md border px-3 py-2 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-brand-500 ${
+              variant={page === currentPage ? "solid" : "bordered"}
+              color={page === currentPage ? "primary" : "default"}
+              size="sm"
+              onPress={() => onPageChange(page)}
+              isDisabled={page === currentPage}
+              className={`min-w-10 ${
                 page === currentPage
-                  ? "border-brand-600 bg-brand-600 text-white dark:border-brand-500 dark:bg-brand-500"
-                  : "border-slate-300 bg-white text-slate-700 hover:bg-slate-50 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700"
+                  ? "bg-brand-600 text-white"
+                  : "border-divider text-default-600"
               }`}
               aria-label={`Página ${page}`}
               aria-current={page === currentPage ? "page" : undefined}
             >
               {page}
-            </button>
+            </Button>
           ))}
         </div>
 
         {/* Números de página - Mobile */}
         <div className="flex items-center gap-2 sm:hidden">
           {mobilePages.map((page) => (
-            <button
+            <Button
               key={page}
-              onClick={() => onPageChange(page)}
-              disabled={page === currentPage}
-              className={`min-w-[40px] rounded-md border px-3 py-2 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-brand-500 ${
+              variant={page === currentPage ? "solid" : "bordered"}
+              color={page === currentPage ? "primary" : "default"}
+              size="sm"
+              onPress={() => onPageChange(page)}
+              isDisabled={page === currentPage}
+              className={`min-w-10 ${
                 page === currentPage
-                  ? "border-brand-600 bg-brand-600 text-white dark:border-brand-500 dark:bg-brand-500"
-                  : "border-slate-300 bg-white text-slate-700 hover:bg-slate-50 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700"
+                  ? "bg-brand-600 text-white"
+                  : "border-divider text-default-600"
               }`}
               aria-label={`Página ${page}`}
               aria-current={page === currentPage ? "page" : undefined}
             >
               {page}
-            </button>
+            </Button>
           ))}
         </div>
 
         {/* Próxima página */}
-        <button
-          onClick={onNextPage}
-          disabled={currentPage === totalPages}
-          className="rounded-md border border-slate-300 bg-white px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-brand-500 disabled:cursor-not-allowed disabled:opacity-50 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700"
+        <Button
+          isIconOnly
+          variant="bordered"
+          size="sm"
+          onPress={onNextPage}
+          isDisabled={currentPage === totalPages}
           aria-label="Próxima página"
+          className="min-w-10 border-divider text-default-600"
         >
           <svg
             className="h-5 w-5"
@@ -159,14 +175,17 @@ export function Pagination({
               d="M9 5l7 7-7 7"
             />
           </svg>
-        </button>
+        </Button>
 
         {/* Última página */}
-        <button
-          onClick={onLastPage}
-          disabled={currentPage === totalPages}
-          className="rounded-md border border-slate-300 bg-white px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-brand-500 disabled:cursor-not-allowed disabled:opacity-50 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700"
+        <Button
+          isIconOnly
+          variant="bordered"
+          size="sm"
+          onPress={onLastPage}
+          isDisabled={currentPage === totalPages}
           aria-label="Última página"
+          className="min-w-10 border-divider text-default-600"
         >
           <svg
             className="h-5 w-5"
@@ -182,7 +201,7 @@ export function Pagination({
               d="M13 5l7 7-7 7M5 5l7 7-7 7"
             />
           </svg>
-        </button>
+        </Button>
       </div>
     </nav>
   );

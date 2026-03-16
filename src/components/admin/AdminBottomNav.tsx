@@ -79,7 +79,7 @@ export function AdminBottomNav() {
 	};
 
 	return (
-		<nav className="fixed bottom-0 left-0 right-0 z-50 border-t border-slate-200 bg-white/95 backdrop-blur-lg dark:border-slate-800 dark:bg-slate-900/95 print:hidden md:hidden">
+		<nav className="fixed bottom-0 left-0 right-0 z-50 border-t border-divider bg-background/95 backdrop-blur-lg print:hidden md:hidden">
 			<div className="flex h-16 items-center justify-around px-2">
 				{navItems.map((item) => {
 					const active = isActive(item.href);
@@ -92,7 +92,7 @@ export function AdminBottomNav() {
 							className={`flex flex-col items-center justify-center gap-1 rounded-xl px-3 py-2 transition-all duration-200 ${
 								active
 									? `${item.bgColor} ${item.color}`
-									: "text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200"
+									: "text-default-400 hover:text-default-600"
 							}`}
 						>
 							<Icon className="h-6 w-6" />
@@ -102,7 +102,7 @@ export function AdminBottomNav() {
 				})}
 			</div>
 			{/* Safe area for devices with home indicator */}
-			<div className="h-safe-area-inset-bottom bg-white/95 dark:bg-slate-900/95" />
+			<div className="h-safe-area-inset-bottom bg-background/95" />
 		</nav>
 	);
 }

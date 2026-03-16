@@ -14,11 +14,11 @@ export default function GarantiaPage() {
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="mb-6">
-        <h1 className="mb-2 flex items-center gap-2 text-3xl font-bold text-slate-900 dark:text-slate-100">
+        <h1 className="mb-2 flex items-center gap-2 text-3xl font-bold text-foreground">
           <ShieldCheckIcon className="h-8 w-8 text-brand-600 dark:text-brand-400" />
           Garantia e Troca
         </h1>
-        <p className="text-slate-600 dark:text-slate-400">
+        <p className="text-default-500">
           Solicite garantia ou devolução de produtos e gere a mensagem
           automática para WhatsApp
         </p>

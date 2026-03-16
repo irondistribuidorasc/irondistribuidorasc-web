@@ -87,9 +87,9 @@ export const createOrderSchema = z.object({
 export const productSchema = z.object({
   code: z.string().min(1, "Código é obrigatório"),
   name: z.string().min(1, "Nome é obrigatório"),
-  brand: z.string().default(""),
-  category: z.string().default("other"),
-  model: z.string().default(""),
+  brand: z.string().min(1, "Marca é obrigatória"),
+  category: z.string().min(1, "Categoria é obrigatória"),
+  model: z.string().min(1, "Modelo é obrigatório"),
   imageUrl: z.string().default("/logo-iron.png"),
   stockQuantity: z.coerce.number().int().nonnegative().default(0),
   minStockThreshold: z.coerce.number().int().nonnegative().default(10),

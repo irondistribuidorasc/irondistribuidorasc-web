@@ -34,7 +34,7 @@ export default function HomePageClient() {
 
 	return (
 		<div className="relative overflow-hidden">
-			<section className="relative overflow-hidden bg-white dark:bg-slate-950">
+			<section className="relative overflow-hidden bg-background">
 				{/* Background Gradients */}
 				<div className="animate-blob absolute -left-20 -top-20 h-96 w-96 rounded-full bg-brand-500/10 blur-3xl filter dark:bg-brand-500/5" />
 				<div
@@ -65,7 +65,7 @@ export default function HomePageClient() {
 										alt="IRON DISTRIBUIDORA SC"
 										width={96}
 										height={96}
-										className="relative h-24 w-24 rounded-full border-4 border-white object-cover shadow-xl dark:border-slate-900"
+										className="relative h-24 w-24 rounded-full border-4 border-background object-cover shadow-xl"
 									/>
 								</div>
 								<p className="rounded-full bg-brand-50 px-4 py-1.5 text-xs font-bold uppercase tracking-widest text-brand-600 dark:bg-brand-900/20 dark:text-brand-400">
@@ -74,7 +74,7 @@ export default function HomePageClient() {
 							</div>
 						</ScrollAnimation>
 						<ScrollAnimation variant="fadeInUp" delay={0.1}>
-							<h1 className="text-4xl font-extrabold tracking-tight text-slate-900 dark:text-white sm:text-5xl md:text-6xl">
+							<h1 className="text-4xl font-extrabold tracking-tight text-foreground sm:text-5xl md:text-6xl">
 								Peças para celular com{" "}
 								<span className="animate-shimmer bg-gradient-to-r from-brand-600 via-brand-400 to-brand-600 bg-[length:200%_100%] bg-clip-text text-transparent">
 									garantia de 1 ano
@@ -83,7 +83,7 @@ export default function HomePageClient() {
 							</h1>
 						</ScrollAnimation>
 						<ScrollAnimation variant="fadeInUp" delay={0.2}>
-							<p className="mx-auto max-w-2xl text-lg text-slate-600 dark:text-slate-400 md:mx-0 md:text-xl">
+							<p className="mx-auto max-w-2xl text-lg text-default-500 md:mx-0 md:text-xl">
 								Peças prontas para envio atacado, atendimento ágil via WhatsApp
 								e cobertura nas cidades de Itapema, Tijucas, Porto Belo e São
 								João Batista.
@@ -104,22 +104,22 @@ export default function HomePageClient() {
 									href="/garantia"
 									size="lg"
 									variant="bordered"
-									className="border-slate-200 font-semibold text-slate-700 hover:border-brand-200 hover:bg-brand-50 hover:text-brand-700 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-800"
+									className="border-divider font-semibold text-foreground transition-all hover:border-brand-200 hover:bg-brand-50 hover:text-brand-700 dark:hover:bg-brand-900/10"
 								>
 									Solicitar garantia / troca
 								</Button>
 							</div>
 						</ScrollAnimation>
 						<ScrollAnimation variant="fadeInUp" delay={0.4}>
-							<div className="flex items-center justify-center gap-4 rounded-2xl border border-slate-100 bg-white/50 p-4 backdrop-blur-sm dark:border-slate-800 dark:bg-slate-900/50 md:justify-start">
+							<div className="flex items-center justify-center gap-4 rounded-2xl border border-divider bg-background/50 p-4 backdrop-blur-sm md:justify-start">
 								<div className="rounded-full bg-green-100 p-2 text-green-600 dark:bg-green-900/30 dark:text-green-400">
 									<ChatBubbleLeftRightIcon className="h-6 w-6" />
 								</div>
 								<div className="text-left">
-									<p className="text-sm font-bold text-slate-900 dark:text-white">
-										WhatsApp: (48) 99114-7117
+<p className="text-sm font-bold text-foreground">
+									WhatsApp: (48) 99114-7117
 									</p>
-									<p className="text-xs text-slate-500 dark:text-slate-400">
+									<p className="text-xs text-default-400">
 										Atendimento exclusivo para lojistas
 									</p>
 								</div>
@@ -130,7 +130,7 @@ export default function HomePageClient() {
 						<ScrollAnimation variant="scaleIn" delay={0.2}>
 							<div className="relative mx-auto max-w-md">
 								<div className="absolute -inset-1 rounded-3xl bg-gradient-to-r from-brand-500 to-violet-500 opacity-20 blur-xl dark:to-white" />
-								<div className="relative rounded-3xl border border-slate-100 bg-white/80 p-8 shadow-2xl backdrop-blur-xl dark:border-slate-800 dark:bg-slate-900/80">
+								<div className="relative rounded-3xl border border-divider bg-background/80 p-8 shadow-2xl backdrop-blur-xl">
 									<Image
 										src="/logo-iron.png"
 										alt="IRON DISTRIBUIDORA SC"
@@ -139,10 +139,10 @@ export default function HomePageClient() {
 										className="mx-auto h-40 w-40 rounded-full object-cover shadow-inner"
 									/>
 									<div className="mt-8 space-y-4 text-center">
-										<h3 className="text-xl font-bold text-slate-900 dark:text-white">
+										<h3 className="text-xl font-bold text-foreground">
 											Parceiro Oficial do Lojista
 										</h3>
-										<p className="text-slate-600 dark:text-slate-400">
+										<p className="text-default-500">
 											Estoque atualizado, reposição planejada e logística rápida
 											para o seu negócio nunca parar.
 										</p>
@@ -155,7 +155,7 @@ export default function HomePageClient() {
 			</section>
 
 			{/* Benefits Section */}
-			<section className="relative overflow-hidden border-y border-slate-100 bg-slate-50/50 py-20 dark:border-slate-800 dark:bg-slate-900/50">
+			<section className="relative overflow-hidden border-y border-divider bg-content1/50 py-20">
 				{/* Background Blobs */}
 				<div className="animate-blob absolute -left-20 top-20 h-72 w-72 rounded-full bg-brand-500/5 blur-3xl filter" />
 				<div
@@ -191,14 +191,14 @@ export default function HomePageClient() {
 							delay={index * 0.1}
 							className="h-full"
 						>
-							<div className="group flex h-full flex-col items-center rounded-2xl border border-slate-100 bg-white p-8 text-center shadow-sm transition-all hover:-translate-y-1 hover:shadow-md dark:border-slate-800 dark:bg-slate-900">
+							<div className="group flex h-full flex-col items-center rounded-2xl border border-divider bg-background p-8 text-center shadow-sm transition-all hover:-translate-y-1 hover:shadow-md">
 								<div className="mb-6 rounded-2xl bg-brand-50 p-4 text-brand-600 transition-colors group-hover:bg-brand-100 dark:bg-brand-900/20 dark:text-brand-400 dark:group-hover:bg-brand-900/30">
 									<item.icon className="h-8 w-8" />
 								</div>
-								<h3 className="mb-3 text-lg font-bold text-slate-900 dark:text-white">
+								<h3 className="mb-4 text-lg font-bold text-foreground">
 									{item.title}
 								</h3>
-								<p className="text-sm leading-relaxed text-slate-600 dark:text-slate-400">
+								<p className="text-sm leading-relaxed text-default-500">
 									{item.desc}
 								</p>
 							</div>
@@ -208,10 +208,10 @@ export default function HomePageClient() {
 			</section>
 
 			{/* Brands Section */}
-			<section className="bg-white py-16 dark:bg-slate-950">
+			<section className="bg-background py-16">
 				<div className="mx-auto w-full max-w-7xl px-6 text-center">
 					<ScrollAnimation variant="fadeIn">
-						<p className="mb-10 text-sm font-bold uppercase tracking-widest text-slate-400 dark:text-slate-500">
+						<p className="mb-10 text-sm font-bold uppercase tracking-widest text-default-400">
 							Trabalhamos com as principais marcas
 						</p>
 					</ScrollAnimation>
@@ -267,7 +267,7 @@ export default function HomePageClient() {
 							].map((partner) => (
 								<div
 									key={partner}
-									className="flex items-center gap-3 text-xl font-bold text-slate-300 transition-colors hover:text-brand-600 dark:text-slate-700 dark:hover:text-brand-500"
+									className="flex items-center gap-3 text-xl font-bold text-default-300 transition-colors hover:text-brand-600 dark:hover:text-brand-500"
 								>
 									{/* Placeholder Logo Icon */}
 									<div className="h-8 w-8 rounded-full bg-current opacity-20" />
@@ -287,7 +287,7 @@ export default function HomePageClient() {
 							].map((partner) => (
 								<div
 									key={`dup-${partner}`}
-									className="flex items-center gap-3 text-xl font-bold text-slate-300 transition-colors hover:text-brand-600 dark:text-slate-700 dark:hover:text-brand-500"
+									className="flex items-center gap-3 text-xl font-bold text-default-300 transition-colors hover:text-brand-600 dark:hover:text-brand-500"
 								>
 									<div className="h-8 w-8 rounded-full bg-current opacity-20" />
 									<span>{partner}</span>
@@ -299,7 +299,7 @@ export default function HomePageClient() {
 			</section>
 
 			{/* Featured Products Section */}
-			<section className="relative overflow-hidden bg-slate-50 py-24 dark:bg-slate-900/50">
+			<section className="relative overflow-hidden bg-content1 py-24">
 				{/* Background Blobs */}
 				<div className="animate-blob absolute left-0 top-1/4 h-96 w-96 -translate-x-1/2 rounded-full bg-brand-500/10 blur-3xl filter dark:bg-brand-500/5" />
 				<div
@@ -345,14 +345,14 @@ export default function HomePageClient() {
 			</section>
 
 			{/* Categories Section */}
-			<section className="bg-white py-24 dark:bg-slate-950">
+			<section className="bg-background py-24">
 				<div className="mx-auto w-full max-w-7xl px-6">
 					<div className="mb-12 flex flex-col gap-4 text-center md:text-left">
 						<ScrollAnimation variant="fadeInUp">
-							<h2 className="text-3xl font-bold tracking-tight text-slate-900 dark:text-white md:text-4xl">
+							<h2 className="text-3xl font-bold tracking-tight text-foreground md:text-4xl">
 								Categorias mais pedidas
 							</h2>
-							<p className="text-lg text-slate-600 dark:text-slate-400">
+							<p className="text-lg text-default-500">
 								Produtos originais e homologados para as principais linhas de
 								smartphones.
 							</p>
@@ -376,7 +376,7 @@ export default function HomePageClient() {
 									delay={index * 0.1}
 									className="h-full"
 								>
-									<Card className="h-full border border-slate-100 bg-white shadow-sm transition-all hover:-translate-y-1 hover:shadow-lg dark:border-slate-800 dark:bg-slate-900">
+									<Card className="h-full border border-divider bg-content1 shadow-sm transition-all hover:-translate-y-1 hover:shadow-lg">
 										<CardBody className="space-y-4 p-6">
 											<div className="flex h-12 w-12 items-center justify-center rounded-xl bg-brand-50 text-brand-600 dark:bg-brand-900/20 dark:text-brand-400">
 												<Icon className="h-6 w-6" />
@@ -476,11 +476,11 @@ export default function HomePageClient() {
 								variant="splitted"
 								className="gap-4"
 								itemClasses={{
-									base: "group bg-slate-50 dark:bg-slate-900 shadow-none hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors px-4 rounded-2xl",
-									title: "font-semibold text-slate-900 dark:text-white",
+									base: "group bg-content2 shadow-none hover:bg-default-100 transition-colors px-4 rounded-2xl",
+									title: "font-semibold text-foreground",
 									trigger: "py-6",
-									content: "pb-6 text-slate-600 dark:text-slate-400",
-									indicator: "text-slate-400 group-hover:text-brand-600",
+									content: "pb-6 text-default-500",
+									indicator: "text-default-400 group-hover:text-brand-600",
 								}}
 							>
 								<AccordionItem
@@ -526,7 +526,7 @@ export default function HomePageClient() {
 			</section>
 
 			{/* Service Area Section */}
-			<section className="relative overflow-hidden border-t border-slate-100 bg-slate-50 py-24 dark:border-slate-800 dark:bg-slate-900/50">
+			<section className="relative overflow-hidden border-t border-divider bg-content1 py-24">
 				<div className="animate-blob absolute left-0 top-0 h-[500px] w-[500px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-brand-500/5 blur-3xl" />
 				<div className="mx-auto flex w-full max-w-7xl flex-col items-center gap-16 px-6 md:flex-row">
 					<div className="flex-1 space-y-8 text-center md:text-left">
@@ -535,10 +535,10 @@ export default function HomePageClient() {
 								<MapPinIcon className="h-5 w-5" />
 								Área de Cobertura
 							</div>
-							<h2 className="text-3xl font-bold tracking-tight text-slate-900 dark:text-white md:text-4xl">
+							<h2 className="text-3xl font-bold tracking-tight text-foreground md:text-4xl">
 								Atendimento Rápido na Região
 							</h2>
-							<p className="text-lg text-slate-600 dark:text-slate-400">
+							<p className="text-lg text-default-500">
 								Nossa equipe de logística realiza entregas diárias nas
 								principais cidades do litoral, garantindo que você nunca fique
 								sem peças.
@@ -554,7 +554,7 @@ export default function HomePageClient() {
 								].map((city) => (
 									<li
 										key={city}
-										className="flex items-center gap-3 text-base font-medium text-slate-700 dark:text-slate-300"
+										className="flex items-center gap-3 text-base font-medium text-default-600"
 									>
 										<div className="h-2 w-2 rounded-full bg-brand-500 shadow-[0_0_10px_rgba(239,68,68,0.5)]" />
 										{city}
@@ -565,7 +565,7 @@ export default function HomePageClient() {
 					</div>
 					<div className="flex-1">
 						<ScrollAnimation variant="slideInRight">
-							<div className="relative aspect-video w-full overflow-hidden rounded-3xl bg-slate-200 shadow-2xl dark:bg-slate-800">
+							<div className="relative aspect-video w-full overflow-hidden rounded-3xl bg-default-200 shadow-2xl">
 								<iframe
 									src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d113865.6674987776!2d-48.69466846536486!3d-27.23867654162383!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x952749b7a445555f%3A0x6e25934c6646836e!2sTijucas%2C%20SC!5e0!3m2!1spt-BR!2sbr!4v1700000000000!5m2!1spt-BR!2sbr"
 									width="100%"

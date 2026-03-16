@@ -3,6 +3,7 @@
 import { useCart } from "@/src/contexts/CartContext";
 import type { Product } from "@/src/data/products";
 import { formatPrice, formatRestockDate } from "@/src/lib/productUtils";
+import { Button } from "@heroui/react";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
@@ -47,7 +48,7 @@ export function ProductCard({ product }: ProductCardProps) {
 
   return (
     <article
-      className="group relative flex flex-col overflow-hidden rounded-lg border border-slate-200 bg-white transition-shadow hover:shadow-lg dark:border-slate-700 dark:bg-slate-800"
+      className="group relative flex flex-col overflow-hidden rounded-lg border border-divider bg-content1 transition-all hover:-translate-y-1 hover:shadow-lg"
       aria-label={`Produto: ${product.name}`}
     >
       {/* Badge de disponibilidade */}
@@ -60,7 +61,7 @@ export function ProductCard({ product }: ProductCardProps) {
       {/* Imagem do produto */}
       <Link
         href={`/produtos/${product.id}`}
-        className="relative aspect-square w-full overflow-hidden bg-slate-100 dark:bg-slate-700"
+        className="relative aspect-square w-full overflow-hidden bg-default-100"
       >
         <Image
           src={product.imageUrl}
@@ -74,20 +75,20 @@ export function ProductCard({ product }: ProductCardProps) {
       {/* Informações do produto */}
       <div className="flex flex-1 flex-col gap-2 p-4">
         {/* Código */}
-        <p className="text-xs font-mono text-slate-500 dark:text-slate-400">
+        <p className="text-xs font-mono text-default-400">
           {product.code}
         </p>
 
         {/* Nome */}
-        <h3 className="line-clamp-2 text-sm font-semibold text-slate-900 dark:text-slate-100">
-          <Link href={`/produtos/${product.id}`} className="hover:underline">
+        <h3 className="line-clamp-2 text-sm font-semibold text-foreground">
+          <Link href={`/produtos/${product.id}`} className="transition-colors hover:underline">
             {product.name}
           </Link>
         </h3>
 
         {/* Marca e categoria */}
-        <div className="flex flex-wrap gap-1 text-xs text-slate-600 dark:text-slate-400">
-          <span className="rounded bg-slate-100 px-2 py-0.5 dark:bg-slate-700">
+        <div className="flex flex-wrap gap-1 text-xs text-default-500">
+          <span className="rounded bg-default-100 px-2 py-0.5">
             {product.brand}
           </span>
         </div>
@@ -100,14 +101,14 @@ export function ProductCard({ product }: ProductCardProps) {
         ) : isAuthenticated && !isApproved ? (
           <Link
             href="/conta-pendente"
-            className="mt-auto inline-block rounded-md bg-yellow-100 px-3 py-2 text-center text-sm font-medium text-yellow-800 transition-colors hover:bg-yellow-200 dark:bg-yellow-900/30 dark:text-yellow-400 dark:hover:bg-yellow-900/50"
+            className="mt-auto inline-block rounded-md bg-yellow-100 px-4 py-2 text-center text-sm font-medium text-yellow-800 transition-colors hover:bg-yellow-200 dark:bg-yellow-900/30 dark:text-yellow-400 dark:hover:bg-yellow-900/50"
           >
             Aguardando aprovação
           </Link>
         ) : (
           <Link
             href="/login?callbackUrl=/produtos"
-            className="mt-auto inline-block rounded-md bg-brand-100 px-3 py-2 text-center text-sm font-medium text-brand-700 transition-colors hover:bg-brand-200 dark:bg-brand-900/30 dark:text-brand-400 dark:hover:bg-brand-900/50"
+            className="mt-auto inline-block rounded-md bg-brand-100 px-4 py-2 text-center text-sm font-medium text-brand-700 transition-colors hover:bg-brand-200 dark:bg-brand-900/30 dark:text-brand-400 dark:hover:bg-brand-900/50"
           >
             Disponível na área de clientes
           </Link>
@@ -115,17 +116,18 @@ export function ProductCard({ product }: ProductCardProps) {
 
         {/* Data de reestoque se fora de estoque */}
         {!product.inStock && product.restockDate && (
-          <p className="text-xs text-slate-500 dark:text-slate-400">
+          <p className="text-xs text-default-400">
             Previsão: {formatRestockDate(product.restockDate)}
           </p>
         )}
 
         {/* Botão adicionar ao carrinho */}
-        <button
-          type="button"
-          onClick={handleAddToCart}
-          disabled={!product.inStock || isAdding}
-          className="mt-2 w-full rounded-md bg-brand-600 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-brand-700 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:bg-slate-300 disabled:text-slate-500 dark:disabled:bg-slate-700 dark:disabled:text-slate-500"
+        <Button
+          fullWidth
+          color="primary"
+          onPress={handleAddToCart}
+          isDisabled={!product.inStock || isAdding}
+          className="mt-2 bg-brand-600 text-sm font-semibold text-white transition-colors hover:bg-brand-700"
           aria-label={
             product.inStock
               ? `Adicionar ${product.name} ao carrinho`
@@ -137,7 +139,7 @@ export function ProductCard({ product }: ProductCardProps) {
             : product.inStock
             ? "Adicionar ao carrinho"
             : "Indisponível"}
-        </button>
+        </Button>
       </div>
     </article>
   );

@@ -198,20 +198,20 @@ export function MobileMenu({
             animate="open"
             exit="closed"
             transition={transition}
-            className={`fixed right-0 top-0 z-50 h-full ${MOBILE_MENU_WIDTH} bg-white shadow-2xl dark:bg-slate-900`}
+            className={`fixed right-0 top-0 z-50 h-full ${MOBILE_MENU_WIDTH} bg-background shadow-2xl`}
             style={{ willChange: "transform" }}
           >
             <div className="flex h-full flex-col">
               {/* Header with close button */}
-              <div className="flex items-center justify-between border-b border-slate-200 p-4 dark:border-slate-800">
-                <h2 className="text-lg font-semibold text-slate-900 dark:text-slate-100">
+              <div className="flex items-center justify-between border-b border-divider p-4">
+                <h2 className="text-lg font-semibold text-foreground">
                   Menu
                 </h2>
                 <button
                   type="button"
                   onClick={onClose}
                   aria-label="Fechar menu"
-                  className="rounded-lg p-2 text-slate-600 transition hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-slate-800"
+                  className="rounded-lg p-2 text-default-500 transition hover:bg-default-100"
                 >
                   <XMarkIcon className="h-6 w-6" />
                 </button>
@@ -240,10 +240,10 @@ export function MobileMenu({
                       </svg>
                     </div>
                     <div>
-                      <h3 className="font-semibold text-slate-900 dark:text-slate-100">
+                      <h3 className="font-semibold text-foreground">
                         Bem-vindo
                       </h3>
-                      <p className="text-xs text-slate-600 dark:text-slate-400">
+                      <p className="text-xs text-default-500">
                         Entre na sua conta para ver suas compras, favoritos etc.
                       </p>
                     </div>
@@ -262,7 +262,7 @@ export function MobileMenu({
                       as={Link}
                       href="/login?tab=register"
                       variant="bordered"
-                      className="flex-1 bg-white dark:bg-transparent"
+                      className="flex-1 bg-background dark:bg-transparent"
                       onPress={handleLinkClick}
                     >
                       Criar conta
@@ -273,12 +273,12 @@ export function MobileMenu({
 
               {/* User info (Authenticated) */}
               {isAuthenticated && (
-                <div className="border-b border-slate-200 p-4 dark:border-slate-800">
-                  <p className="text-sm font-medium text-slate-900 dark:text-slate-100">
+                <div className="border-b border-divider p-4">
+                  <p className="text-sm font-medium text-foreground">
                     {getUserDisplayName()}
                   </p>
                   {userName && userEmail && (
-                    <p className="text-xs text-slate-600 dark:text-slate-400">
+                    <p className="text-xs text-default-500">
                       {userEmail}
                     </p>
                   )}
@@ -287,7 +287,7 @@ export function MobileMenu({
 
               {/* Notifications (Authenticated) */}
               {isAuthenticated && (
-                <div className="border-b border-slate-200 p-4 dark:border-slate-800">
+                <div className="border-b border-divider p-4">
                   {userRole === "ADMIN" ? (
                     <NotificationBell label="Notificações" />
                   ) : (
@@ -307,8 +307,8 @@ export function MobileMenu({
                         onClick={handleLinkClick}
                         className={`block rounded-lg px-4 py-3 text-base font-medium transition ${
                           currentPath === link.href
-                            ? "bg-danger-50 text-danger-600 dark:bg-danger-900/20 dark:text-danger-400"
-                            : "text-slate-700 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800"
+                            ? "bg-brand-50 text-brand-600 dark:bg-brand-900/20 dark:text-brand-400"
+                            : "text-default-600 hover:bg-default-100"
                         }`}
                       >
                         {link.label}
@@ -323,8 +323,8 @@ export function MobileMenu({
                           onClick={handleLinkClick}
                           className={`block rounded-lg px-4 py-3 text-base font-medium transition ${
                             currentPath === "/minha-conta"
-                              ? "bg-danger-50 text-danger-600 dark:bg-danger-900/20 dark:text-danger-400"
-                              : "text-slate-700 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800"
+                              ? "bg-brand-50 text-brand-600 dark:bg-brand-900/20 dark:text-brand-400"
+                              : "text-default-600 hover:bg-default-100"
                           }`}
                         >
                           Minha Conta
@@ -336,8 +336,8 @@ export function MobileMenu({
                           onClick={handleLinkClick}
                           className={`block rounded-lg px-4 py-3 text-base font-medium transition ${
                             currentPath === "/meus-pedidos"
-                              ? "bg-danger-50 text-danger-600 dark:bg-danger-900/20 dark:text-danger-400"
-                              : "text-slate-700 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800"
+                              ? "bg-brand-50 text-brand-600 dark:bg-brand-900/20 dark:text-brand-400"
+                              : "text-default-600 hover:bg-default-100"
                           }`}
                         >
                           Meus Pedidos
@@ -347,7 +347,7 @@ export function MobileMenu({
                   )}
                 </ul>
 
-                <div className="mt-6 border-t border-slate-200 pt-6 dark:border-slate-800">
+                <div className="mt-6 border-t border-divider pt-6">
                   <div className="px-4">
                     <ThemeToggle label="Tema" />
                   </div>
@@ -356,7 +356,7 @@ export function MobileMenu({
 
               {/* Auth button (Authenticated only) */}
               {isAuthenticated && (
-                <div className="border-t border-slate-200 p-4 dark:border-slate-800">
+                <div className="border-t border-divider p-4">
                   <Button
                     color="default"
                     variant="flat"

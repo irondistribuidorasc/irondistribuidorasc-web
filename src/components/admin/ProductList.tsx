@@ -148,18 +148,18 @@ export default function ProductList() {
 
 	if (editingProduct) {
 		return (
-			<Card className="overflow-hidden border-0 shadow-lg bg-white/80 backdrop-blur-sm dark:bg-slate-800/80">
-				<CardHeader className="border-b border-slate-100 bg-gradient-to-r from-blue-50 to-cyan-50 px-6 py-4 dark:border-slate-700 dark:from-blue-900/20 dark:to-cyan-900/20">
+		<Card className="overflow-hidden border-0 shadow-lg bg-background/80 backdrop-blur-sm">
+			<CardHeader className="border-b border-divider bg-gradient-to-r from-blue-50 to-cyan-50 px-6 py-4 dark:from-blue-900/20 dark:to-cyan-900/20">
 					<div className="flex items-center justify-between w-full">
 						<div className="flex items-center gap-3">
 							<div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-blue-500 to-cyan-600 shadow-lg shadow-blue-500/30">
 								<PencilIcon className="h-5 w-5 text-white" />
 							</div>
 							<div>
-								<h2 className="text-lg font-semibold text-slate-900 dark:text-slate-100">
-									Editar Produto
-								</h2>
-								<p className="text-xs text-slate-500 dark:text-slate-400">
+							<h2 className="text-lg font-semibold text-foreground">
+								Editar Produto
+							</h2>
+							<p className="text-xs text-default-400">
 									{editingProduct.name}
 								</p>
 							</div>
@@ -168,9 +168,9 @@ export default function ProductList() {
 							variant="flat"
 							startContent={<ChevronLeftIcon className="h-4 w-4" />}
 							onPress={() => setEditingProduct(null)}
-							className="bg-slate-100 dark:bg-slate-700"
-						>
-							Voltar à Lista
+						className="bg-default-100"
+					>
+						Voltar à Lista
 						</Button>
 					</div>
 				</CardHeader>
@@ -193,13 +193,13 @@ export default function ProductList() {
 	return (
 		<div className="space-y-6">
 			{/* Toolbar */}
-			<Card className="overflow-hidden border-0 shadow-lg bg-white/80 backdrop-blur-sm dark:bg-slate-800/80">
-				<CardBody className="p-4">
-					<div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
-						<div className="flex-1 min-w-0 md:max-w-sm">
-							<label
-								htmlFor="search-products"
-								className="mb-2 flex items-center gap-2 text-xs font-medium text-slate-500 dark:text-slate-400"
+		<Card className="overflow-hidden border-0 shadow-lg bg-background/80 backdrop-blur-sm">
+			<CardBody className="p-4">
+				<div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+					<div className="flex-1 min-w-0 md:max-w-sm">
+						<label
+							htmlFor="search-products"
+							className="mb-2 flex items-center gap-2 text-xs font-medium text-default-400"
 							>
 								<MagnifyingGlassIcon className="h-3.5 w-3.5" />
 								Buscar produto
@@ -208,17 +208,17 @@ export default function ProductList() {
 								<input
 									id="search-products"
 									type="text"
-									className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2 pl-10 text-sm text-slate-900 shadow-sm outline-none transition-colors placeholder:text-slate-400 hover:bg-slate-100 focus:ring-2 focus:ring-brand-500 dark:border-slate-600 dark:bg-slate-700/50 dark:text-slate-100 dark:placeholder:text-slate-500 dark:hover:bg-slate-700"
+									className="w-full rounded-xl border border-divider bg-content1 px-4 py-2 pl-10 text-sm text-foreground shadow-sm outline-none transition-colors placeholder:text-default-400 hover:bg-default-100 focus:ring-2 focus:ring-brand-500"
 									placeholder="Nome, código, marca..."
 									value={searchQuery}
 									onChange={(e) => setSearchQuery(e.target.value)}
 								/>
-								<MagnifyingGlassIcon className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+								<MagnifyingGlassIcon className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-default-400" />
 								{searchQuery && (
 									<button
 										type="button"
 										onClick={() => setSearchQuery("")}
-										className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-300"
+										className="absolute right-3 top-1/2 -translate-y-1/2 text-default-400 hover:text-default-500"
 										aria-label="Limpar busca"
 									>
 										<svg
@@ -243,7 +243,7 @@ export default function ProductList() {
 							className={
 								showLowStock
 									? "bg-gradient-to-r from-amber-500 to-orange-600 text-white shadow-lg shadow-amber-500/30"
-									: "bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300"
+									: "bg-default-100 text-default-600"
 							}
 							startContent={
 								showLowStock ? (
@@ -268,9 +268,9 @@ export default function ProductList() {
 				<Chip
 					size="sm"
 					variant="flat"
-					className="bg-slate-100 dark:bg-slate-800"
-				>
-					{loading ? (
+				className="bg-default-100"
+			>
+				{loading ? (
 						<span className="flex items-center gap-1">
 							<Spinner size="sm" /> Carregando...
 						</span>
@@ -298,22 +298,22 @@ export default function ProductList() {
 				<div className="flex justify-center py-16">
 					<div className="flex flex-col items-center gap-4">
 						<Spinner size="lg" color="secondary" />
-						<p className="text-sm text-slate-500 dark:text-slate-400">
-							Carregando produtos...
+					<p className="text-sm text-default-400">
+						Carregando produtos...
 						</p>
 					</div>
 				</div>
 			) : products.length === 0 ? (
-				<Card className="overflow-hidden border-0 shadow-lg bg-white/80 backdrop-blur-sm dark:bg-slate-800/80">
-					<CardBody className="py-16">
-						<div className="flex flex-col items-center justify-center text-center">
-							<div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-slate-100 dark:bg-slate-700">
-								<InboxIcon className="h-8 w-8 text-slate-400" />
-							</div>
-							<h3 className="text-lg font-semibold text-slate-700 dark:text-slate-300">
-								Nenhum produto encontrado
-							</h3>
-							<p className="mt-2 text-sm text-slate-500 dark:text-slate-400 max-w-md">
+			<Card className="overflow-hidden border-0 shadow-lg bg-background/80 backdrop-blur-sm">
+				<CardBody className="py-16">
+					<div className="flex flex-col items-center justify-center text-center">
+						<div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-default-100">
+							<InboxIcon className="h-8 w-8 text-default-400" />
+						</div>
+						<h3 className="text-lg font-semibold text-default-600">
+							Nenhum produto encontrado
+						</h3>
+						<p className="mt-2 text-sm text-default-400 max-w-md">
 								{searchQuery
 									? `Não encontramos produtos correspondentes a "${searchQuery}".`
 									: showLowStock
@@ -327,9 +327,9 @@ export default function ProductList() {
 				<>
 					{/* Desktop Table View - Now as Cards */}
 					<div className="hidden md:block">
-						<Card className="overflow-hidden border-0 shadow-lg bg-white/80 backdrop-blur-sm dark:bg-slate-800/80">
-							{/* Table Header */}
-							<div className="grid grid-cols-12 gap-4 border-b border-slate-200 bg-slate-50/80 px-6 py-3 text-xs font-semibold uppercase tracking-wider text-slate-500 dark:border-slate-700 dark:bg-slate-800/80 dark:text-slate-400">
+					<Card className="overflow-hidden border-0 shadow-lg bg-background/80 backdrop-blur-sm">
+						{/* Table Header */}
+						<div className="grid grid-cols-12 gap-4 border-b border-divider bg-default-50 px-6 py-3 text-xs font-semibold uppercase tracking-wider text-default-400">
 								<div className="col-span-2 flex items-center gap-1">
 									<HashtagIcon className="h-3.5 w-3.5" />
 									Código
@@ -354,48 +354,48 @@ export default function ProductList() {
 							</div>
 
 							{/* Table Body */}
-							<div className="divide-y divide-slate-100 dark:divide-slate-700">
+							<div className="divide-y divide-divider">
 								{filteredProducts.map((product) => {
 									const isLowStock =
 										product.stockQuantity <= product.minStockThreshold;
 									return (
 										<div
 											key={product.id}
-											className={`group grid grid-cols-12 gap-4 px-6 py-4 transition-colors hover:bg-slate-50/50 dark:hover:bg-slate-700/30 ${
+											className={`group grid grid-cols-12 gap-4 px-6 py-4 transition-colors hover:bg-default-100/50 ${
 												isLowStock ? "bg-amber-50/50 dark:bg-amber-900/10" : ""
 											}`}
 										>
 											{/* Código */}
 											<div className="col-span-2 flex items-center">
-												<span className="font-mono text-sm text-slate-600 dark:text-slate-400">
+												<span className="font-mono text-sm text-default-500">
 													{product.code}
 												</span>
 											</div>
 
 											{/* Nome & Modelo */}
 											<div className="col-span-4 flex flex-col justify-center">
-												<span className="font-medium text-slate-900 dark:text-slate-100">
-													{product.name}
-												</span>
-												<span className="text-xs text-slate-500 dark:text-slate-400">
+											<span className="font-medium text-foreground">
+												{product.name}
+											</span>
+											<span className="text-xs text-default-400">
 													{product.model}
 												</span>
 											</div>
 
-											{/* Marca */}
-											<div className="col-span-1 flex items-center">
-												<Chip
-													size="sm"
-													variant="flat"
-													className="bg-slate-100 dark:bg-slate-700"
-												>
-													{product.brand}
+										{/* Marca */}
+										<div className="col-span-1 flex items-center">
+											<Chip
+												size="sm"
+												variant="flat"
+												className="bg-default-100"
+											>
+												{product.brand}
 												</Chip>
 											</div>
 
-											{/* Preço */}
-											<div className="col-span-2 flex items-center">
-												<span className="font-semibold text-slate-900 dark:text-slate-100">
+										{/* Preço */}
+										<div className="col-span-2 flex items-center">
+											<span className="font-semibold text-foreground">
 													{new Intl.NumberFormat("pt-BR", {
 														style: "currency",
 														currency: "BRL",
@@ -428,7 +428,7 @@ export default function ProductList() {
 														isIconOnly
 														size="sm"
 														variant="flat"
-														className="bg-slate-100 text-slate-600 hover:bg-blue-100 hover:text-blue-600 dark:bg-slate-700 dark:text-slate-400 dark:hover:bg-blue-900/30 dark:hover:text-blue-400"
+														className="bg-default-100 text-default-500 hover:bg-blue-100 hover:text-blue-600 dark:hover:bg-blue-900/30 dark:hover:text-blue-400"
 														onPress={() => setEditingProduct(product)}
 													>
 														<PencilIcon className="h-4 w-4" />
@@ -439,7 +439,7 @@ export default function ProductList() {
 														isIconOnly
 														size="sm"
 														variant="flat"
-														className="bg-slate-100 text-slate-600 hover:bg-error-100 hover:text-error-600 dark:bg-slate-700 dark:text-slate-400 dark:hover:bg-error-900/30 dark:hover:text-error-400"
+														className="bg-default-100 text-default-500 hover:bg-error-100 hover:text-error-600 dark:hover:bg-error-900/30 dark:hover:text-error-400"
 														onPress={() => handleDelete(product.id)}
 													>
 														<TrashIcon className="h-4 w-4" />
@@ -464,17 +464,17 @@ export default function ProductList() {
 									className={`overflow-hidden border-0 shadow-lg transition-all hover:shadow-xl ${
 										isLowStock
 											? "bg-gradient-to-br from-amber-50 to-orange-50 dark:from-amber-900/20 dark:to-orange-900/20"
-											: "bg-white/80 backdrop-blur-sm dark:bg-slate-800/80"
+											: "bg-background/80 backdrop-blur-sm"
 									}`}
 								>
 									<CardBody className="p-4">
 										{/* Header */}
 										<div className="flex items-start justify-between gap-3">
 											<div className="min-w-0 flex-1">
-												<p className="font-semibold text-slate-900 dark:text-slate-100 truncate">
+												<p className="font-semibold text-foreground truncate">
 													{product.name}
 												</p>
-												<div className="mt-1 flex flex-wrap items-center gap-2 text-xs text-slate-500 dark:text-slate-400">
+												<div className="mt-1 flex flex-wrap items-center gap-2 text-xs text-default-400">
 													<span className="flex items-center gap-1 font-mono">
 														<HashtagIcon className="h-3 w-3" />
 														{product.code}
@@ -500,14 +500,14 @@ export default function ProductList() {
 										{/* Info Row */}
 										<div className="mt-4 flex items-center justify-between">
 											<div className="flex items-center gap-3">
-												<Chip
-													size="sm"
-													variant="flat"
-													className="bg-slate-100 dark:bg-slate-700"
-												>
-													{product.brand}
-												</Chip>
-												<span
+											<Chip
+												size="sm"
+												variant="flat"
+												className="bg-default-100"
+											>
+												{product.brand}
+											</Chip>
+											<span
 													className={`flex items-center gap-1 text-sm font-bold ${
 														isLowStock
 															? "text-amber-600 dark:text-amber-400"
@@ -518,7 +518,7 @@ export default function ProductList() {
 													{product.stockQuantity} un.
 												</span>
 											</div>
-											<span className="text-lg font-bold text-slate-900 dark:text-slate-100">
+											<span className="text-lg font-bold text-foreground">
 												{new Intl.NumberFormat("pt-BR", {
 													style: "currency",
 													currency: "BRL",
@@ -527,7 +527,7 @@ export default function ProductList() {
 										</div>
 
 										{/* Actions */}
-										<div className="mt-4 flex justify-end gap-2 border-t border-slate-100 pt-4 dark:border-slate-700">
+										<div className="mt-4 flex justify-end gap-2 border-t border-divider pt-4">
 											<Button
 												size="sm"
 												variant="flat"
@@ -556,7 +556,7 @@ export default function ProductList() {
 					{/* Pagination */}
 					{pagination.totalPages > 1 && (
 						<div className="flex justify-center mt-6">
-							<Card className="border-0 shadow-lg bg-white/80 backdrop-blur-sm dark:bg-slate-800/80 px-4 py-3">
+							<Card className="border-0 shadow-lg bg-background/80 backdrop-blur-sm px-4 py-3">
 								<Pagination
 									total={pagination.totalPages}
 									page={pagination.page}

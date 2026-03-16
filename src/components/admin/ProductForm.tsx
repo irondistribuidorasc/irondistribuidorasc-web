@@ -1,9 +1,13 @@
 "use client";
 
 import { brandOptions, categoryOptions } from "@/src/data/products";
+import { logger } from "@/src/lib/logger";
+import { type ProductSchema, productSchema } from "@/src/lib/schemas";
 import { Button, Input, Select, SelectItem, Textarea } from "@heroui/react";
-import { useState } from "react";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
 import { toast } from "sonner";
+import type { ZodType } from "zod";
 import ImageUpload from "./ImageUpload";
 
 type Product = {
@@ -32,129 +36,102 @@ export default function ProductForm({
   initialData,
   onSuccess,
 }: ProductFormProps) {
-  const [loading, setLoading] = useState(false);
-  const [formData, setFormData] = useState<Product>({
-    code: initialData?.code || "",
-    name: initialData?.name || "",
-    brand: initialData?.brand || "",
-    category: initialData?.category || "",
-    model: initialData?.model || "",
-    price: initialData?.price || 0,
-    inStock: initialData?.inStock ?? true,
-    imageUrl: initialData?.imageUrl || "/logo-iron.png",
-    description: initialData?.description || "",
-    tags: initialData?.tags || [],
-    popularity: initialData?.popularity || 0,
-    stockQuantity: initialData?.stockQuantity || 0,
-    minStockThreshold: initialData?.minStockThreshold || 10,
+  const {
+    setValue,
+    watch,
+    handleSubmit,
+    reset,
+    formState: { errors, isSubmitting },
+  } = useForm<ProductSchema>({
+    resolver: zodResolver(
+      productSchema as ZodType<ProductSchema, ProductSchema>,
+    ),
+    defaultValues: {
+      code: initialData?.code || "",
+      name: initialData?.name || "",
+      brand: initialData?.brand || "",
+      category: initialData?.category || "",
+      model: initialData?.model || "",
+      price: initialData?.price || 0,
+      imageUrl: initialData?.imageUrl || "/logo-iron.png",
+      description: initialData?.description || "",
+      tags: initialData?.tags || [],
+      popularity: initialData?.popularity || 0,
+      stockQuantity: initialData?.stockQuantity || 0,
+      minStockThreshold: initialData?.minStockThreshold || 10,
+    },
   });
 
-  const handleChange = (
-    field: keyof Product,
-    value: string | number | boolean | string[]
-  ) => {
-    setFormData((prev) => ({ ...prev, [field]: value }));
-  };
+  const formData = watch();
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-
+  const onSubmit = async (data: ProductSchema) => {
     try {
       const url = initialData
         ? `/api/admin/products/${initialData.id}`
         : "/api/admin/products";
       const method = initialData ? "PUT" : "POST";
 
-      // Sanitize data to avoid sending NaN (which becomes null in JSON)
-      const payload = {
-        ...formData,
-        price: Number.isNaN(Number(formData.price))
-          ? 0
-          : Number(formData.price),
-        popularity: Number.isNaN(Number(formData.popularity))
-          ? 0
-          : Number(formData.popularity),
-        stockQuantity: Number.isNaN(Number(formData.stockQuantity))
-          ? 0
-          : Number(formData.stockQuantity),
-        minStockThreshold: Number.isNaN(Number(formData.minStockThreshold))
-          ? 0
-          : Number(formData.minStockThreshold),
-      };
-
       const response = await fetch(url, {
         method,
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
+        body: JSON.stringify(data),
       });
 
       if (response.ok) {
         toast.success(initialData ? "Produto atualizado!" : "Produto criado!");
         onSuccess();
         if (!initialData) {
-          // Reset form if creating
-          setFormData({
-            code: "",
-            name: "",
-            brand: "",
-            category: "",
-            model: "",
-            price: 0,
-            inStock: true,
-            imageUrl: "/logo-iron.png",
-            description: "",
-            tags: [],
-            popularity: 0,
-            stockQuantity: 0,
-            minStockThreshold: 10,
-          });
+          reset();
         }
       } else {
         const error = await response.json();
         toast.error(`Erro: ${error.error || "Falha ao salvar produto"}`);
       }
     } catch (error) {
-      console.error("Error saving product:", error);
+      logger.error("Error saving product", { error });
       toast.error("Erro ao salvar produto");
-    } finally {
-      setLoading(false);
     }
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
         <Input
           label="Código"
           placeholder="Ex: DISP-SAM-A01"
           value={formData.code}
-          onValueChange={(v) => handleChange("code", v)}
+          onValueChange={(v) => setValue("code", v)}
           onKeyDown={(e) => {
             if (e.key === " ") {
               e.nativeEvent.stopPropagation();
             }
           }}
           isRequired
+          isInvalid={!!errors.code}
+          errorMessage={errors.code?.message}
         />
         <Input
           label="Nome"
           placeholder="Ex: Display Samsung A01"
           value={formData.name}
-          onValueChange={(v) => handleChange("name", v)}
+          onValueChange={(v) => setValue("name", v)}
           onKeyDown={(e) => {
             if (e.key === " ") {
               e.nativeEvent.stopPropagation();
             }
           }}
           isRequired
+          isInvalid={!!errors.name}
+          errorMessage={errors.name?.message}
         />
         <Select
           label="Marca"
           placeholder="Selecione a marca"
           selectedKeys={formData.brand ? [formData.brand] : []}
-          onChange={(e) => handleChange("brand", e.target.value)}
+          onChange={(e) => setValue("brand", e.target.value)}
           isRequired
+          isInvalid={!!errors.brand}
+          errorMessage={errors.brand?.message}
         >
           {brandOptions.map((brand) => (
             <SelectItem key={brand.key} value={brand.key}>
@@ -166,8 +143,10 @@ export default function ProductForm({
           label="Categoria"
           placeholder="Selecione a categoria"
           selectedKeys={formData.category ? [formData.category] : []}
-          onChange={(e) => handleChange("category", e.target.value)}
+          onChange={(e) => setValue("category", e.target.value)}
           isRequired
+          isInvalid={!!errors.category}
+          errorMessage={errors.category?.message}
         >
           {categoryOptions.map((cat) => (
             <SelectItem key={cat.key} value={cat.key}>
@@ -179,13 +158,15 @@ export default function ProductForm({
           label="Modelo"
           placeholder="Ex: A01"
           value={formData.model}
-          onValueChange={(v) => handleChange("model", v)}
+          onValueChange={(v) => setValue("model", v)}
           onKeyDown={(e) => {
             if (e.key === " ") {
               e.nativeEvent.stopPropagation();
             }
           }}
           isRequired
+          isInvalid={!!errors.model}
+          errorMessage={errors.model?.message}
         />
         <Input
           label="Preço"
@@ -193,7 +174,7 @@ export default function ProductForm({
           step="0.01"
           placeholder="0.00"
           value={formData.price.toString()}
-          onValueChange={(v) => handleChange("price", parseFloat(v))}
+          onValueChange={(v) => setValue("price", parseFloat(v) || 0)}
           startContent={
             <div className="pointer-events-none flex items-center">
               <span className="text-default-400 text-small">R$</span>
@@ -205,35 +186,40 @@ export default function ProductForm({
             }
           }}
           isRequired
+          isInvalid={!!errors.price}
+          errorMessage={errors.price?.message}
         />
         <div className="col-span-1 md:col-span-2">
-          <label className="mb-2 block text-sm font-medium text-slate-700 dark:text-slate-200">
+          <label className="mb-2 block text-sm font-medium text-default-600">
             Imagem do Produto
           </label>
           <ImageUpload
             value={formData.imageUrl}
-            onChange={(url) => handleChange("imageUrl", url)}
-            disabled={loading}
+            onChange={(url) => setValue("imageUrl", url)}
+            disabled={isSubmitting}
+            altText={formData.name || "Imagem do produto"}
           />
         </div>
         <Input
           label="Popularidade"
           type="number"
           value={formData.popularity?.toString() || "0"}
-          onValueChange={(v) => handleChange("popularity", parseInt(v))}
+          onValueChange={(v) => setValue("popularity", parseInt(v) || 0)}
         />
         <Input
           label="Quantidade em Estoque"
           type="number"
           value={formData.stockQuantity?.toString() || "0"}
-          onValueChange={(v) => handleChange("stockQuantity", parseInt(v))}
+          onValueChange={(v) => setValue("stockQuantity", parseInt(v) || 0)}
           isRequired
+          isInvalid={!!errors.stockQuantity}
+          errorMessage={errors.stockQuantity?.message}
         />
         <Input
           label="Alerta de Estoque Mínimo"
           type="number"
           value={formData.minStockThreshold?.toString() || "10"}
-          onValueChange={(v) => handleChange("minStockThreshold", parseInt(v))}
+          onValueChange={(v) => setValue("minStockThreshold", parseInt(v) || 0)}
           description="Avise-me quando o estoque estiver abaixo deste valor"
           isRequired
         />
@@ -243,7 +229,7 @@ export default function ProductForm({
         label="Descrição"
         placeholder="Descrição detalhada do produto"
         value={formData.description || ""}
-        onValueChange={(v) => handleChange("description", v)}
+        onValueChange={(v) => setValue("description", v)}
         onKeyDown={(e) => {
           if (e.key === " ") {
             e.nativeEvent.stopPropagation();
@@ -252,7 +238,7 @@ export default function ProductForm({
       />
 
       <div className="flex justify-end gap-2">
-        <Button color="primary" type="submit" isLoading={loading}>
+        <Button color="primary" type="submit" isLoading={isSubmitting}>
           {initialData ? "Atualizar Produto" : "Criar Produto"}
         </Button>
       </div>

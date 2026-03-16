@@ -74,11 +74,11 @@ export function StarRating({
               onMouseEnter={() => handleMouseEnter(rating)}
               disabled={readOnly}
               className={`
-                transition-transform
+                transition
                 ${isInteractive ? "cursor-pointer hover:scale-110" : "cursor-default"}
                 ${!readOnly ? "focus:outline-none focus:ring-2 focus:ring-brand-500 focus:ring-offset-1 rounded" : ""}
               `}
-              aria-label={`${rating} ${rating === 1 ? "estrela" : "estrelas"}`}
+              aria-label={`Avaliar ${rating} estrela${rating > 1 ? "s" : ""}`}
             >
               {isFilled ? (
                 <StarIconSolid
@@ -86,7 +86,7 @@ export function StarRating({
                 />
               ) : (
                 <StarIcon
-                  className={`${sizeClass} text-slate-300 dark:text-slate-600 transition-colors`}
+                  className={`${sizeClass} text-default-300 transition-colors`}
                 />
               )}
             </button>
@@ -95,7 +95,7 @@ export function StarRating({
       </div>
 
       {showLabel && displayValue > 0 && (
-        <span className="text-sm font-medium text-slate-600 dark:text-slate-400">
+        <span className="text-sm font-medium text-default-500">
           {ratingLabels[displayValue]}
         </span>
       )}

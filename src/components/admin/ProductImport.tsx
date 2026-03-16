@@ -55,19 +55,19 @@ export default function ProductImport() {
 
   return (
     <div className="space-y-6">
-      <Card className="bg-slate-50 dark:bg-slate-800/50">
+      <Card className="bg-content1">
         <CardBody>
           <h3 className="mb-4 text-lg font-semibold">
             Instruções de Importação
           </h3>
-          <p className="mb-4 text-sm text-slate-600 dark:text-slate-400">
+          <p className="mb-4 text-sm text-default-500">
             Para importar produtos em massa, utilize um arquivo CSV com as
             seguintes colunas (a primeira linha deve conter os cabeçalhos):
           </p>
-          <div className="rounded-md bg-slate-100 p-4 font-mono text-xs text-slate-700 dark:bg-slate-900 dark:text-slate-300">
+          <div className="rounded-md bg-default-100 p-4 font-mono text-xs text-default-600">
             code,name,brand,category,model,price,inStock,stockQuantity,minStockThreshold,imageUrl,description,tags,popularity
           </div>
-          <p className="mt-4 text-sm text-slate-600 dark:text-slate-400">
+          <p className="mt-4 text-sm text-default-500">
             Exemplo:
             <br />
             <span className="font-mono text-xs">
@@ -78,8 +78,8 @@ export default function ProductImport() {
         </CardBody>
       </Card>
 
-      <div className="flex flex-col items-center justify-center rounded-lg border-2 border-dashed border-slate-300 p-12 dark:border-slate-700">
-        <DocumentTextIcon className="mb-4 h-12 w-12 text-slate-400" />
+      <div className="flex flex-col items-center justify-center rounded-lg border-2 border-dashed border-divider p-12">
+        <DocumentTextIcon className="mb-4 h-12 w-12 text-default-400" />
         <label
           htmlFor="csv-upload"
           className="cursor-pointer rounded-md bg-primary px-4 py-2 text-sm font-medium text-white hover:bg-primary-600 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
@@ -94,7 +94,7 @@ export default function ProductImport() {
           onChange={handleFileChange}
         />
         {file && (
-          <p className="mt-2 text-sm text-slate-600 dark:text-slate-400">
+          <p className="mt-2 text-sm text-default-500">
             Arquivo selecionado: {file.name}
           </p>
         )}

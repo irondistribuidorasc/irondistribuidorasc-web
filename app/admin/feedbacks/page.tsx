@@ -32,7 +32,7 @@ export default function AdminFeedbacksPage() {
 	}
 
 	return (
-		<div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100 dark:from-slate-900 dark:via-slate-900 dark:to-slate-800">
+		<div className="min-h-screen bg-gradient-to-br from-content1 via-background to-default-100">
 			<div className="px-4 py-8 pb-24 md:py-12 md:pb-12">
 				<div className="mx-auto w-full max-w-6xl">
 					{/* Header */}
@@ -42,10 +42,10 @@ export default function AdminFeedbacksPage() {
 								<StarIcon className="h-6 w-6 text-white" />
 							</div>
 							<div>
-								<h1 className="text-2xl font-bold text-slate-900 dark:text-slate-100">
+								<h1 className="text-2xl font-bold text-foreground">
 									Avaliações de Pedidos
 								</h1>
-								<p className="text-sm text-slate-600 dark:text-slate-400">
+								<p className="text-sm text-default-500">
 									Acompanhe o feedback dos clientes sobre os pedidos entregues
 								</p>
 							</div>

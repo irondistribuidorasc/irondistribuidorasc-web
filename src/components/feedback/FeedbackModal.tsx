@@ -9,7 +9,14 @@ import {
 	ModalHeader,
 	Textarea,
 } from "@heroui/react";
-import { useState } from "react";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import type { ZodType } from "zod";
+import { logger } from "@/src/lib/logger";
+import {
+	type OrderFeedbackSchema,
+	orderFeedbackSchema,
+} from "@/src/lib/schemas";
 import { toast } from "sonner";
 import type { Order } from "@/types/order";
 import { StarRating } from "./StarRating";
@@ -27,37 +34,39 @@ export function FeedbackModal({
 	onClose,
 	onSuccess,
 }: FeedbackModalProps) {
-	const [rating, setRating] = useState(0);
-	const [comment, setComment] = useState("");
-	const [isSubmitting, setIsSubmitting] = useState(false);
+	const {
+		setValue,
+		watch,
+		handleSubmit,
+		reset,
+		formState: { isSubmitting },
+	} = useForm<OrderFeedbackSchema>({
+		resolver: zodResolver(
+			orderFeedbackSchema as ZodType<OrderFeedbackSchema, OrderFeedbackSchema>,
+		),
+		defaultValues: { rating: 0, comment: "" },
+	});
+
+	const rating = watch("rating");
+	const comment = watch("comment") ?? "";
 
 	const handleClose = () => {
 		if (!isSubmitting) {
-			setRating(0);
-			setComment("");
+			reset();
 			onClose();
 		}
 	};
 
-	const handleSubmit = async () => {
+	const onSubmit = async (data: OrderFeedbackSchema) => {
 		if (!order) return;
-
-		if (rating === 0) {
-			toast.error("Selecione uma avaliação de 1 a 5 estrelas.");
-			return;
-		}
-
-		setIsSubmitting(true);
 
 		try {
 			const response = await fetch(`/api/orders/${order.id}/feedback`, {
 				method: "POST",
-				headers: {
-					"Content-Type": "application/json",
-				},
+				headers: { "Content-Type": "application/json" },
 				body: JSON.stringify({
-					rating,
-					comment: comment.trim() || undefined,
+					rating: data.rating,
+					comment: data.comment?.trim() || undefined,
 				}),
 			});
 
@@ -67,17 +76,14 @@ export function FeedbackModal({
 			}
 
 			toast.success("Avaliação enviada com sucesso!");
-			setRating(0);
-			setComment("");
+			reset();
 			onSuccess();
 			onClose();
 		} catch (error) {
-			console.error("Error submitting feedback:", error);
+			logger.error("Error submitting feedback", { error });
 			toast.error(
 				error instanceof Error ? error.message : "Erro ao enviar avaliação",
 			);
-		} finally {
-			setIsSubmitting(false);
 		}
 	};
 
@@ -89,31 +95,31 @@ export function FeedbackModal({
 			onClose={handleClose}
 			size="lg"
 			classNames={{
-				base: "bg-white dark:bg-slate-900",
-				header: "border-b border-slate-200 dark:border-slate-800",
-				footer: "border-t border-slate-200 dark:border-slate-800",
+				base: "bg-background",
+				header: "border-b border-divider",
+				footer: "border-t border-divider",
 			}}
 		>
 			<ModalContent>
 				{(onCloseModal) => (
 					<>
 						<ModalHeader className="flex flex-col gap-1">
-							<h2 className="text-xl font-bold text-slate-900 dark:text-slate-100">
+							<h2 className="text-xl font-bold text-foreground">
 								Avalie seu pedido
 							</h2>
-							<p className="text-sm font-normal text-slate-600 dark:text-slate-400">
+							<p className="text-sm font-normal text-default-500">
 								Pedido #{order.orderNumber}
 							</p>
 						</ModalHeader>
 
 						<ModalBody className="gap-6 py-6">
-							<div className="flex flex-col items-center gap-3">
-								<p className="text-sm text-slate-600 dark:text-slate-400">
+							<div className="flex flex-col items-center gap-4">
+								<p className="text-sm text-default-500">
 									Como foi sua experiência com este pedido?
 								</p>
 								<StarRating
 									value={rating}
-									onChange={setRating}
+									onChange={(v) => setValue("rating", v)}
 									size="lg"
 									showLabel
 								/>
@@ -123,13 +129,13 @@ export function FeedbackModal({
 								label="Comentário (opcional)"
 								placeholder="Conte-nos mais sobre sua experiência..."
 								value={comment}
-								onValueChange={setComment}
+								onValueChange={(v) => setValue("comment", v)}
 								maxLength={500}
 								description={`${comment.length}/500 caracteres`}
 								classNames={{
 									input: "resize-none",
 									inputWrapper:
-										"bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700",
+										"bg-content1 border-divider",
 								}}
 								onKeyDown={(e) => {
 									if (e.key === " ") {
@@ -150,7 +156,7 @@ export function FeedbackModal({
 							</Button>
 							<Button
 								color="primary"
-								onPress={handleSubmit}
+								onPress={() => handleSubmit(onSubmit)()}
 								isLoading={isSubmitting}
 								isDisabled={rating === 0}
 							>

@@ -92,7 +92,7 @@ export function OrdersList({ orders: initialOrders }: OrdersListProps) {
 
 	return (
 		<>
-			<div className="grid gap-4 sm:grid-cols-2 lg:gap-5 xl:grid-cols-3">
+			<div className="grid gap-4 sm:grid-cols-2 lg:gap-6 xl:grid-cols-3">
 				{orders.map((order) => (
 					<OrderCard
 						key={order.id}
@@ -123,14 +123,14 @@ export function OrdersList({ orders: initialOrders }: OrdersListProps) {
 								Cancelar Pedido
 							</ModalHeader>
 							<ModalBody>
-								<p className="text-slate-600 dark:text-slate-400">
+								<p className="text-default-500">
 									Tem certeza que deseja cancelar o pedido{" "}
-									<span className="font-semibold text-slate-900 dark:text-slate-100">
+									<span className="font-semibold text-foreground">
 										#{orderToCancel?.orderNumber}
 									</span>
 									?
 								</p>
-								<p className="text-sm text-slate-500 dark:text-slate-500">
+								<p className="text-sm text-default-400">
 									Esta ação não pode ser desfeita.
 								</p>
 							</ModalBody>

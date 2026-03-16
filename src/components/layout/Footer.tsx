@@ -33,7 +33,8 @@ export function Footer() {
 	}
 
 	return (
-		<footer className="border-t border-slate-200 bg-white pt-16 pb-8 dark:border-slate-800 dark:bg-slate-900 print:hidden">
+		<footer className="border-t border-divider bg-gradient-to-b from-background to-content1 pt-16 pb-8 print:hidden">
+			<div className="h-1 bg-gradient-to-r from-brand-500 via-brand-600 to-brand-500" />
 			<div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
 				<div className="grid grid-cols-1 gap-12 lg:grid-cols-4">
 					{/* Brand Section */}
@@ -46,11 +47,11 @@ export function Footer() {
 								height={48}
 								className="h-10 w-10 rounded-full object-cover"
 							/>
-							<span className="text-lg font-bold text-slate-900 dark:text-slate-100">
+							<span className="text-lg font-bold text-foreground">
 								IRON DISTRIBUIDORA SC
 							</span>
 						</Link>
-						<p className="text-sm leading-relaxed text-slate-600 dark:text-slate-400">
+						<p className="text-sm leading-relaxed text-default-500">
 							Distribuidora de peças para celular com garantia de 1 ano.
 							Atendemos Itapema, Tijucas, Porto Belo e São João Batista com
 							agilidade e qualidade.
@@ -81,14 +82,14 @@ export function Footer() {
 
 					{/* Quick Links */}
 					<div>
-						<h3 className="mb-6 text-sm font-semibold uppercase tracking-wider text-slate-900 dark:text-slate-100">
+						<h3 className="mb-6 text-sm font-semibold uppercase tracking-wider text-foreground">
 							Links Rápidos
 						</h3>
 						<ul className="space-y-4">
 							<li>
 								<Link
 									href="/"
-									className="text-sm text-slate-600 hover:text-brand-600 dark:text-slate-400 dark:hover:text-brand-400"
+									className="text-sm text-default-500 transition-colors hover:text-brand-600 dark:hover:text-brand-400"
 								>
 									Início
 								</Link>
@@ -96,7 +97,7 @@ export function Footer() {
 							<li>
 								<Link
 									href="/produtos"
-									className="text-sm text-slate-600 hover:text-brand-600 dark:text-slate-400 dark:hover:text-brand-400"
+									className="text-sm text-default-500 transition-colors hover:text-brand-600 dark:hover:text-brand-400"
 								>
 									Produtos
 								</Link>
@@ -104,7 +105,7 @@ export function Footer() {
 							<li>
 								<Link
 									href="/garantia"
-									className="text-sm text-slate-600 hover:text-brand-600 dark:text-slate-400 dark:hover:text-brand-400"
+									className="text-sm text-default-500 transition-colors hover:text-brand-600 dark:hover:text-brand-400"
 								>
 									Garantia
 								</Link>
@@ -114,13 +115,13 @@ export function Footer() {
 
 					{/* Contact Info */}
 					<div>
-						<h3 className="mb-6 text-sm font-semibold uppercase tracking-wider text-slate-900 dark:text-slate-100">
+						<h3 className="mb-6 text-sm font-semibold uppercase tracking-wider text-foreground">
 							Atendimento
 						</h3>
 						<ul className="space-y-4">
 							<li className="flex items-start gap-3">
 								<MapPinIcon className="mt-0.5 h-5 w-5 flex-shrink-0 text-brand-600 dark:text-brand-400" />
-								<span className="text-sm text-slate-600 dark:text-slate-400">
+								<span className="text-sm text-default-500">
 									Tijucas, SC
 									<br />
 									Atendemos toda a região
@@ -130,7 +131,7 @@ export function Footer() {
 								<PhoneIcon className="h-5 w-5 flex-shrink-0 text-brand-600 dark:text-brand-400" />
 								<a
 									href="tel:+5548991147117"
-									className="text-sm text-slate-600 hover:text-brand-600 dark:text-slate-400 dark:hover:text-brand-400"
+									className="text-sm text-default-500 transition-colors hover:text-brand-600 dark:hover:text-brand-400"
 								>
 									(48) 99114-7117
 								</a>
@@ -139,7 +140,7 @@ export function Footer() {
                 <EnvelopeIcon className="h-5 w-5 flex-shrink-0 text-brand-600 dark:text-brand-400" />
                 <a
                   href="mailto:contato@irondistribuidorasc.com.br"
-                  className="text-sm text-slate-600 hover:text-brand-600 dark:text-slate-400 dark:hover:text-brand-400"
+                  className="text-sm text-default-500 hover:text-brand-600 dark:hover:text-brand-400"
                 >
                   contato@irondistribuidorasc.com.br
                 </a>
@@ -149,14 +150,14 @@ export function Footer() {
 
 					{/* Legal */}
 					<div>
-						<h3 className="mb-6 text-sm font-semibold uppercase tracking-wider text-slate-900 dark:text-slate-100">
+						<h3 className="mb-6 text-sm font-semibold uppercase tracking-wider text-foreground">
 							Legal
 						</h3>
 						<ul className="space-y-4">
 							<li>
 								<Link
 									href="/termos-de-uso"
-									className="text-sm text-slate-600 hover:text-brand-600 dark:text-slate-400 dark:hover:text-brand-400"
+									className="text-sm text-default-500 transition-colors hover:text-brand-600 dark:hover:text-brand-400"
 								>
 									Termos de Uso
 								</Link>
@@ -164,7 +165,7 @@ export function Footer() {
 							<li>
 								<Link
 									href="/politica-de-privacidade"
-									className="text-sm text-slate-600 hover:text-brand-600 dark:text-slate-400 dark:hover:text-brand-400"
+									className="text-sm text-default-500 transition-colors hover:text-brand-600 dark:hover:text-brand-400"
 								>
 									Política de Privacidade
 								</Link>
@@ -172,7 +173,7 @@ export function Footer() {
 							<li>
 								<Link
 									href="/politica-de-trocas"
-									className="text-sm text-slate-600 hover:text-brand-600 dark:text-slate-400 dark:hover:text-brand-400"
+									className="text-sm text-default-500 transition-colors hover:text-brand-600 dark:hover:text-brand-400"
 								>
 									Política de Trocas
 								</Link>
@@ -181,8 +182,8 @@ export function Footer() {
 					</div>
 				</div>
 
-				<div className="mt-12 border-t border-slate-200 pt-8 dark:border-slate-800">
-					<p className="text-center text-sm text-slate-500 dark:text-slate-400">
+				<div className="mt-12 border-t border-divider pt-8">
+					<p className="text-center text-sm text-default-400">
 						© {currentYear} IRON DISTRIBUIDORA SC. Todos os direitos reservados.
 					</p>
 				</div>

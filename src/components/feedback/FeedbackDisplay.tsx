@@ -15,17 +15,17 @@ export function FeedbackDisplay({
   showDate = true,
 }: FeedbackDisplayProps) {
   return (
-    <div className="rounded-lg bg-slate-50 p-4 dark:bg-slate-800">
+    <div className="rounded-lg bg-content1 p-4">
       <div className="flex items-center justify-between gap-4">
         <div className="flex items-center gap-2">
           <StarRating value={feedback.rating} readOnly size="sm" />
-          <span className="text-sm font-medium text-slate-700 dark:text-slate-300">
+          <span className="text-sm font-medium text-default-600">
             {feedback.rating}/5
           </span>
         </div>
 
         {showDate && (
-          <span className="text-xs text-slate-500 dark:text-slate-400">
+          <span className="text-xs text-default-400">
             {format(new Date(feedback.createdAt), "dd/MM/yyyy", {
               locale: ptBR,
             })}
@@ -34,7 +34,7 @@ export function FeedbackDisplay({
       </div>
 
       {feedback.comment && (
-        <p className="mt-3 text-sm text-slate-600 dark:text-slate-400">
+        <p className="mt-4 text-sm text-default-500">
           {feedback.comment}
         </p>
       )}

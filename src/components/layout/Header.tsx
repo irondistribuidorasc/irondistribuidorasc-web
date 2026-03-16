@@ -113,7 +113,7 @@ export function Header() {
   return (
     <div className="flex flex-col w-full print:hidden">
       <Navbar
-        className="border-b border-slate-200 bg-white/70 backdrop-blur dark:border-slate-800 dark:bg-slate-900/70 gap-0"
+        className="border-b border-divider bg-background/70 backdrop-blur gap-0"
         maxWidth="xl"
         position="static"
       >
@@ -126,7 +126,7 @@ export function Header() {
               height={48}
               className="h-8 w-8 flex-shrink-0 rounded-full object-cover sm:h-10 sm:w-10"
             />
-            <span className="hidden md:block truncate text-xs font-semibold text-slate-900 dark:text-slate-100 sm:text-sm md:text-base lg:text-lg">
+            <span className="hidden md:block truncate text-xs font-semibold text-foreground sm:text-sm md:text-base lg:text-lg">
               IRON DISTRIBUIDORA SC
             </span>
           </Link>
@@ -160,9 +160,9 @@ export function Header() {
                 className="border-2 border-white dark:border-slate-900"
               >
                 {isMobileMenuOpen ? (
-                  <XMarkIcon className="h-6 w-6 text-slate-900 dark:text-slate-100" />
+                  <XMarkIcon className="h-6 w-6 text-foreground" />
                 ) : (
-                  <Bars3Icon className="h-6 w-6 text-slate-900 dark:text-slate-100" />
+                  <Bars3Icon className="h-6 w-6 text-foreground" />
                 )}
               </Badge>
             </Button>
@@ -184,7 +184,7 @@ export function Header() {
                 variant="light"
                 onPress={openCart}
               >
-                <ShoppingCartIcon className="h-6 w-6 text-slate-900 dark:text-slate-100" />
+                <ShoppingCartIcon className="h-6 w-6 text-foreground" />
               </Button>
               {totalItems > 0 && (
                 <span className="pointer-events-none absolute right-0 top-0 flex min-h-[1.25rem] min-w-[1.25rem] -translate-y-1/4 translate-x-1/4 items-center justify-center rounded-full bg-danger px-1 text-xs font-semibold text-white">
@@ -197,7 +197,7 @@ export function Header() {
       </Navbar>
 
       {/* Sub-header for Desktop Navigation */}
-      <div className="hidden md:flex w-full border-b border-slate-200 bg-white dark:border-slate-800 dark:bg-slate-900 py-2">
+      <div className="hidden md:flex w-full border-b border-divider bg-background py-2">
         <div className="mx-auto w-full max-w-7xl px-6 flex justify-center">
           <Suspense fallback={<div className="h-6 w-full" />}>
             <CategoryNavigation />

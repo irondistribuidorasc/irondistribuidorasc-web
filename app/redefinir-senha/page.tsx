@@ -5,7 +5,7 @@ import {
   resetPasswordSchema,
 } from "@/src/lib/schemas";
 import { MIN_PASSWORD_LENGTH } from "@/src/lib/validation";
-import { Button, Card, CardBody, Input } from "@heroui/react";
+import { Button, Card, CardBody, Input, Skeleton } from "@heroui/react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -88,7 +88,7 @@ function ResetPasswordContent() {
         <div className="rounded-lg bg-emerald-50 p-4 text-sm text-emerald-700 dark:bg-emerald-900/20 dark:text-emerald-400">
           {successMessage}
         </div>
-        <p className="text-sm text-slate-600">
+        <p className="text-sm text-default-500">
           Você será redirecionado para o login em instantes...
         </p>
         <Button as={Link} href="/login" color="primary" className="w-full">
@@ -133,19 +133,25 @@ function ResetPasswordContent() {
 
 export default function ResetPasswordPage() {
   return (
-    <section className="flex min-h-[calc(100vh-120px)] items-center justify-center bg-white px-4 py-16 dark:bg-slate-900">
-      <Card className="w-full max-w-md border border-slate-200 shadow-xl dark:border-slate-800 dark:bg-slate-900">
+    <section className="flex min-h-[calc(100vh-120px)] items-center justify-center bg-gradient-to-b from-background to-content1 px-4 py-16">
+      <Card className="w-full max-w-md border border-divider shadow-xl">
         <CardBody className="space-y-8">
-          <div className="space-y-3 text-center">
-            <h1 className="text-2xl font-semibold text-slate-900 dark:text-slate-100">
+          <div className="space-y-4 text-center">
+            <h1 className="text-2xl font-semibold text-foreground">
               Redefinir Senha
             </h1>
-            <p className="text-sm text-slate-600 dark:text-slate-400">
+            <p className="text-sm text-default-500">
               Crie uma nova senha segura para sua conta.
             </p>
           </div>
 
-          <Suspense fallback={<div className="text-center">Carregando...</div>}>
+          <Suspense fallback={
+            <div className="space-y-6">
+              <Skeleton className="h-12 w-full rounded-lg" />
+              <Skeleton className="h-12 w-full rounded-lg" />
+              <Skeleton className="h-12 w-full rounded-lg" />
+            </div>
+          }>
             <ResetPasswordContent />
           </Suspense>
         </CardBody>

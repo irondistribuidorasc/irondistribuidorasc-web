@@ -12,7 +12,7 @@ import {
 	ModalContent,
 	ModalFooter,
 	ModalHeader,
-	Spinner,
+	Skeleton,
 	Tab,
 	Tabs,
 	useDisclosure,
@@ -178,9 +178,17 @@ export function ProfileForm() {
 
 	if (isLoading) {
 		return (
-			<div className="flex justify-center items-center p-8 min-h-[400px]">
-				<Spinner size="lg" label="Carregando seus dados..." />
-			</div>
+			<Card className="border border-default">
+				<CardBody className="space-y-6 p-6">
+					<Skeleton className="h-6 w-48 rounded-lg" />
+					<div className="grid gap-4 md:grid-cols-2">
+						{Array.from({ length: 6 }).map((_, i) => (
+							<Skeleton key={i} className="h-12 w-full rounded-lg" />
+						))}
+					</div>
+					<Skeleton className="h-10 w-32 rounded-lg" />
+				</CardBody>
+			</Card>
 		);
 	}
 
@@ -422,7 +430,7 @@ export function ProfileForm() {
 										Para mais informações, consulte nossa{" "}
 										<Link
 											href="/politica-de-privacidade"
-											className="text-primary hover:underline"
+											className="text-primary transition-colors hover:underline"
 										>
 											Política de Privacidade
 										</Link>

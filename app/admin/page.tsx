@@ -38,10 +38,10 @@ export default function AdminDashboard() {
 
 	if (status === "loading" || status === "unauthenticated") {
 		return (
-			<div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-slate-50 via-white to-slate-100 dark:from-slate-900 dark:via-slate-900 dark:to-slate-800">
+			<div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-content1 via-background to-default-100">
 				<div className="text-center">
 					<Spinner size="lg" color="primary" />
-					<p className="mt-4 text-sm text-slate-500 dark:text-slate-400">
+					<p className="mt-4 text-sm text-default-400">
 						Carregando painel...
 					</p>
 				</div>
@@ -99,7 +99,7 @@ export default function AdminDashboard() {
 	];
 
 	return (
-		<div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100 dark:from-slate-900 dark:via-slate-900 dark:to-slate-800">
+		<div className="min-h-screen bg-gradient-to-br from-content1 via-background to-default-100">
 			{/* Background Pattern */}
 			<div className="pointer-events-none absolute inset-0 -z-10 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiM5Qzk0OTQiIGZpbGwtb3BhY2l0eT0iMC4wMyI+PHBhdGggZD0iTTM2IDM0djItSDI0di0yaDEyek0zNiAyNHYySDI0di0yaDEyeiIvPjwvZz48L2c+PC9zdmc+')] opacity-50 dark:opacity-20" />
 
@@ -108,10 +108,10 @@ export default function AdminDashboard() {
 					{/* Header Section */}
 					<div className="mb-8 md:mb-12">
 						{/* Welcome Card */}
-						<div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-slate-50 via-white to-slate-100 p-5 shadow-2xl md:rounded-3xl md:p-8 dark:from-slate-800 dark:via-slate-900 dark:to-slate-800">
+						<div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-content1 via-background to-default-100 p-5 shadow-2xl md:rounded-3xl md:p-8">
 							{/* Decorative Elements */}
 							<div className="absolute -right-10 -top-10 h-40 w-40 rounded-full bg-gradient-to-br from-brand-500/10 to-brand-600/10 blur-3xl" />
-							<div className="absolute -bottom-10 -left-10 h-40 w-40 rounded-full bg-gradient-to-br from-slate-500/10 to-slate-400/10 blur-3xl" />
+							<div className="absolute -bottom-10 -left-10 h-40 w-40 rounded-full bg-gradient-to-br from-default-400/10 to-default-300/10 blur-3xl" />
 
 							<div className="relative flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
 								<div>
@@ -121,23 +121,23 @@ export default function AdminDashboard() {
 											{getGreeting()}
 										</span>
 									</div>
-									<h1 className="text-2xl font-bold text-slate-900 md:text-4xl dark:text-white">
+									<h1 className="text-2xl font-bold text-foreground md:text-4xl">
 										Painel Administrativo
 									</h1>
-									<p className="mt-2 text-slate-600 dark:text-slate-400">
+									<p className="mt-2 text-default-500">
 										Bem-vindo de volta,{" "}
-										<span className="font-semibold text-slate-900 dark:text-white">
+										<span className="font-semibold text-foreground">
 											{session.user.name}
 										</span>
 									</p>
 								</div>
 
 								<div className="flex flex-col items-end gap-2">
-									<div className="rounded-xl bg-slate-100/80 px-4 py-2 backdrop-blur-sm dark:bg-white/10">
-										<p className="text-xs text-slate-500 dark:text-slate-400">
+									<div className="rounded-xl bg-default-100 px-4 py-2 backdrop-blur-sm">
+										<p className="text-xs text-default-400">
 											Hoje é
 										</p>
-										<p className="text-lg font-semibold text-slate-900 dark:text-white">
+										<p className="text-lg font-semibold text-foreground">
 											{currentTime.toLocaleDateString("pt-BR", {
 												weekday: "long",
 												day: "numeric",
@@ -145,7 +145,7 @@ export default function AdminDashboard() {
 											})}
 										</p>
 									</div>
-									<div className="flex items-center gap-2 text-sm text-slate-500 dark:text-slate-400">
+									<div className="flex items-center gap-2 text-sm text-default-400">
 										<ArrowTrendingUpIcon className="h-4 w-4 text-brand-500" />
 										<span>Sistema operacional</span>
 									</div>
@@ -158,10 +158,10 @@ export default function AdminDashboard() {
 					<div className="mb-6">
 						<div className="mb-4 flex items-center gap-3">
 							<div className="h-1 w-1 rounded-full bg-brand-500" />
-							<h2 className="text-lg font-semibold text-slate-700 dark:text-slate-300">
+							<h2 className="text-lg font-semibold text-default-600">
 								Ações Rápidas
 							</h2>
-							<div className="h-px flex-1 bg-gradient-to-r from-slate-200 to-transparent dark:from-slate-700" />
+							<div className="h-px flex-1 bg-gradient-to-r from-divider to-transparent" />
 						</div>
 
 						<div className="flex flex-wrap gap-3">
@@ -177,18 +177,18 @@ export default function AdminDashboard() {
 							<button
 								type="button"
 								onClick={() => router.push("/admin/pedidos?status=PENDING")}
-								className="flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm font-semibold text-slate-700 shadow-sm transition-all hover:shadow-md hover:border-slate-300 active:scale-95 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200 dark:hover:border-slate-600"
+								className="flex items-center gap-2 rounded-xl border border-divider bg-content1 px-4 py-3 text-sm font-semibold text-foreground shadow-sm transition-all hover:shadow-md active:scale-95"
 							>
-								<ClockIcon className="h-5 w-5 text-slate-500 dark:text-slate-400" />
+								<ClockIcon className="h-5 w-5 text-default-400" />
 								Pedidos Pendentes
 							</button>
 
 							<button
 								type="button"
 								onClick={() => router.push("/admin/usuarios?status=PENDING")}
-								className="flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm font-semibold text-slate-700 shadow-sm transition-all hover:shadow-md hover:border-slate-300 active:scale-95 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200 dark:hover:border-slate-600"
+								className="flex items-center gap-2 rounded-xl border border-divider bg-content1 px-4 py-3 text-sm font-semibold text-foreground shadow-sm transition-all hover:shadow-md active:scale-95"
 							>
-								<UserPlusIcon className="h-5 w-5 text-slate-500 dark:text-slate-400" />
+								<UserPlusIcon className="h-5 w-5 text-default-400" />
 								Usuários Aguardando
 							</button>
 						</div>
@@ -197,10 +197,10 @@ export default function AdminDashboard() {
 					{/* Section Title */}
 					<div className="mb-6 flex items-center gap-3">
 						<div className="h-1 w-1 rounded-full bg-brand-500" />
-						<h2 className="text-lg font-semibold text-slate-700 dark:text-slate-300">
+						<h2 className="text-lg font-semibold text-default-600">
 							Acesso Rápido
 						</h2>
-						<div className="h-px flex-1 bg-gradient-to-r from-slate-200 to-transparent dark:from-slate-700" />
+						<div className="h-px flex-1 bg-gradient-to-r from-divider to-transparent" />
 					</div>
 
 					{/* Menu Cards Grid */}
@@ -208,7 +208,7 @@ export default function AdminDashboard() {
 						{menuItems.map((item, index) => (
 							<Card
 								key={item.href}
-								className="group relative h-full cursor-pointer overflow-hidden border border-slate-200 bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-md dark:border-slate-800 dark:bg-slate-900"
+								className="group relative h-full cursor-pointer overflow-hidden border border-divider bg-background shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-md"
 								isPressable
 								onPress={() => router.push(item.href)}
 								style={{ animationDelay: `${index * 100}ms` }}
@@ -221,17 +221,17 @@ export default function AdminDashboard() {
 
 									{/* Content */}
 									<div className="flex-1">
-										<h3 className="mb-2 text-lg font-bold text-slate-800 dark:text-slate-100">
+										<h3 className="mb-2 text-lg font-bold text-foreground">
 											{item.title}
 										</h3>
-										<p className="text-sm leading-relaxed text-slate-600 dark:text-slate-400">
+										<p className="text-sm leading-relaxed text-default-500">
 											{item.description}
 										</p>
 									</div>
 
 									{/* Footer */}
 									<div className="mt-5 flex items-center justify-between">
-										<span className="rounded-md bg-slate-100 px-3 py-1 text-xs font-medium text-slate-600 dark:bg-slate-800 dark:text-slate-400">
+										<span className="rounded-md bg-default-100 px-3 py-1 text-xs font-medium text-default-500">
 											{item.badge}
 										</span>
 										<div className="flex h-8 w-8 items-center justify-center rounded-full bg-brand-500 opacity-0 transition-all duration-300 group-hover:opacity-100">
@@ -247,28 +247,28 @@ export default function AdminDashboard() {
 					<div className="mt-12 hidden md:block">
 						<div className="mb-6 flex items-center gap-3">
 							<div className="h-1 w-1 rounded-full bg-brand-500" />
-							<h2 className="text-lg font-semibold text-slate-700 dark:text-slate-300">
+							<h2 className="text-lg font-semibold text-default-600">
 								Dica Rápida
 							</h2>
-							<div className="h-px flex-1 bg-gradient-to-r from-slate-200 to-transparent dark:from-slate-700" />
+							<div className="h-px flex-1 bg-gradient-to-r from-divider to-transparent" />
 						</div>
 
-						<div className="rounded-2xl border border-slate-200 bg-white/50 p-6 backdrop-blur-sm dark:border-slate-700 dark:bg-slate-800/50">
+						<div className="rounded-2xl border border-divider bg-content1/50 p-6 backdrop-blur-sm">
 							<div className="flex items-start gap-4">
-								<div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl bg-slate-100 dark:bg-slate-800">
-									<SparklesIcon className="h-5 w-5 text-slate-600 dark:text-slate-400" />
+								<div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl bg-default-100">
+									<SparklesIcon className="h-5 w-5 text-default-500" />
 								</div>
 								<div>
-									<h4 className="font-semibold text-slate-800 dark:text-slate-100">
+									<h4 className="font-semibold text-foreground">
 										Atalho de Teclado
 									</h4>
-									<p className="mt-1 text-sm text-slate-600 dark:text-slate-400">
+									<p className="mt-1 text-sm text-default-500">
 										Na página de criar pedidos, use{" "}
-										<kbd className="mx-1 rounded-md bg-slate-200 px-2 py-0.5 text-xs font-semibold dark:bg-slate-700">
+										<kbd className="mx-1 rounded-md bg-default-200 px-2 py-0.5 text-xs font-semibold">
 											Ctrl
 										</kbd>{" "}
 										+{" "}
-										<kbd className="mx-1 rounded-md bg-slate-200 px-2 py-0.5 text-xs font-semibold dark:bg-slate-700">
+										<kbd className="mx-1 rounded-md bg-default-200 px-2 py-0.5 text-xs font-semibold">
 											Enter
 										</kbd>{" "}
 										para criar o pedido rapidamente.

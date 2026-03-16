@@ -73,22 +73,22 @@ export function OrderDetailsModal({
       size="3xl"
       scrollBehavior="inside"
       classNames={{
-        base: "bg-white dark:bg-slate-900",
-        header: "border-b border-slate-200 dark:border-slate-800",
-        footer: "border-t border-slate-200 dark:border-slate-800",
+        base: "bg-background",
+        header: "border-b border-divider",
+        footer: "border-t border-divider",
       }}
     >
       <ModalContent>
         <ModalHeader className="flex flex-col gap-2">
           <div className="flex items-center justify-between">
-            <h2 className="text-xl font-bold text-slate-900 dark:text-slate-100">
+            <h2 className="text-xl font-bold text-foreground">
               Pedido #{order.orderNumber}
             </h2>
             <Chip color={status.color} variant="flat" size="sm">
               {status.label}
             </Chip>
           </div>
-          <p className="text-sm font-normal text-slate-600 dark:text-slate-400">
+          <p className="text-sm font-normal text-default-500">
             Realizado em{" "}
             {format(
               new Date(order.createdAt),
@@ -103,26 +103,26 @@ export function OrderDetailsModal({
         <ModalBody className="gap-6 py-6">
           {/* Items do pedido */}
           <section>
-            <h3 className="mb-3 flex items-center gap-2 text-lg font-semibold text-slate-900 dark:text-slate-100">
+            <h3 className="mb-4 flex items-center gap-2 text-lg font-semibold text-foreground">
               <ClipboardDocumentListIcon className="h-5 w-5" />
               Itens do Pedido
             </h3>
-            <div className="space-y-3">
+            <div className="space-y-4">
               {order.items.map((item) => (
                 <div
                   key={item.id}
-                  className="flex items-center justify-between rounded-lg bg-slate-50 p-3 dark:bg-slate-800"
+                  className="flex items-center justify-between rounded-lg bg-content1 p-4"
                 >
                   <div className="flex-1">
-                    <p className="font-medium text-slate-900 dark:text-slate-100">
+                    <p className="font-medium text-foreground">
                       {item.productName}
                     </p>
-                    <p className="text-sm text-slate-600 dark:text-slate-400">
+                    <p className="text-sm text-default-500">
                       Código: {item.productCode}
                     </p>
                   </div>
                   <div className="text-right">
-                    <p className="font-medium text-slate-900 dark:text-slate-100">
+                    <p className="font-medium text-foreground">
                       {item.quantity}x {formatCurrency(item.price)}
                     </p>
                     <p className="text-sm font-semibold text-brand-600 dark:text-brand-400">
@@ -136,7 +136,7 @@ export function OrderDetailsModal({
             <Divider className="my-4" />
 
             <div className="flex items-center justify-between">
-              <span className="text-lg font-semibold text-slate-900 dark:text-slate-100">
+              <span className="text-lg font-semibold text-foreground">
                 Total
               </span>
               <span className="text-2xl font-bold text-brand-600 dark:text-brand-400">
@@ -144,11 +144,11 @@ export function OrderDetailsModal({
               </span>
             </div>
             {order.paymentMethod && (
-              <div className="mt-3 flex items-center justify-between rounded-lg bg-slate-50 p-3 dark:bg-slate-800">
-                <span className="text-sm font-medium text-slate-600 dark:text-slate-400">
+              <div className="mt-4 flex items-center justify-between rounded-lg bg-content1 p-4">
+                <span className="text-sm font-medium text-default-500">
                   Forma de pagamento
                 </span>
-                <span className="font-medium text-slate-900 dark:text-slate-100">
+                <span className="font-medium text-foreground">
                   {getPaymentMethodLabel(order.paymentMethod)}
                 </span>
               </div>
@@ -159,18 +159,18 @@ export function OrderDetailsModal({
 
           {/* Informações do cliente */}
           <section>
-            <h3 className="mb-3 text-lg font-semibold text-slate-900 dark:text-slate-100">
+            <h3 className="mb-4 text-lg font-semibold text-foreground">
               Informações do Cliente
             </h3>
             <div className="space-y-2">
               <div className="flex items-start gap-2">
-                <IdentificationIcon className="mt-0.5 h-5 w-5 flex-shrink-0 text-slate-500 dark:text-slate-400" />
+                <IdentificationIcon className="mt-0.5 h-5 w-5 flex-shrink-0 text-default-400" />
                 <div>
-                  <p className="font-medium text-slate-900 dark:text-slate-100">
+                  <p className="font-medium text-foreground">
                     {order.customerName}
                   </p>
                   {order.customerDocNumber && (
-                    <p className="text-sm text-slate-600 dark:text-slate-400">
+                    <p className="text-sm text-default-500">
                       CPF/CNPJ: {order.customerDocNumber}
                     </p>
                   )}
@@ -178,15 +178,15 @@ export function OrderDetailsModal({
               </div>
 
               <div className="flex items-center gap-2">
-                <EnvelopeIcon className="h-5 w-5 flex-shrink-0 text-slate-500 dark:text-slate-400" />
-                <p className="text-slate-700 dark:text-slate-300">
+                <EnvelopeIcon className="h-5 w-5 flex-shrink-0 text-default-400" />
+                <p className="text-default-600">
                   {order.customerEmail}
                 </p>
               </div>
 
               <div className="flex items-center gap-2">
-                <PhoneIcon className="h-5 w-5 flex-shrink-0 text-slate-500 dark:text-slate-400" />
-                <p className="text-slate-700 dark:text-slate-300">
+                <PhoneIcon className="h-5 w-5 flex-shrink-0 text-default-400" />
+                <p className="text-default-600">
                   {order.customerPhone}
                 </p>
               </div>
@@ -197,20 +197,20 @@ export function OrderDetailsModal({
 
           {/* Endereço de entrega */}
           <section>
-            <h3 className="mb-3 flex items-center gap-2 text-lg font-semibold text-slate-900 dark:text-slate-100">
+            <h3 className="mb-4 flex items-center gap-2 text-lg font-semibold text-foreground">
               <MapPinIcon className="h-5 w-5" />
               Endereço de Entrega
             </h3>
-            <div className="rounded-lg bg-slate-50 p-4 dark:bg-slate-800">
-              <p className="text-slate-900 dark:text-slate-100">
+            <div className="rounded-lg bg-content1 p-4">
+              <p className="text-foreground">
                 {order.addressLine1}
               </p>
               {order.addressLine2 && (
-                <p className="text-slate-900 dark:text-slate-100">
+                <p className="text-foreground">
                   {order.addressLine2}
                 </p>
               )}
-              <p className="text-slate-900 dark:text-slate-100">
+              <p className="text-foreground">
                 {order.city}, {order.state} - CEP {order.postalCode}
               </p>
             </div>
@@ -221,10 +221,10 @@ export function OrderDetailsModal({
             <>
               <Divider />
               <section>
-                <h3 className="mb-2 text-lg font-semibold text-slate-900 dark:text-slate-100">
+                <h3 className="mb-2 text-lg font-semibold text-foreground">
                   Observações
                 </h3>
-                <p className="text-slate-700 dark:text-slate-300">
+                <p className="text-default-600">
                   {order.notes}
                 </p>
               </section>
@@ -236,7 +236,7 @@ export function OrderDetailsModal({
             <>
               <Divider />
               <section>
-                <h3 className="mb-3 flex items-center gap-2 text-lg font-semibold text-slate-900 dark:text-slate-100">
+                <h3 className="mb-4 flex items-center gap-2 text-lg font-semibold text-foreground">
                   <StarIcon className="h-5 w-5" />
                   Sua Avaliação
                 </h3>

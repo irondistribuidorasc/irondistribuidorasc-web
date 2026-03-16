@@ -40,6 +40,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { useCallback, useEffect, useState } from "react";
+import { logger } from "@/src/lib/logger";
 import { toast } from "sonner";
 import { createQuickUser } from "@/app/actions/admin-order-creation";
 
@@ -147,7 +148,7 @@ export default function AdminUsersPage() {
 				setPagination(data.pagination);
 			}
 		} catch (error) {
-			console.error("Failed to fetch users:", error);
+			logger.error("Failed to fetch users", { error });
 		} finally {
 			setLoading(false);
 		}
@@ -179,7 +180,7 @@ export default function AdminUsersPage() {
 				fetchUsers();
 			}
 		} catch (error) {
-			console.error("Failed to update user:", error);
+			logger.error("Failed to update user", { error });
 		}
 	};
 
@@ -262,7 +263,7 @@ export default function AdminUsersPage() {
 
 	if (status === "loading" || status === "unauthenticated") {
 		return (
-			<div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-slate-50 via-white to-slate-100 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950">
+			<div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-content1 via-background to-default-100">
 				<Spinner size="lg" />
 			</div>
 		);
@@ -273,9 +274,8 @@ export default function AdminUsersPage() {
 	}
 
 	return (
-		<div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950">
-			{/* Background Pattern */}
-			<div className="fixed inset-0 -z-10 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik0wIDBoNjB2NjBIMHoiLz48cGF0aCBkPSJNMzYgMzRjMC0yLjIwOS0xLjc5MS00LTQtNHMtNCAxLjc5MS00IDQgMS43OTEgNCA0IDQgNC0xLjc5MSA0LTR6bTAtMThjMC0yLjIwOS0xLjc5MS00LTQtNHMtNCAxLjc5MS00IDQgMS43OTEgNCA0IDQgNC0xLjc5MSA0LTR6bTE4IDBjMC0yLjIwOS0xLjc5MS00LTQtNHMtNCAxLjc5MS00IDQgMS43OTEgNCA0IDQgNC0xLjc5MSA0LTR6bTAgMThjMC0yLjIwOS0xLjc5MS00LTQtNHMtNCAxLjc5MS00IDQgMS43OTEgNCA0IDQgNC0xLjc5MSA0LTR6bS0xOCAxOGMwLTIuMjA5LTEuNzkxLTQtNC00cy00IDEuNzkxLTQgNCAxLjc5MSA0IDQgNCA0LTEuNzkxIDQtNHptMTggMGMwLTIuMjA5LTEuNzkxLTQtNC00cy00IDEuNzkxLTQgNCAxLjc5MSA0IDQgNCA0LTEuNzkxIDQtNHoiIGZpbGw9IiM5NDk0YjgiIGZpbGwtb3BhY2l0eT0iMC4wMyIvPjwvZz48L3N2Zz4=')] opacity-60" />
+		<div className="min-h-screen bg-gradient-to-br from-content1 via-background to-default-100">
+			<div className="fixed inset-0 -z-10 bg-[url('/patterns/dots.svg')] opacity-60" />
 
 			<div className="mx-auto w-full max-w-6xl px-4 py-8">
 				{/* Back Button */}
@@ -283,7 +283,7 @@ export default function AdminUsersPage() {
 					as={Link}
 					href="/admin"
 					variant="light"
-					className="mb-6 -ml-2 text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 transition-colors"
+					className="mb-6 -ml-2 text-default-400 hover:text-default-600 transition-colors"
 				>
 					<ChevronLeftIcon className="mr-1 h-4 w-4" />
 					Voltar para Dashboard
@@ -291,11 +291,11 @@ export default function AdminUsersPage() {
 
 				{/* Header Card */}
 				<Card className="mb-8 overflow-hidden border-0 shadow-xl">
-					<div className="relative bg-gradient-to-r from-slate-50 via-white to-slate-100 dark:from-slate-700 dark:via-slate-800 dark:to-slate-700">
+					<div className="relative bg-gradient-to-r from-content1 via-background to-content1">
 						{/* Decorative elements */}
 						<div className="absolute inset-0 overflow-hidden">
 							<div className="absolute -top-10 -right-10 h-40 w-40 rounded-full bg-brand-500/10 blur-3xl dark:bg-white/5" />
-							<div className="absolute -bottom-10 -left-10 h-40 w-40 rounded-full bg-brand-600/10 blur-3xl dark:bg-slate-500/10" />
+							<div className="absolute -bottom-10 -left-10 h-40 w-40 rounded-full bg-brand-600/10 blur-3xl" />
 						</div>
 
 						<div className="relative px-6 py-6 sm:px-8">
@@ -305,10 +305,10 @@ export default function AdminUsersPage() {
 										<UsersIcon className="h-7 w-7 text-white" />
 									</div>
 									<div>
-										<h1 className="text-2xl font-bold text-slate-900 dark:text-white sm:text-3xl">
+										<h1 className="text-2xl font-bold text-foreground sm:text-3xl">
 											Gerenciar Usuários
 										</h1>
-										<p className="mt-1 text-slate-600 dark:text-slate-300">
+										<p className="mt-1 text-default-500">
 											Aprovação e gerenciamento de contas
 										</p>
 									</div>
@@ -316,11 +316,11 @@ export default function AdminUsersPage() {
 
 								{/* Quick Stats */}
 								<div className="flex gap-3">
-									<div className="rounded-xl bg-slate-100/80 px-4 py-2 backdrop-blur-sm dark:bg-white/10">
-										<p className="text-xs font-medium text-slate-500 dark:text-slate-400">
+									<div className="rounded-xl bg-default-100/80 px-4 py-2 backdrop-blur-sm">
+										<p className="text-xs font-medium text-default-400">
 											Total
 										</p>
-										<p className="text-xl font-bold text-slate-900 dark:text-white">
+										<p className="text-xl font-bold text-foreground">
 											{pagination.total}
 										</p>
 									</div>
@@ -331,51 +331,31 @@ export default function AdminUsersPage() {
 				</Card>
 
 				{/* Toolbar Card - Unified */}
-				<Card className="mb-6 overflow-hidden border-0 shadow-lg bg-white/80 backdrop-blur-sm dark:bg-slate-800/80">
+				<Card className="mb-6 overflow-hidden border-0 shadow-lg bg-background/80 backdrop-blur-sm">
 					<CardBody className="p-4">
 						<div className="flex flex-col gap-4">
 							{/* Row 1: Search, Filter Chips, and New Button */}
 							<div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
 								{/* Search */}
-								<div className="relative flex-1 max-w-sm">
-									<input
-										id="search-users"
-										type="text"
-										className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2 pl-10 text-sm text-slate-900 shadow-sm outline-none transition-colors placeholder:text-slate-400 hover:bg-slate-100 focus:ring-2 focus:ring-brand-500 dark:border-slate-600 dark:bg-slate-700/50 dark:text-slate-100 dark:placeholder:text-slate-500 dark:hover:bg-slate-700"
+								<div className="flex-1 max-w-sm">
+									<Input
 										placeholder="Buscar por nome, email, telefone..."
 										value={searchQuery}
-										onChange={(e) => setSearchQuery(e.target.value)}
+										onValueChange={setSearchQuery}
+										startContent={<MagnifyingGlassIcon className="h-4 w-4 text-default-400" />}
+										isClearable
+										onClear={() => setSearchQuery("")}
+										size="sm"
+										classNames={{
+											inputWrapper: "bg-default-100 border-divider",
+										}}
 									/>
-									<MagnifyingGlassIcon className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
-									{searchQuery && (
-										<button
-											type="button"
-											onClick={() => setSearchQuery("")}
-											className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-300"
-											aria-label="Limpar busca"
-										>
-											<svg
-												className="h-4 w-4"
-												fill="none"
-												viewBox="0 0 24 24"
-												stroke="currentColor"
-												aria-hidden="true"
-											>
-												<path
-													strokeLinecap="round"
-													strokeLinejoin="round"
-													strokeWidth={2}
-													d="M6 18L18 6M6 6l12 12"
-												/>
-											</svg>
-										</button>
-									)}
 								</div>
 
 								{/* Status Filter Chips */}
 								<div className="flex items-center gap-2">
-									<FunnelIcon className="h-4 w-4 text-slate-400 hidden sm:block" />
-									<div className="flex gap-1.5 p-1 rounded-xl bg-slate-100/80 dark:bg-slate-700/50">
+									<FunnelIcon className="h-4 w-4 text-default-400 hidden sm:block" />
+									<div className="flex gap-1.5 p-1 rounded-xl bg-default-100/80">
 										<button
 											type="button"
 											onClick={() => {
@@ -385,7 +365,7 @@ export default function AdminUsersPage() {
 											className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium transition-all ${
 												filter === "pending"
 													? "bg-warning-500 text-white shadow-md"
-													: "text-slate-600 hover:bg-slate-200 dark:text-slate-400 dark:hover:bg-slate-600"
+													: "text-default-500 hover:bg-default-200"
 											}`}
 										>
 											<ClockIcon className="h-4 w-4" />
@@ -400,7 +380,7 @@ export default function AdminUsersPage() {
 											className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium transition-all ${
 												filter === "approved"
 													? "bg-success-500 text-white shadow-md"
-													: "text-slate-600 hover:bg-slate-200 dark:text-slate-400 dark:hover:bg-slate-600"
+													: "text-default-500 hover:bg-default-200"
 											}`}
 										>
 											<CheckCircleIcon className="h-4 w-4" />
@@ -415,7 +395,7 @@ export default function AdminUsersPage() {
 											className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium transition-all ${
 												filter === "all"
 													? "bg-brand-500 text-white shadow-md"
-													: "text-slate-600 hover:bg-slate-200 dark:text-slate-400 dark:hover:bg-slate-600"
+													: "text-default-500 hover:bg-default-200"
 											}`}
 										>
 											<UserGroupIcon className="h-4 w-4" />
@@ -435,7 +415,7 @@ export default function AdminUsersPage() {
 							</div>
 
 							{/* Row 2: Sorting and Pagination Options */}
-							<div className="flex flex-wrap items-center gap-3 pt-3 border-t border-slate-200/60 dark:border-slate-700/60">
+							<div className="flex flex-wrap items-center gap-3 pt-3 border-t border-divider/60">
 								<Select
 									label="Ordenar por"
 									selectedKeys={[orderBy]}
@@ -444,7 +424,7 @@ export default function AdminUsersPage() {
 									size="sm"
 									classNames={{
 										trigger:
-											"bg-slate-50 dark:bg-slate-700/50 border-slate-200 dark:border-slate-600",
+											"bg-default-100 border-divider",
 									}}
 								>
 									<SelectItem key="createdAt" value="createdAt">
@@ -466,7 +446,7 @@ export default function AdminUsersPage() {
 									size="sm"
 									classNames={{
 										trigger:
-											"bg-slate-50 dark:bg-slate-700/50 border-slate-200 dark:border-slate-600",
+											"bg-default-100 border-divider",
 									}}
 								>
 									<SelectItem key="desc" value="desc">
@@ -485,7 +465,7 @@ export default function AdminUsersPage() {
 									size="sm"
 									classNames={{
 										trigger:
-											"bg-slate-50 dark:bg-slate-700/50 border-slate-200 dark:border-slate-600",
+											"bg-default-100 border-divider",
 									}}
 								>
 									<SelectItem key="10" value="10">
@@ -507,7 +487,7 @@ export default function AdminUsersPage() {
 									<Chip
 										size="sm"
 										variant="flat"
-										className="bg-slate-100 dark:bg-slate-700"
+										className="bg-default-100"
 									>
 										{loading ? (
 											<span className="flex items-center gap-1">
@@ -540,22 +520,22 @@ export default function AdminUsersPage() {
 					<div className="flex justify-center py-16">
 						<div className="flex flex-col items-center gap-4">
 							<Spinner size="lg" />
-							<p className="text-sm text-slate-500 dark:text-slate-400">
+							<p className="text-sm text-default-400">
 								Carregando usuários...
 							</p>
 						</div>
 					</div>
 				) : users.length === 0 ? (
-					<Card className="overflow-hidden border-0 shadow-lg bg-white/80 backdrop-blur-sm dark:bg-slate-800/80">
+					<Card className="overflow-hidden border-0 shadow-lg bg-background/80 backdrop-blur-sm">
 						<CardBody className="py-16">
 							<div className="flex flex-col items-center justify-center text-center">
-								<div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-slate-100 dark:bg-slate-700">
-									<InboxIcon className="h-8 w-8 text-slate-400" />
+								<div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-default-100">
+									<InboxIcon className="h-8 w-8 text-default-400" />
 								</div>
-								<h3 className="text-lg font-semibold text-slate-700 dark:text-slate-300">
+								<h3 className="text-lg font-semibold text-default-600">
 									Nenhum usuário encontrado
 								</h3>
-								<p className="mt-2 text-sm text-slate-500 dark:text-slate-400 max-w-md">
+								<p className="mt-2 text-sm text-default-400 max-w-md">
 									{searchQuery
 										? `Não encontramos usuários correspondentes a "${searchQuery}". Tente outra busca.`
 										: filter === "pending"
@@ -589,7 +569,7 @@ export default function AdminUsersPage() {
 								return (
 									<Card
 										key={user.id}
-										className="group border-0 bg-white/80 backdrop-blur-sm shadow-md transition-all hover:shadow-xl dark:bg-slate-800/80"
+										className="group border-0 bg-background/80 backdrop-blur-sm shadow-md transition-all hover:shadow-xl"
 									>
 										<CardBody className="p-4">
 											{/* Header: Avatar + Info + Status Badge */}
@@ -604,7 +584,7 @@ export default function AdminUsersPage() {
 												<div className="min-w-0 flex-1">
 													{/* Nome e badges */}
 													<div className="flex flex-wrap items-center gap-2">
-														<h3 className="font-semibold text-slate-900 dark:text-slate-100">
+														<h3 className="font-semibold text-foreground">
 															{user.name}
 														</h3>
 														{isAvulso && (
@@ -662,7 +642,7 @@ export default function AdminUsersPage() {
 														</span>
 													</div>
 													{/* Email */}
-													<p className="mt-1 text-sm text-slate-500 dark:text-slate-400 truncate">
+													<p className="mt-1 text-sm text-default-400 truncate">
 														{user.email}
 													</p>
 												</div>
@@ -670,22 +650,22 @@ export default function AdminUsersPage() {
 
 											{/* Informações adicionais - Grid vertical no mobile */}
 											{(user.phone || user.storeName || user.docNumber) && (
-												<div className="mt-3 grid grid-cols-1 gap-2 rounded-lg bg-slate-50 dark:bg-slate-700/30 p-3 text-sm">
+												<div className="mt-3 grid grid-cols-1 gap-2 rounded-lg bg-default-100 p-3 text-sm">
 													{user.phone && (
-														<div className="flex items-center gap-2 text-slate-600 dark:text-slate-400">
-															<PhoneIcon className="h-4 w-4 text-slate-400 flex-shrink-0" />
+														<div className="flex items-center gap-2 text-default-500">
+															<PhoneIcon className="h-4 w-4 text-default-400 flex-shrink-0" />
 															<span>{user.phone}</span>
 														</div>
 													)}
 													{user.docNumber && (
-														<div className="flex items-center gap-2 text-slate-600 dark:text-slate-400">
-															<IdentificationIcon className="h-4 w-4 text-slate-400 flex-shrink-0" />
+														<div className="flex items-center gap-2 text-default-500">
+															<IdentificationIcon className="h-4 w-4 text-default-400 flex-shrink-0" />
 															<span>{user.docNumber}</span>
 														</div>
 													)}
 													{user.storeName && (
-														<div className="flex items-center gap-2 text-slate-600 dark:text-slate-400">
-															<BuildingStorefrontIcon className="h-4 w-4 text-slate-400 flex-shrink-0" />
+														<div className="flex items-center gap-2 text-default-500">
+															<BuildingStorefrontIcon className="h-4 w-4 text-default-400 flex-shrink-0" />
 															<span>{user.storeName}</span>
 														</div>
 													)}
@@ -693,10 +673,10 @@ export default function AdminUsersPage() {
 											)}
 
 											{/* Footer: Data + Ações */}
-											<div className="mt-3 flex flex-col gap-3 border-t border-slate-200/60 pt-3 dark:border-slate-700/60">
+											<div className="mt-3 flex flex-col gap-3 border-t border-divider/60 pt-3">
 												{/* Data e botão editar */}
 												<div className="flex items-center justify-between">
-													<span className="text-xs text-slate-400 flex items-center gap-1">
+													<span className="text-xs text-default-400 flex items-center gap-1">
 														<ClockIcon className="h-3.5 w-3.5" />
 														{new Date(user.createdAt).toLocaleDateString(
 															"pt-BR",
@@ -708,7 +688,7 @@ export default function AdminUsersPage() {
 															variant="flat"
 															size="sm"
 															onPress={() => handleOpenEdit(user)}
-															className="bg-slate-100 text-slate-600 hover:bg-slate-200 dark:bg-slate-700 dark:text-slate-400 dark:hover:bg-slate-600"
+															className="bg-default-100 text-default-500 hover:bg-default-200"
 														>
 															<PencilSquareIcon className="h-4 w-4" />
 														</Button>
@@ -766,7 +746,7 @@ export default function AdminUsersPage() {
 						{/* Paginação */}
 						{pagination.totalPages > 1 && (
 							<div className="mt-8 flex justify-center">
-								<Card className="border-0 shadow-lg bg-white/80 backdrop-blur-sm dark:bg-slate-800/80 px-4 py-3">
+								<Card className="border-0 shadow-lg bg-background/80 backdrop-blur-sm px-4 py-3">
 									<Pagination
 										total={pagination.totalPages}
 										page={pagination.page}
@@ -790,9 +770,9 @@ export default function AdminUsersPage() {
 					onClose={onClose}
 					size="lg"
 					classNames={{
-						base: "bg-white dark:bg-slate-800",
-						header: "border-b border-slate-200 dark:border-slate-700",
-						footer: "border-t border-slate-200 dark:border-slate-700",
+						base: "bg-background",
+						header: "border-b border-divider",
+						footer: "border-t border-divider",
 					}}
 				>
 					<ModalContent>
@@ -814,7 +794,7 @@ export default function AdminUsersPage() {
 						<ModalBody className="py-6">
 							<div className="space-y-4">
 								<Input
-									label="👤 Nome"
+									label="Nome"
 									placeholder="Nome completo"
 									value={editForm.name}
 									onValueChange={(value) =>
@@ -822,11 +802,11 @@ export default function AdminUsersPage() {
 									}
 									isRequired
 									classNames={{
-										inputWrapper: "bg-slate-50 dark:bg-slate-700/50",
+										inputWrapper: "bg-default-100",
 									}}
 								/>
 								<Input
-									label="✉️ Email"
+									label="Email"
 									placeholder="email@exemplo.com"
 									type="email"
 									value={editForm.email}
@@ -840,29 +820,29 @@ export default function AdminUsersPage() {
 											: undefined
 									}
 									classNames={{
-										inputWrapper: "bg-slate-50 dark:bg-slate-700/50",
+										inputWrapper: "bg-default-100",
 									}}
 								/>
 								<Input
-									label="📱 Telefone"
+									label="Telefone"
 									placeholder="(00) 00000-0000"
 									value={editForm.phone}
 									onValueChange={(value) =>
 										setEditForm((prev) => ({ ...prev, phone: value }))
 									}
 									classNames={{
-										inputWrapper: "bg-slate-50 dark:bg-slate-700/50",
+										inputWrapper: "bg-default-100",
 									}}
 								/>
 								<Input
-									label="🏪 Nome da Loja"
+									label="Nome da Loja"
 									placeholder="Nome da loja (opcional)"
 									value={editForm.storeName}
 									onValueChange={(value) =>
 										setEditForm((prev) => ({ ...prev, storeName: value }))
 									}
 									classNames={{
-										inputWrapper: "bg-slate-50 dark:bg-slate-700/50",
+										inputWrapper: "bg-default-100",
 									}}
 								/>
 							</div>
@@ -887,9 +867,9 @@ export default function AdminUsersPage() {
 					isOpen={isQuickCreateOpen}
 					onClose={onQuickCreateClose}
 					classNames={{
-						base: "bg-white dark:bg-slate-800",
-						header: "border-b border-slate-200 dark:border-slate-700",
-						footer: "border-t border-slate-200 dark:border-slate-700",
+						base: "bg-background",
+						header: "border-b border-divider",
+						footer: "border-t border-divider",
 					}}
 				>
 					<ModalContent>
@@ -900,7 +880,7 @@ export default function AdminUsersPage() {
 								</div>
 								<div>
 									<h3 className="text-lg font-semibold">Novo Usuário Rápido</h3>
-									<p className="text-sm font-normal text-slate-500">
+									<p className="text-sm font-normal text-default-400">
 										Cadastro simplificado apenas com o nome
 									</p>
 								</div>
@@ -908,7 +888,7 @@ export default function AdminUsersPage() {
 						</ModalHeader>
 						<ModalBody className="py-6">
 							<Input
-								label="👤 Nome do Usuário"
+								label="Nome do Usuário"
 								placeholder="Digite o nome completo..."
 								value={quickUserName}
 								onValueChange={setQuickUserName}
@@ -920,11 +900,11 @@ export default function AdminUsersPage() {
 									}
 								}}
 								classNames={{
-									inputWrapper: "bg-slate-50 dark:bg-slate-700/50",
+									inputWrapper: "bg-default-100",
 								}}
 							/>
-							<div className="mt-2 rounded-lg bg-slate-100 dark:bg-slate-800 px-3 py-2">
-								<p className="text-xs text-slate-600 dark:text-slate-400 flex items-start gap-2">
+							<div className="mt-2 rounded-lg bg-default-100 px-3 py-2">
+								<p className="text-xs text-default-500 flex items-start gap-2">
 									<ExclamationTriangleIcon className="h-4 w-4 mt-0.5 flex-shrink-0" />
 									O usuário será criado com um email temporário que pode ser
 									atualizado depois através da edição.

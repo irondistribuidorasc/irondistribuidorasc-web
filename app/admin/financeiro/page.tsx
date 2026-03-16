@@ -127,10 +127,10 @@ function FinancialPageContent() {
 
 	if (status === "loading" || loading) {
 		return (
-			<div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-slate-50 via-white to-slate-100 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950">
+			<div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-content1 via-background to-default-100">
 				<div className="flex flex-col items-center gap-4">
 					<Spinner size="lg" />
-					<p className="text-sm text-slate-500 dark:text-slate-400">
+					<p className="text-sm text-default-400">
 						Carregando dados financeiros...
 					</p>
 				</div>
@@ -169,7 +169,7 @@ function FinancialPageContent() {
 	});
 
 	return (
-		<div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 print:!bg-white print:!bg-none print:!p-0 print:!m-0 print:!min-h-0">
+		<div className="min-h-screen bg-gradient-to-br from-content1 via-background to-default-100 print:!bg-white print:!bg-none print:!p-0 print:!m-0 print:!min-h-0">
 			{/* Print-specific styles */}
 			<style jsx global>{`
 				@media print {
@@ -196,7 +196,7 @@ function FinancialPageContent() {
 						as={Link}
 						href="/admin"
 						variant="light"
-						className="mb-6 -ml-2 text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 transition-colors"
+						className="mb-6 -ml-2 text-default-400 hover:text-default-600 transition-colors"
 					>
 						<ChevronLeftIcon className="mr-1 h-4 w-4" />
 						Voltar para Dashboard
@@ -205,11 +205,11 @@ function FinancialPageContent() {
 
 				{/* Header Card - Hidden on print */}
 				<Card className="mb-8 overflow-hidden border-0 shadow-xl print:hidden">
-					<div className="relative bg-gradient-to-r from-slate-50 via-white to-slate-100 dark:from-slate-700 dark:via-slate-800 dark:to-slate-700">
+					<div className="relative bg-gradient-to-r from-content1 via-background to-content1">
 						{/* Decorative elements */}
 						<div className="absolute inset-0 overflow-hidden">
 							<div className="absolute -top-10 -right-10 h-40 w-40 rounded-full bg-brand-500/10 blur-3xl dark:bg-white/5" />
-							<div className="absolute -bottom-10 -left-10 h-40 w-40 rounded-full bg-brand-600/10 blur-3xl dark:bg-slate-500/10" />
+							<div className="absolute -bottom-10 -left-10 h-40 w-40 rounded-full bg-brand-600/10 blur-3xl dark:bg-default-200/10" />
 						</div>
 
 						<div className="relative px-6 py-6 sm:px-8">
@@ -219,10 +219,10 @@ function FinancialPageContent() {
 										<BanknotesIcon className="h-7 w-7 text-white" />
 									</div>
 									<div>
-										<h1 className="text-2xl font-bold text-slate-900 dark:text-white sm:text-3xl">
+										<h1 className="text-2xl font-bold text-foreground sm:text-3xl">
 											Controle Financeiro
 										</h1>
-										<p className="mt-1 text-slate-600 dark:text-slate-300">
+										<p className="mt-1 text-default-500">
 											Resumo de vendas e fechamento de caixa
 										</p>
 									</div>
@@ -230,17 +230,17 @@ function FinancialPageContent() {
 
 								{/* Date Selector & Actions */}
 								<div className="flex flex-wrap items-center gap-3">
-									<div className="flex items-center gap-2 rounded-xl bg-slate-100/80 px-4 py-2.5 backdrop-blur-sm dark:bg-white/10">
-										<CalendarDaysIcon className="h-5 w-5 text-slate-700 dark:text-white" />
+									<div className="flex items-center gap-2 rounded-xl bg-default-100/80 px-4 py-2.5 backdrop-blur-sm">
+										<CalendarDaysIcon className="h-5 w-5 text-foreground" />
 										<input
 											type="date"
 											value={date}
 											onChange={handleDateChange}
-											className="bg-transparent text-slate-700 font-medium outline-none cursor-pointer [color-scheme:light] dark:text-white dark:[color-scheme:dark]"
+											className="bg-transparent text-default-600 font-medium outline-none cursor-pointer [color-scheme:light] dark:[color-scheme:dark]"
 										/>
 									</div>
 									<Button
-										className="bg-white text-slate-700 font-medium shadow-lg hover:bg-slate-50 hover:shadow-xl transition-all"
+										className="bg-background text-default-600 font-medium shadow-lg hover:bg-default-100 hover:shadow-xl transition-all"
 										startContent={<PrinterIcon className="h-5 w-5" />}
 										onPress={handlePrint}
 									>
@@ -250,7 +250,7 @@ function FinancialPageContent() {
 							</div>
 
 							{/* Date Display */}
-							<div className="mt-4 text-sm text-slate-500 dark:text-slate-400 capitalize">
+							<div className="mt-4 text-sm text-default-400 capitalize">
 								📅 {formattedDate}
 							</div>
 						</div>
@@ -382,17 +382,17 @@ function FinancialPageContent() {
 						</Card>
 
 						{/* Pix Card */}
-						<Card className="overflow-hidden border border-slate-200 shadow-sm bg-white dark:border-slate-800 dark:bg-slate-900 hover:shadow-md transition-all">
+						<Card className="overflow-hidden border border-divider shadow-sm bg-background hover:shadow-md transition-all">
 							<CardBody className="p-5">
 								<div className="flex items-center gap-3">
 									<div className="flex h-12 w-12 items-center justify-center rounded-xl bg-brand-500 shadow-lg shadow-brand-500/20">
 										<DevicePhoneMobileIcon className="h-6 w-6 text-white" />
 									</div>
 									<div>
-										<p className="text-sm font-medium text-slate-500 dark:text-slate-400">
+										<p className="text-sm font-medium text-default-400">
 											⚡ Pix
 										</p>
-										<p className="text-xl font-bold text-slate-900 dark:text-slate-100">
+										<p className="text-xl font-bold text-foreground">
 											{formatCurrency(summary.pix)}
 										</p>
 									</div>
@@ -401,17 +401,17 @@ function FinancialPageContent() {
 						</Card>
 
 						{/* Card Card */}
-						<Card className="overflow-hidden border border-slate-200 shadow-sm bg-white dark:border-slate-800 dark:bg-slate-900 hover:shadow-md transition-all">
+						<Card className="overflow-hidden border border-divider shadow-sm bg-background hover:shadow-md transition-all">
 							<CardBody className="p-5">
 								<div className="flex items-center gap-3">
 									<div className="flex h-12 w-12 items-center justify-center rounded-xl bg-brand-500 shadow-lg shadow-brand-500/20">
 										<CreditCardIcon className="h-6 w-6 text-white" />
 									</div>
 									<div>
-										<p className="text-sm font-medium text-slate-500 dark:text-slate-400">
+										<p className="text-sm font-medium text-default-400">
 											💳 Cartão
 										</p>
-										<p className="text-xl font-bold text-slate-900 dark:text-slate-100">
+										<p className="text-xl font-bold text-foreground">
 											{formatCurrency(summary.creditCard + summary.debitCard)}
 										</p>
 									</div>
@@ -420,14 +420,14 @@ function FinancialPageContent() {
 									<Chip
 										size="sm"
 										variant="flat"
-										className="bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300"
+										className="bg-default-100 text-default-600"
 									>
 										C: {formatCurrency(summary.creditCard)}
 									</Chip>
 									<Chip
 										size="sm"
 										variant="flat"
-										className="bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300"
+										className="bg-default-100 text-default-600"
 									>
 										D: {formatCurrency(summary.debitCard)}
 									</Chip>
@@ -436,17 +436,17 @@ function FinancialPageContent() {
 						</Card>
 
 						{/* Cash Card */}
-						<Card className="overflow-hidden border border-slate-200 shadow-sm bg-white dark:border-slate-800 dark:bg-slate-900 hover:shadow-md transition-all">
+						<Card className="overflow-hidden border border-divider shadow-sm bg-background hover:shadow-md transition-all">
 							<CardBody className="p-5">
 								<div className="flex items-center gap-3">
 									<div className="flex h-12 w-12 items-center justify-center rounded-xl bg-brand-500 shadow-lg shadow-brand-500/20">
 										<WalletIcon className="h-6 w-6 text-white" />
 									</div>
 									<div>
-										<p className="text-sm font-medium text-slate-500 dark:text-slate-400">
+										<p className="text-sm font-medium text-default-400">
 											💵 Dinheiro
 										</p>
-										<p className="text-xl font-bold text-slate-900 dark:text-slate-100">
+										<p className="text-xl font-bold text-foreground">
 											{formatCurrency(summary.cash)}
 										</p>
 									</div>
@@ -456,17 +456,17 @@ function FinancialPageContent() {
 					</div>
 
 					{/* Orders Table */}
-					<Card className="overflow-hidden border border-slate-200 shadow-sm bg-white dark:border-slate-800 dark:bg-slate-900">
-						<CardHeader className="border-b border-slate-200 px-6 py-4 dark:border-slate-700">
+					<Card className="overflow-hidden border border-divider shadow-sm bg-background">
+						<CardHeader className="border-b border-divider px-6 py-4">
 							<div className="flex items-center gap-3">
 								<div className="flex h-10 w-10 items-center justify-center rounded-xl bg-brand-500 shadow-lg shadow-brand-500/20">
 									<CurrencyDollarIcon className="h-5 w-5 text-white" />
 								</div>
 								<div>
-									<h2 className="text-lg font-semibold text-slate-900 dark:text-slate-100">
+									<h2 className="text-lg font-semibold text-foreground">
 										Transações do Dia
 									</h2>
-									<p className="text-xs text-slate-500 dark:text-slate-400">
+									<p className="text-xs text-default-400">
 										{orders.length} venda{orders.length !== 1 ? "s" : ""}{" "}
 										registrada{orders.length !== 1 ? "s" : ""}
 									</p>
@@ -476,13 +476,13 @@ function FinancialPageContent() {
 						<CardBody className="p-0">
 							{orders.length === 0 ? (
 								<div className="flex flex-col items-center justify-center py-16 text-center">
-									<div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-slate-100 dark:bg-slate-700">
-										<InboxIcon className="h-8 w-8 text-slate-400" />
+									<div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-default-100">
+										<InboxIcon className="h-8 w-8 text-default-400" />
 									</div>
-									<h3 className="text-lg font-semibold text-slate-700 dark:text-slate-300">
+									<h3 className="text-lg font-semibold text-default-600">
 										Nenhuma venda registrada
 									</h3>
-									<p className="mt-2 text-sm text-slate-500 dark:text-slate-400 max-w-md">
+									<p className="mt-2 text-sm text-default-400 max-w-md">
 										Não há transações para este dia. Selecione outra data para
 										visualizar.
 									</p>
@@ -490,7 +490,7 @@ function FinancialPageContent() {
 							) : (
 								<>
 									{/* Table Header */}
-									<div className="grid grid-cols-12 gap-4 border-b border-slate-200 bg-slate-50/80 px-6 py-3 text-xs font-semibold uppercase tracking-wider text-slate-500 dark:border-slate-700 dark:bg-slate-800/80 dark:text-slate-400">
+									<div className="grid grid-cols-12 gap-4 border-b border-divider bg-default-100/80 px-6 py-3 text-xs font-semibold uppercase tracking-wider text-default-400">
 										<div className="col-span-2 flex items-center gap-1">
 											<HashtagIcon className="h-3.5 w-3.5" />
 											Pedido
@@ -514,29 +514,29 @@ function FinancialPageContent() {
 									</div>
 
 									{/* Table Body */}
-									<div className="divide-y divide-slate-100 dark:divide-slate-700">
+									<div className="divide-y divide-divider">
 										{orders.map((order) => (
 											<div
 												key={order.id}
-												className="group grid grid-cols-12 gap-4 px-6 py-4 transition-colors hover:bg-slate-50/50 dark:hover:bg-slate-700/30"
+												className="group grid grid-cols-12 gap-4 px-6 py-4 transition-colors hover:bg-default-100/50"
 											>
 												{/* Pedido */}
 												<div className="col-span-2 flex items-center">
-													<span className="font-mono text-sm font-medium text-slate-700 dark:text-slate-300">
+													<span className="font-mono text-sm font-medium text-default-600">
 														#{order.orderNumber}
 													</span>
 												</div>
 
 												{/* Cliente */}
 												<div className="col-span-3 flex items-center">
-													<span className="text-sm text-slate-600 dark:text-slate-400 truncate">
+													<span className="text-sm text-default-500 truncate">
 														{order.customerName}
 													</span>
 												</div>
 
 												{/* Horário */}
 												<div className="col-span-2 flex items-center">
-													<span className="text-sm text-slate-500 dark:text-slate-400">
+													<span className="text-sm text-default-400">
 														{new Date(order.createdAt).toLocaleTimeString(
 															"pt-BR",
 															{
@@ -553,7 +553,7 @@ function FinancialPageContent() {
 													<Chip
 														size="sm"
 														variant="flat"
-														className="bg-slate-100 dark:bg-slate-700"
+														className="bg-default-100"
 													>
 														{getPaymentMethodEmoji(order.paymentMethod)}{" "}
 														{getPaymentMethodLabel(order.paymentMethod)}
@@ -571,11 +571,11 @@ function FinancialPageContent() {
 									</div>
 
 									{/* Total Footer */}
-									<div className="border-t border-slate-200 bg-slate-50 px-6 py-4 dark:border-slate-700 dark:bg-slate-800/50">
+									<div className="border-t border-divider bg-default-100 px-6 py-4">
 										<div className="flex items-center justify-between">
 											<div className="flex items-center gap-2">
 												<BanknotesIcon className="h-5 w-5 text-brand-600 dark:text-brand-400" />
-												<span className="font-semibold text-slate-700 dark:text-slate-300">
+												<span className="font-semibold text-default-600">
 													Total do Dia
 												</span>
 											</div>
@@ -598,10 +598,10 @@ export default function FinancialPage() {
 	return (
 		<Suspense
 			fallback={
-				<div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-slate-50 via-white to-slate-100 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950">
+				<div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-content1 via-background to-default-100">
 					<div className="flex flex-col items-center gap-4">
 						<Spinner size="lg" />
-						<p className="text-sm text-slate-500 dark:text-slate-400">
+						<p className="text-sm text-default-400">
 							Carregando...
 						</p>
 					</div>

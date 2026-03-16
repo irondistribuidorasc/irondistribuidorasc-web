@@ -2,6 +2,7 @@
 
 import {
 	BoltIcon,
+	BuildingStorefrontIcon,
 	CheckBadgeIcon,
 	ClipboardDocumentListIcon,
 	MapPinIcon,
@@ -41,6 +42,7 @@ import {
 	searchProducts,
 	searchUsers,
 } from "@/app/actions/admin-order-creation";
+import { logger } from "@/src/lib/logger";
 import { maskCEP, maskUF } from "@/src/lib/masks";
 import { formatCurrency } from "@/src/lib/utils";
 
@@ -131,7 +133,7 @@ export function NewOrderForm() {
 				setRecentUsers(usersData);
 				setPopularProducts(productsData);
 			} catch (error) {
-				console.error("Erro ao carregar dados iniciais:", error);
+				logger.error("Erro ao carregar dados iniciais", { error });
 			}
 		};
 		loadInitialData();
@@ -374,17 +376,17 @@ export function NewOrderForm() {
 			{/* Left Column: Customer & Products */}
 			<div className="lg:col-span-2 space-y-6">
 				{/* Customer Selection */}
-				<Card className="border border-slate-200 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-900">
-					<CardHeader className="px-6 py-5 border-b border-slate-200/50 dark:border-slate-700/50">
+				<Card className="border border-divider bg-background shadow-sm">
+					<CardHeader className="px-6 py-5 border-b border-divider">
 						<div className="flex items-center gap-3">
 							<div className="flex h-10 w-10 items-center justify-center rounded-xl bg-brand-500 shadow-lg shadow-brand-500/20">
 								<UserCircleIcon className="h-5 w-5 text-white" />
 							</div>
 							<div>
-								<h2 className="text-lg font-semibold text-slate-800 dark:text-slate-100">
+								<h2 className="text-lg font-semibold text-foreground">
 									Selecionar Cliente
 								</h2>
-								<p className="text-xs text-slate-500 dark:text-slate-400">
+								<p className="text-xs text-default-400">
 									Busque ou crie um novo cliente
 								</p>
 							</div>
@@ -393,7 +395,7 @@ export function NewOrderForm() {
 									variant="flat"
 									size="sm"
 									startContent={<CheckCircleIcon className="h-3.5 w-3.5" />}
-									className="ml-auto bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300"
+									className="ml-auto bg-default-100 text-default-600"
 								>
 									Selecionado
 								</Chip>
@@ -460,8 +462,9 @@ export function NewOrderForm() {
 												{user.email}
 											</span>
 											{user.storeName && (
-												<span className="text-xs text-default-400">
-													🏪 {user.storeName}
+												<span className="inline-flex items-center gap-1 text-xs text-default-400">
+													<BuildingStorefrontIcon className="h-3.5 w-3.5" aria-hidden="true" />
+													{user.storeName}
 												</span>
 											)}
 										</div>
@@ -472,15 +475,15 @@ export function NewOrderForm() {
 
 						{/* Botão de criar cliente rápido sempre visível */}
 						{!selectedUser && (
-							<div className="mt-4 flex items-center gap-3 rounded-xl border border-dashed border-slate-300 bg-slate-50/50 p-4 dark:border-slate-600 dark:bg-slate-800/30">
-								<div className="flex h-10 w-10 items-center justify-center rounded-lg bg-slate-100 dark:bg-slate-800">
-									<UserPlusIcon className="h-5 w-5 text-slate-600 dark:text-slate-400" />
+							<div className="mt-4 flex items-center gap-3 rounded-xl border border-dashed border-divider bg-content1 p-4">
+								<div className="flex h-10 w-10 items-center justify-center rounded-lg bg-default-100">
+									<UserPlusIcon className="h-5 w-5 text-default-500" />
 								</div>
 								<div className="flex-1">
-									<p className="text-sm font-medium text-slate-700 dark:text-slate-300">
+									<p className="text-sm font-medium text-default-600">
 										Criar cliente rápido
 									</p>
-									<p className="text-xs text-slate-500">
+									<p className="text-xs text-default-400">
 										{userSearch.length < 2
 											? "Digite o nome acima"
 											: `Criar "${userSearch}"`}
@@ -499,7 +502,7 @@ export function NewOrderForm() {
 						)}
 
 						{selectedUser && (
-							<div className="mt-4 overflow-hidden rounded-xl border border-slate-200 bg-slate-50 dark:border-slate-700 dark:bg-slate-800/50">
+							<div className="mt-4 overflow-hidden rounded-xl border border-divider bg-content1">
 								<div className="flex items-center gap-4 p-4">
 									<Avatar
 										name={selectedUser.name
@@ -511,16 +514,17 @@ export function NewOrderForm() {
 										className="bg-brand-500 text-white text-lg font-semibold"
 									/>
 									<div className="flex-1 min-w-0">
-										<h4 className="font-semibold text-slate-800 dark:text-slate-100 truncate">
+										<h4 className="font-semibold text-foreground truncate">
 											{selectedUser.name}
 										</h4>
-										<p className="text-sm text-slate-500 dark:text-slate-400 truncate">
+										<p className="text-sm text-default-400 truncate">
 											{selectedUser.email}
 										</p>
 										{selectedUser.storeName && (
-											<p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+											<p className="text-xs text-default-400 mt-1">
 												<span className="inline-flex items-center gap-1">
-													🏪 {selectedUser.storeName}
+													<BuildingStorefrontIcon className="h-3.5 w-3.5" aria-hidden="true" />
+													{selectedUser.storeName}
 												</span>
 											</p>
 										)}
@@ -530,7 +534,8 @@ export function NewOrderForm() {
 										variant="light"
 										size="sm"
 										onPress={() => setSelectedUser(null)}
-										className="text-slate-400 hover:text-brand-500"
+										className="text-default-400 hover:text-brand-500"
+										aria-label="Remover cliente selecionado"
 									>
 										<XMarkIcon className="h-5 w-5" />
 									</Button>
@@ -542,18 +547,18 @@ export function NewOrderForm() {
 
 				{/* Address Section */}
 				<Card
-					className={`border border-slate-200 bg-white shadow-sm transition-all duration-300 dark:border-slate-800 dark:bg-slate-900 ${!selectedUser ? "opacity-50 pointer-events-none" : ""}`}
+					className={`border border-divider bg-background shadow-sm transition-all duration-300 ${!selectedUser ? "opacity-50 pointer-events-none" : ""}`}
 				>
-					<CardHeader className="px-6 py-5 border-b border-slate-200/50 dark:border-slate-700/50">
+					<CardHeader className="px-6 py-5 border-b border-divider">
 						<div className="flex items-center gap-3">
-							<div className="flex h-10 w-10 items-center justify-center rounded-xl bg-slate-100 dark:bg-slate-700">
-								<MapPinIcon className="h-5 w-5 text-slate-600 dark:text-slate-400" />
+							<div className="flex h-10 w-10 items-center justify-center rounded-xl bg-default-100">
+								<MapPinIcon className="h-5 w-5 text-default-500" />
 							</div>
 							<div className="flex-1">
-								<h2 className="text-lg font-semibold text-slate-800 dark:text-slate-100">
+								<h2 className="text-lg font-semibold text-foreground">
 									Endereço de Entrega
 								</h2>
-								<p className="text-xs text-slate-500 dark:text-slate-400">
+								<p className="text-xs text-default-400">
 									Salvo automaticamente no perfil do cliente
 								</p>
 							</div>
@@ -576,8 +581,7 @@ export function NewOrderForm() {
 							value={addressLine1}
 							onValueChange={setAddressLine1}
 							classNames={{
-								inputWrapper:
-									"border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800",
+								inputWrapper: "border-divider bg-background",
 							}}
 							onKeyDown={(e) => {
 								if (e.key === " ") {
@@ -591,8 +595,7 @@ export function NewOrderForm() {
 							value={addressLine2}
 							onValueChange={setAddressLine2}
 							classNames={{
-								inputWrapper:
-									"border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800",
+								inputWrapper: "border-divider bg-background",
 							}}
 							onKeyDown={(e) => {
 								if (e.key === " ") {
@@ -607,8 +610,7 @@ export function NewOrderForm() {
 								value={city}
 								onValueChange={setCity}
 								classNames={{
-									inputWrapper:
-										"border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800",
+									inputWrapper: "border-divider bg-background",
 								}}
 								onKeyDown={(e) => {
 									if (e.key === " ") {
@@ -623,8 +625,7 @@ export function NewOrderForm() {
 								onValueChange={(value) => setState(maskUF(value))}
 								maxLength={2}
 								classNames={{
-									inputWrapper:
-										"border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800",
+									inputWrapper: "border-divider bg-background",
 								}}
 							/>
 						</div>
@@ -634,8 +635,7 @@ export function NewOrderForm() {
 							value={postalCode}
 							onValueChange={(value) => setPostalCode(maskCEP(value))}
 							classNames={{
-								inputWrapper:
-									"border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800",
+								inputWrapper: "border-divider bg-background",
 							}}
 						/>
 					</CardBody>
@@ -643,18 +643,18 @@ export function NewOrderForm() {
 
 				{/* Product Selection */}
 				<Card
-					className={`border border-slate-200 bg-white shadow-sm transition-all duration-300 dark:border-slate-800 dark:bg-slate-900 ${!selectedUser ? "opacity-50 pointer-events-none" : ""}`}
+					className={`border border-divider bg-background shadow-sm transition-all duration-300 ${!selectedUser ? "opacity-50 pointer-events-none" : ""}`}
 				>
-					<CardHeader className="px-6 py-5 border-b border-slate-200/50 dark:border-slate-700/50">
+					<CardHeader className="px-6 py-5 border-b border-divider">
 						<div className="flex items-center gap-3">
 							<div className="flex h-10 w-10 items-center justify-center rounded-xl bg-brand-500 shadow-lg shadow-brand-500/20">
 								<ShoppingCartIcon className="h-5 w-5 text-white" />
 							</div>
 							<div>
-								<h2 className="text-lg font-semibold text-slate-800 dark:text-slate-100">
+								<h2 className="text-lg font-semibold text-foreground">
 									Adicionar Produtos
 								</h2>
-								<p className="text-xs text-slate-500 dark:text-slate-400">
+								<p className="text-xs text-default-400">
 									Busque e adicione itens ao pedido
 								</p>
 							</div>
@@ -708,7 +708,7 @@ export function NewOrderForm() {
 												className={
 													product.stockQuantity <= 5
 														? "bg-warning-100 text-warning-700 dark:bg-warning-900/30 dark:text-warning-400"
-														: "bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400"
+														: "bg-default-100 text-default-500"
 												}
 											>
 												{product.stockQuantity} un
@@ -716,7 +716,7 @@ export function NewOrderForm() {
 											<Chip
 												variant="flat"
 												size="sm"
-												className="font-semibold bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300"
+												className="font-semibold bg-default-100 text-default-600"
 											>
 												{formatCurrency(product.price)}
 											</Chip>
@@ -732,15 +732,15 @@ export function NewOrderForm() {
 								{cart.map((item, index) => (
 									<div
 										key={item.id}
-										className="group flex items-center gap-4 rounded-xl border border-slate-200 bg-white p-4 shadow-sm transition-all hover:shadow-md dark:border-slate-700 dark:bg-slate-800/50"
+										className="group flex items-center gap-4 rounded-xl border border-divider bg-background p-4 shadow-sm transition-all hover:shadow-md"
 										style={{ animationDelay: `${index * 50}ms` }}
 									>
 										{/* Product Info */}
 										<div className="flex-1 min-w-0">
-											<h4 className="font-medium text-slate-800 dark:text-slate-100 truncate">
+											<h4 className="font-medium text-foreground truncate">
 												{item.name}
 											</h4>
-											<p className="text-xs text-slate-500 dark:text-slate-400">
+											<p className="text-xs text-default-400">
 												{item.code}
 											</p>
 											<div className="flex items-center gap-2 mt-1">
@@ -753,7 +753,7 @@ export function NewOrderForm() {
 															? "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400"
 															: item.stockQuantity <= 5
 																? "bg-warning-100 text-warning-700 dark:bg-warning-900/30 dark:text-warning-400"
-																: "bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400"
+																: "bg-default-100 text-default-500"
 													}`}
 												>
 													Estoque: {item.stockQuantity}
@@ -762,7 +762,7 @@ export function NewOrderForm() {
 										</div>
 
 										{/* Quantity Controls */}
-										<div className="flex items-center gap-1 rounded-lg bg-slate-100 p-1 dark:bg-slate-700/50">
+										<div className="flex items-center gap-1 rounded-lg bg-default-100 p-1">
 											<Button
 												isIconOnly
 												size="sm"
@@ -770,6 +770,7 @@ export function NewOrderForm() {
 												onPress={() => updateQuantity(item.id, -1)}
 												isDisabled={item.quantity <= 1}
 												className="h-8 w-8 min-w-8"
+												aria-label="Diminuir quantidade"
 											>
 												<MinusIcon className="w-4 h-4" />
 											</Button>
@@ -785,7 +786,7 @@ export function NewOrderForm() {
 													base: "w-12",
 													input: "text-center font-semibold",
 													inputWrapper:
-														"h-8 min-h-8 bg-white dark:bg-slate-800 shadow-sm",
+														"h-8 min-h-8 bg-background shadow-sm",
 												}}
 												size="sm"
 											/>
@@ -796,6 +797,7 @@ export function NewOrderForm() {
 												onPress={() => updateQuantity(item.id, 1)}
 												isDisabled={item.quantity >= item.stockQuantity}
 												className="h-8 w-8 min-w-8"
+												aria-label="Aumentar quantidade"
 											>
 												<PlusIcon className="w-4 h-4" />
 											</Button>
@@ -803,10 +805,10 @@ export function NewOrderForm() {
 
 										{/* Total */}
 										<div className="text-right min-w-[100px]">
-											<p className="text-xs text-slate-500 dark:text-slate-400">
+											<p className="text-xs text-default-400">
 												Total
 											</p>
-											<p className="text-lg font-bold text-slate-800 dark:text-slate-100">
+											<p className="text-lg font-bold text-foreground">
 												{formatCurrency(item.price * item.quantity)}
 											</p>
 										</div>
@@ -818,7 +820,8 @@ export function NewOrderForm() {
 												size="sm"
 												variant="light"
 												onPress={() => removeProduct(item.id)}
-												className="text-slate-400 hover:text-brand-500 opacity-0 group-hover:opacity-100 transition-opacity"
+												className="text-default-400 hover:text-brand-500 opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 sm:max-md:opacity-100 transition-opacity"
+												aria-label="Remover item"
 											>
 												<TrashIcon className="w-5 h-5" />
 											</Button>
@@ -830,12 +833,12 @@ export function NewOrderForm() {
 
 						{/* Empty State */}
 						{cart.length === 0 && selectedUser && (
-							<div className="mt-6 rounded-xl border-2 border-dashed border-slate-200 bg-slate-50/50 p-8 text-center dark:border-slate-700 dark:bg-slate-800/30">
-								<ShoppingCartIcon className="mx-auto h-12 w-12 text-slate-300 dark:text-slate-600" />
-								<p className="mt-3 text-sm text-slate-500 dark:text-slate-400">
+							<div className="mt-6 rounded-xl border-2 border-dashed border-divider bg-content1 p-8 text-center">
+								<ShoppingCartIcon className="mx-auto h-12 w-12 text-default-300" />
+								<p className="mt-3 text-sm text-default-400">
 									Nenhum produto adicionado
 								</p>
-								<p className="text-xs text-slate-400">
+								<p className="text-xs text-default-400">
 									Busque produtos acima para adicionar ao pedido
 								</p>
 							</div>
@@ -846,17 +849,17 @@ export function NewOrderForm() {
 
 			{/* Right Column: Order Summary */}
 			<div className="space-y-6">
-				<Card className="sticky top-6 border border-slate-200 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-900">
-					<CardHeader className="px-6 py-5 border-b border-slate-200/50 dark:border-slate-700/50">
+				<Card className="sticky top-6 border border-divider bg-background shadow-sm">
+					<CardHeader className="px-6 py-5 border-b border-divider">
 						<div className="flex items-center gap-3">
 							<div className="flex h-10 w-10 items-center justify-center rounded-xl bg-brand-500 shadow-lg shadow-brand-500/20">
 								<ClipboardDocumentListIcon className="h-5 w-5 text-white" />
 							</div>
 							<div>
-								<h2 className="text-lg font-semibold text-slate-800 dark:text-slate-100">
+								<h2 className="text-lg font-semibold text-foreground">
 									Resumo do Pedido
 								</h2>
-								<p className="text-xs text-slate-500 dark:text-slate-400">
+								<p className="text-xs text-default-400">
 									Configure os detalhes
 								</p>
 							</div>
@@ -870,7 +873,7 @@ export function NewOrderForm() {
 								value={createdAt}
 								onValueChange={setCreatedAt}
 								classNames={{
-									inputWrapper: "bg-white dark:bg-slate-800 shadow-sm",
+									inputWrapper: "bg-background shadow-sm",
 								}}
 							/>
 
@@ -879,23 +882,23 @@ export function NewOrderForm() {
 								selectedKeys={[status]}
 								onChange={(e) => setStatus(e.target.value)}
 								classNames={{
-									trigger: "bg-white dark:bg-slate-800 shadow-sm",
+									trigger: "bg-background shadow-sm",
 								}}
 							>
 								<SelectItem key="PENDING" value="PENDING">
-									⏳ Pendente
+									Pendente
 								</SelectItem>
 								<SelectItem key="CONFIRMED" value="CONFIRMED">
-									✅ Confirmado
+									Confirmado
 								</SelectItem>
 								<SelectItem key="PROCESSING" value="PROCESSING">
-									🔄 Processando
+									Processando
 								</SelectItem>
 								<SelectItem key="SHIPPED" value="SHIPPED">
-									📦 Enviado
+									Enviado
 								</SelectItem>
 								<SelectItem key="DELIVERED" value="DELIVERED">
-									🎉 Entregue
+									Entregue
 								</SelectItem>
 							</Select>
 
@@ -904,23 +907,23 @@ export function NewOrderForm() {
 								selectedKeys={[paymentMethod]}
 								onChange={(e) => setPaymentMethod(e.target.value)}
 								classNames={{
-									trigger: "bg-white dark:bg-slate-800 shadow-sm",
+									trigger: "bg-background shadow-sm",
 								}}
 							>
 								<SelectItem key="PIX" value="PIX">
-									📱 PIX
+									PIX
 								</SelectItem>
 								<SelectItem key="CREDIT_CARD" value="CREDIT_CARD">
-									💳 Cartão de Crédito
+									Cartão de Crédito
 								</SelectItem>
 								<SelectItem key="DEBIT_CARD" value="DEBIT_CARD">
-									💳 Cartão de Débito
+									Cartão de Débito
 								</SelectItem>
 								<SelectItem key="CASH" value="CASH">
-									💵 Dinheiro
+									Dinheiro
 								</SelectItem>
 								<SelectItem key="OTHER" value="OTHER">
-									📋 Outro
+									Outro
 								</SelectItem>
 							</Select>
 
@@ -930,7 +933,7 @@ export function NewOrderForm() {
 								value={notes}
 								onValueChange={setNotes}
 								classNames={{
-									inputWrapper: "bg-white dark:bg-slate-800 shadow-sm",
+									inputWrapper: "bg-background shadow-sm",
 								}}
 							/>
 						</div>
@@ -940,7 +943,7 @@ export function NewOrderForm() {
 						{/* Order Summary Stats */}
 						<div className="space-y-3">
 							<div className="flex justify-between text-sm">
-								<span className="text-slate-500 dark:text-slate-400">
+								<span className="text-default-400">
 									Itens no pedido
 								</span>
 								<span className="font-medium">
@@ -948,7 +951,7 @@ export function NewOrderForm() {
 								</span>
 							</div>
 							<div className="flex justify-between text-sm">
-								<span className="text-slate-500 dark:text-slate-400">
+								<span className="text-default-400">
 									Produtos diferentes
 								</span>
 								<span className="font-medium">{cart.length}</span>
@@ -990,7 +993,7 @@ export function NewOrderForm() {
 								className={`w-full font-semibold text-white shadow-lg transition-all ${
 									canSubmit
 										? "bg-gradient-to-r from-brand-500 to-brand-600 shadow-brand-500/25 hover:shadow-brand-500/40 hover:scale-[1.02]"
-										: "bg-slate-300 dark:bg-slate-700"
+										: "bg-default-300"
 								}`}
 								isLoading={loading}
 								onPress={handleSubmit}
@@ -1002,7 +1005,7 @@ export function NewOrderForm() {
 						</Tooltip>
 
 						{/* Keyboard Hint */}
-						<p className="text-center text-xs text-slate-400">
+						<p className="text-center text-xs text-default-400">
 							Pressione{" "}
 							<Kbd
 								keys={isMac ? ["command"] : ["ctrl"]}

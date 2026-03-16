@@ -1,4 +1,6 @@
 import type { Product } from "@/src/data/products";
+import { Button } from "@heroui/react";
+import Link from "next/link";
 import { ProductCard } from "./ProductCard";
 
 type ProductGridProps = {
@@ -13,7 +15,7 @@ export function ProductGrid({ products, isLoading = false }: ProductGridProps) {
         {Array.from({ length: 8 }).map((_, i) => (
           <div
             key={i}
-            className="h-96 animate-pulse rounded-lg bg-slate-200 dark:bg-slate-700"
+            className="h-96 animate-pulse rounded-lg bg-default-200"
             aria-label="Carregando produto"
           />
         ))}
@@ -23,9 +25,9 @@ export function ProductGrid({ products, isLoading = false }: ProductGridProps) {
 
   if (products.length === 0) {
     return (
-      <div className="flex min-h-[400px] flex-col items-center justify-center gap-4 rounded-lg border-2 border-dashed border-slate-300 bg-slate-50 p-8 text-center dark:border-slate-600 dark:bg-slate-800">
+      <div className="flex min-h-[400px] flex-col items-center justify-center gap-4 rounded-lg border-2 border-dashed border-default-300 bg-content1 p-8 text-center">
         <svg
-          className="h-16 w-16 text-slate-400 dark:text-slate-500"
+          className="h-16 w-16 text-default-400"
           fill="none"
           viewBox="0 0 24 24"
           stroke="currentColor"
@@ -39,13 +41,21 @@ export function ProductGrid({ products, isLoading = false }: ProductGridProps) {
           />
         </svg>
         <div className="space-y-2">
-          <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100">
+          <h3 className="text-lg font-semibold text-foreground">
             Nenhum produto encontrado
           </h3>
-          <p className="text-sm text-slate-600 dark:text-slate-400">
+          <p className="text-sm text-default-500">
             Tente ajustar os filtros ou realizar uma nova busca.
           </p>
         </div>
+        <Button
+          as={Link}
+          href="/produtos"
+          variant="bordered"
+          className="border-divider font-medium text-foreground"
+        >
+          Ver todos os produtos
+        </Button>
       </div>
     );
   }

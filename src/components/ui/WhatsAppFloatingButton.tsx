@@ -27,8 +27,8 @@ export function WhatsAppFloatingButton({
       isIconOnly
       aria-label="Atendimento via WhatsApp"
       className={clsx(
-        "fixed bottom-5 right-5 z-40 h-14 w-14 rounded-full bg-[#25D366] !text-white shadow-lg shadow-[#25D366]/40",
-        "hover:bg-[#128C7E] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#25D366] focus-visible:ring-offset-2",
+        "fixed bottom-5 right-5 z-40 h-14 w-14 rounded-full bg-[#25D366] !text-white shadow-lg shadow-[#25D366]/40 transition-all duration-200",
+        "hover:bg-[#128C7E] hover:scale-105 hover:shadow-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#25D366] focus-visible:ring-offset-2",
         className
       )}
     >

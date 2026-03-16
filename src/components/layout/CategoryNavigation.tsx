@@ -12,50 +12,50 @@ export function CategoryNavigation() {
     <nav className="flex gap-8">
       <Link
         href="/produtos"
-        className={`text-sm font-medium transition ${
+        className={`border-b-2 pb-1 text-sm font-medium transition-colors ${
           pathname === "/produtos" && !currentCategory
-            ? "text-brand-600 dark:text-brand-400"
-            : "text-slate-700 hover:text-brand-600 dark:text-slate-300 dark:hover:text-brand-400"
+            ? "border-brand-600 text-brand-600 dark:border-brand-400 dark:text-brand-400"
+            : "border-transparent text-default-600 hover:text-brand-600 dark:hover:text-brand-400"
         }`}
       >
         Todos Produtos
       </Link>
       <Link
         href="/produtos?category=display"
-        className={`text-sm font-medium transition ${
+        className={`border-b-2 pb-1 text-sm font-medium transition-colors ${
           currentCategory === "display"
-            ? "text-brand-600 dark:text-brand-400"
-            : "text-slate-700 hover:text-brand-600 dark:text-slate-300 dark:hover:text-brand-400"
+            ? "border-brand-600 text-brand-600 dark:border-brand-400 dark:text-brand-400"
+            : "border-transparent text-default-600 hover:text-brand-600 dark:hover:text-brand-400"
         }`}
       >
         Display
       </Link>
       <Link
         href="/produtos?category=battery"
-        className={`text-sm font-medium transition ${
+        className={`border-b-2 pb-1 text-sm font-medium transition-colors ${
           currentCategory === "battery"
-            ? "text-brand-600 dark:text-brand-400"
-            : "text-slate-700 hover:text-brand-600 dark:text-slate-300 dark:hover:text-brand-400"
+            ? "border-brand-600 text-brand-600 dark:border-brand-400 dark:text-brand-400"
+            : "border-transparent text-default-600 hover:text-brand-600 dark:hover:text-brand-400"
         }`}
       >
         Bateria
       </Link>
       <Link
         href="/produtos?category=charging_board"
-        className={`text-sm font-medium transition ${
+        className={`border-b-2 pb-1 text-sm font-medium transition-colors ${
           currentCategory === "charging_board"
-            ? "text-brand-600 dark:text-brand-400"
-            : "text-slate-700 hover:text-brand-600 dark:text-slate-300 dark:hover:text-brand-400"
+            ? "border-brand-600 text-brand-600 dark:border-brand-400 dark:text-brand-400"
+            : "border-transparent text-default-600 hover:text-brand-600 dark:hover:text-brand-400"
         }`}
       >
         Placa de Carga
       </Link>
       <Link
         href="/produtos?category=back_cover"
-        className={`text-sm font-medium transition ${
+        className={`border-b-2 pb-1 text-sm font-medium transition-colors ${
           currentCategory === "back_cover"
-            ? "text-brand-600 dark:text-brand-400"
-            : "text-slate-700 hover:text-brand-600 dark:text-slate-300 dark:hover:text-brand-400"
+            ? "border-brand-600 text-brand-600 dark:border-brand-400 dark:text-brand-400"
+            : "border-transparent text-default-600 hover:text-brand-600 dark:hover:text-brand-400"
         }`}
       >
         Tampa Traseira

@@ -58,9 +58,9 @@ export default function ProductCatalog({
   );
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-900">
+    <div className="min-h-screen bg-content1">
       {/* Header */}
-      <div className="border-b border-slate-200 bg-white dark:border-slate-700 dark:bg-slate-800">
+      <div className="border-b border-divider bg-background">
         <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
           {/* Breadcrumb */}
           <nav className="mb-4 flex text-sm" aria-label="Breadcrumb">
@@ -68,14 +68,14 @@ export default function ProductCatalog({
               <li>
                 <Link
                   href="/"
-                  className="text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200"
+                  className="text-default-400 transition-colors hover:text-default-600"
                 >
                   Início
                 </Link>
               </li>
               <li>
                 <svg
-                  className="h-4 w-4 text-slate-400"
+                  className="h-4 w-4 text-default-400"
                   fill="currentColor"
                   viewBox="0 0 20 20"
                   aria-hidden="true"
@@ -84,7 +84,7 @@ export default function ProductCatalog({
                 </svg>
               </li>
               <li>
-                <span className="font-medium text-slate-900 dark:text-slate-100">
+                <span className="font-medium text-foreground">
                   Produtos
                 </span>
               </li>
@@ -93,10 +93,10 @@ export default function ProductCatalog({
 
           {/* Título e descrição */}
           <div className="space-y-2">
-            <h1 className="text-3xl font-bold text-slate-900 dark:text-slate-100 md:text-4xl">
+            <h1 className="text-3xl font-bold text-foreground md:text-4xl">
               Nossos Produtos
             </h1>
-            <p className="text-base text-slate-600 dark:text-slate-400">
+            <p className="text-base text-default-500">
               Peças de celular de qualidade para sua assistência técnica.
               Adicione ao carrinho e finalize seu pedido via WhatsApp.
             </p>
@@ -126,7 +126,7 @@ export default function ProductCatalog({
           <div className="flex-1">
             {/* Header com ordenação */}
             <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-              <p className="text-sm text-slate-600 dark:text-slate-400">
+              <p className="text-sm text-default-500">
                 Mostrando{" "}
                 <span className="font-semibold">
                   {paginatedProducts.length}
@@ -137,7 +137,7 @@ export default function ProductCatalog({
               <div className="flex items-center gap-2">
                 <label
                   htmlFor="sort"
-                  className="text-sm font-medium text-slate-700 dark:text-slate-300"
+                  className="text-sm font-medium text-default-600"
                 >
                   Ordenar por:
                 </label>
@@ -149,7 +149,7 @@ export default function ProductCatalog({
                   title={
                     !isAuthenticated ? "Faça login para ordenar" : undefined
                   }
-                  className="rounded-lg border-slate-200 bg-white py-2 pl-3 pr-2 text-sm font-medium text-slate-900 focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500 disabled:cursor-not-allowed disabled:opacity-50 dark:border-slate-700 dark:bg-slate-800 dark:text-white"
+                  className="rounded-lg border-divider bg-background py-2 pl-3 pr-2 text-sm font-medium text-foreground focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500 disabled:cursor-not-allowed disabled:opacity-50"
                 >
                   <option value="relevance">Mais Relevância</option>
                   <option value="price_desc">Valor mais alto</option>

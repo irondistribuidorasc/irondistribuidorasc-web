@@ -4,7 +4,9 @@ import {
   type SearchResult,
   searchProducts,
 } from "@/app/actions/search-products";
+import { logger } from "@/src/lib/logger";
 import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
+import { Input } from "@heroui/react";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
@@ -58,7 +60,7 @@ function SearchInput() {
         setResults(products);
         setIsOpen(true);
       } catch (error) {
-        console.error("Error fetching search results:", error);
+        logger.error("Error fetching search results:", { error });
       } finally {
         setIsLoading(false);
       }
@@ -88,7 +90,7 @@ function SearchInput() {
   const renderDropdownContent = () => {
     if (isLoading) {
       return (
-        <div className="p-4 text-center text-slate-500 dark:text-slate-400 text-sm">
+        <div className="p-4 text-center text-default-400 text-sm">
           Buscando...
         </div>
       );
@@ -96,7 +98,7 @@ function SearchInput() {
 
     if (results.length === 0) {
       return (
-        <div className="p-4 text-center text-slate-500 dark:text-slate-400 text-sm">
+        <div className="p-4 text-center text-default-400 text-sm">
           Nenhum produto encontrado.
         </div>
       );
@@ -107,14 +109,14 @@ function SearchInput() {
         {results.map((product) => (
           <li
             key={product.id}
-            className="border-b border-slate-100 dark:border-slate-700 last:border-0"
+            className="border-b border-divider last:border-0"
           >
             <Link
               href={`/produtos/${product.id}`}
               onClick={() => setIsOpen(false)}
-              className="flex items-center gap-3 p-3 hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors"
+              className="flex items-center gap-3 p-3 hover:bg-default-100 transition-colors"
             >
-              <div className="h-10 w-10 flex-shrink-0 relative bg-slate-100 dark:bg-slate-700 rounded-md overflow-hidden">
+              <div className="h-10 w-10 flex-shrink-0 relative bg-default-100 rounded-md overflow-hidden">
                 {product.imageUrl ? (
                   <Image
                     src={product.imageUrl}
@@ -130,10 +132,10 @@ function SearchInput() {
                 )}
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium text-slate-900 dark:text-slate-100 truncate">
+                <p className="text-sm font-medium text-foreground truncate">
                   {product.name}
                 </p>
-                <div className="flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400">
+                <div className="flex items-center gap-2 text-xs text-default-400">
                   <span>{product.brand}</span>
                   {status === "authenticated" && session?.user?.approved && (
                     <>
@@ -148,7 +150,7 @@ function SearchInput() {
             </Link>
           </li>
         ))}
-        <li className="p-2 bg-slate-50 dark:bg-slate-800/50 text-center">
+        <li className="p-2 bg-default-100 text-center">
           <button
             type="button"
             onClick={(e) => handleSearch(e)}
@@ -164,32 +166,41 @@ function SearchInput() {
   return (
     <div className="w-full md:max-w-lg relative" ref={containerRef}>
       <form onSubmit={handleSearch} className="w-full">
-        <div className="relative">
-          <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+        <Input
+          type="search"
+          placeholder="Buscar produtos..."
+          value={query}
+          onValueChange={(value) => {
+            setQuery(value);
+            if (!isOpen && value.length >= 2) setIsOpen(true);
+          }}
+          onFocus={() => {
+            if (query.length >= 2 && results.length > 0) setIsOpen(true);
+          }}
+          onClear={() => {
+            setQuery("");
+            setResults([]);
+            setIsOpen(false);
+          }}
+          isClearable
+          variant="bordered"
+          radius="full"
+          size="sm"
+          startContent={
             <MagnifyingGlassIcon
-              className="h-5 w-5 text-slate-400"
+              className="h-4 w-4 text-default-400"
               aria-hidden="true"
             />
-          </div>
-          <input
-            type="search"
-            className="block w-full rounded-full border border-slate-300 bg-slate-50 py-2 pl-10 pr-4 text-sm text-slate-900 placeholder-slate-500 focus:border-brand-500 focus:bg-white focus:outline-none focus:ring-1 focus:ring-brand-500 dark:border-slate-600 dark:bg-slate-800 dark:text-white dark:placeholder-slate-400 dark:focus:border-brand-400 dark:focus:ring-brand-400 sm:text-sm"
-            placeholder="Buscar produtos..."
-            value={query}
-            onChange={(e) => {
-              setQuery(e.target.value);
-              if (!isOpen && e.target.value.length >= 2) setIsOpen(true);
-            }}
-            onFocus={() => {
-              if (query.length >= 2 && results.length > 0) setIsOpen(true);
-            }}
-          />
-        </div>
+          }
+          classNames={{
+            inputWrapper: "border-default-300 focus-within:border-brand-500 focus-within:ring-1 focus-within:ring-brand-500",
+          }}
+        />
       </form>
 
       {/* Autocomplete Dropdown */}
       {isOpen && (
-        <div className="absolute top-full left-0 right-0 mt-2 bg-white dark:bg-slate-800 rounded-xl shadow-xl border border-slate-200 dark:border-slate-700 overflow-hidden z-50">
+        <div className="absolute top-full left-0 right-0 mt-2 bg-content1 rounded-xl shadow-xl border border-divider overflow-hidden z-50">
           {renderDropdownContent()}
         </div>
       )}

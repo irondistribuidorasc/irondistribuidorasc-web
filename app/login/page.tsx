@@ -6,6 +6,7 @@ import {
 	CardBody,
 	Checkbox,
 	Input,
+	Skeleton,
 	Tab,
 	Tabs,
 } from "@heroui/react";
@@ -29,7 +30,8 @@ function LoginPageContent() {
 	const { data: session, status } = useSession();
 	const router = useRouter();
 	const searchParams = useSearchParams();
-	const callbackUrl = searchParams.get("callbackUrl") ?? "/";
+	const rawCallback = searchParams.get("callbackUrl") ?? "/";
+	const callbackUrl = rawCallback.startsWith("/") ? rawCallback : "/";
 	const [activeTab, setActiveTab] = useState<string | number>(
 		searchParams.get("tab") === "register" ? "register" : "login",
 	);
@@ -152,21 +154,21 @@ function LoginPageContent() {
 
 	if (isAuthenticated) {
 		return (
-			<section className="flex min-h-[calc(100vh-120px)] items-center justify-center bg-white px-4 py-16 dark:bg-slate-900">
-				<Card className="w-full max-w-md border border-slate-200 dark:border-slate-800">
+			<section className="flex min-h-[calc(100vh-120px)] items-center justify-center bg-gradient-to-b from-background to-content1 px-4 py-16">
+				<Card className="w-full max-w-md border border-divider">
 					<CardBody className="space-y-6 text-center">
 						<div className="space-y-2">
 							<p className="text-sm uppercase tracking-[0.3em] text-brand-600">
 								Já conectado
 							</p>
-							<h1 className="text-2xl font-semibold text-slate-900 dark:text-slate-100">
+							<h1 className="text-2xl font-semibold text-foreground">
 								Olá, {session.user?.name ?? session.user?.email}
 							</h1>
-							<p className="text-sm text-slate-600 dark:text-slate-400">
+							<p className="text-sm text-default-500">
 								Você já pode finalizar seu pedido ou atualizar seus dados.
 							</p>
 						</div>
-						<div className="flex flex-col gap-3">
+						<div className="flex flex-col gap-4">
 							<Button
 								as={Link}
 								href="/pedido"
@@ -190,17 +192,17 @@ function LoginPageContent() {
 	}
 
 	return (
-		<section className="flex min-h-[calc(100vh-120px)] items-center justify-center bg-white px-4 py-16 dark:bg-slate-900">
-			<Card className="w-full max-w-xl border border-slate-200 shadow-xl dark:border-slate-800 dark:bg-slate-900">
+		<section className="flex min-h-[calc(100vh-120px)] items-center justify-center bg-gradient-to-b from-background to-content1 px-4 py-16">
+			<Card className="w-full max-w-xl border border-divider shadow-xl">
 				<CardBody className="space-y-8">
-					<div className="space-y-3 text-center">
+					<div className="space-y-4 text-center">
 						<p className="text-xs uppercase tracking-[0.3em] text-brand-600">
 							Acesso rápido
 						</p>
-						<h1 className="text-3xl font-semibold text-slate-900 dark:text-slate-100">
+						<h1 className="text-3xl font-semibold text-foreground">
 							Entrar ou criar conta
 						</h1>
-						<p className="text-sm text-slate-600 dark:text-slate-400">
+						<p className="text-sm text-default-500">
 							Use o Google para preencher tudo automaticamente ou faça um
 							cadastro rápido.
 						</p>
@@ -222,10 +224,10 @@ function LoginPageContent() {
 						>
 							Continuar com Google
 						</Button>
-						<div className="flex items-center gap-3 text-xs uppercase tracking-[0.3em] text-slate-400">
-							<span className="h-px flex-1 bg-slate-200 dark:bg-slate-700" />
+						<div className="flex items-center gap-4 text-xs uppercase tracking-[0.3em] text-default-400">
+							<span className="h-px flex-1 bg-divider" />
 							<span>ou</span>
-							<span className="h-px flex-1 bg-slate-200 dark:bg-slate-700" />
+							<span className="h-px flex-1 bg-divider" />
 						</div>
 					</div>
 
@@ -262,7 +264,7 @@ function LoginPageContent() {
 								<div className="flex justify-end">
 									<Link
 										href="/recuperar-senha"
-										className="text-sm text-brand-600 hover:underline dark:text-brand-400"
+										className="text-sm text-brand-600 transition-colors hover:underline dark:text-brand-400"
 									>
 										Esqueceu a senha?
 									</Link>
@@ -357,14 +359,14 @@ function LoginPageContent() {
 										isInvalid={!!registerErrors.acceptedTerms}
 										size="sm"
 										classNames={{
-											label: "text-sm text-slate-600 dark:text-slate-400",
+											label: "text-sm text-default-500",
 										}}
 									>
 										Li e aceito os{" "}
 										<Link
 											href="/termos-de-uso"
 											target="_blank"
-											className="text-brand-600 hover:underline dark:text-brand-400"
+											className="text-brand-600 transition-colors hover:underline dark:text-brand-400"
 										>
 											Termos de Uso
 										</Link>{" "}
@@ -372,7 +374,7 @@ function LoginPageContent() {
 										<Link
 											href="/politica-de-privacidade"
 											target="_blank"
-											className="text-brand-600 hover:underline dark:text-brand-400"
+											className="text-brand-600 transition-colors hover:underline dark:text-brand-400"
 										>
 											Política de Privacidade
 										</Link>
@@ -404,12 +406,25 @@ export default function LoginPage() {
 	return (
 		<Suspense
 			fallback={
-				<section className="flex min-h-[calc(100vh-120px)] items-center justify-center bg-gradient-to-b from-brand-50 to-white px-4 py-16 dark:from-slate-900 dark:to-slate-950">
-					<Card className="w-full max-w-md border border-slate-200 dark:border-slate-800">
-						<CardBody className="space-y-6 text-center">
-							<p className="text-slate-600 dark:text-slate-400">
-								Carregando...
-							</p>
+				<section className="flex min-h-[calc(100vh-120px)] items-center justify-center bg-gradient-to-b from-brand-50 to-background px-4 py-16">
+					<Card className="w-full max-w-md border border-divider">
+						<CardBody className="space-y-6 p-8">
+							<div className="space-y-4 text-center">
+								<Skeleton className="mx-auto h-4 w-24 rounded-lg" />
+								<Skeleton className="mx-auto h-8 w-48 rounded-lg" />
+								<Skeleton className="mx-auto h-4 w-64 rounded-lg" />
+							</div>
+							<Skeleton className="h-12 w-full rounded-lg" />
+							<div className="flex items-center gap-4">
+								<Skeleton className="h-px flex-1 rounded" />
+								<Skeleton className="h-4 w-8 rounded" />
+								<Skeleton className="h-px flex-1 rounded" />
+							</div>
+							<div className="space-y-4">
+								<Skeleton className="h-12 w-full rounded-lg" />
+								<Skeleton className="h-12 w-full rounded-lg" />
+								<Skeleton className="h-12 w-full rounded-lg" />
+							</div>
 						</CardBody>
 					</Card>
 				</section>

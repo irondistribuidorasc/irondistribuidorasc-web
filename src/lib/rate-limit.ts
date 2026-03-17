@@ -144,14 +144,29 @@ export async function checkRateLimit(
     return null;
   }
 
-  const result = await limiter.limit(identifier);
+  try {
+    const result = await limiter.limit(identifier);
 
-  return {
-    success: result.success,
-    limit: result.limit,
-    remaining: result.remaining,
-    reset: result.reset,
-  };
+    return {
+      success: result.success,
+      limit: result.limit,
+      remaining: result.remaining,
+      reset: result.reset,
+    };
+  } catch (error) {
+    const masked = maskIdentifier(identifier);
+    logger.error("rate-limit - Erro ao verificar rate limit no Redis", {
+      type,
+      identifier: masked,
+      error: error instanceof Error ? error.message : String(error),
+    });
+
+    if (CRITICAL_TYPES.has(type)) {
+      return inMemoryRateLimit(identifier, type);
+    }
+
+    return null;
+  }
 }
 
 /**

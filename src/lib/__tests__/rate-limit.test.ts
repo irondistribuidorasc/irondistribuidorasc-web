@@ -183,6 +183,77 @@ describe("RateLimitError", () => {
   });
 });
 
+describe("Redis disponível mas com erro de rede", () => {
+  beforeEach(() => {
+    vi.resetModules();
+    vi.clearAllMocks();
+
+    vi.doMock("../redis", () => ({
+      redis: { ping: vi.fn() },
+      isRedisAvailable: vi.fn(() => true),
+    }));
+
+    vi.doMock("@upstash/ratelimit", () => ({
+      Ratelimit: class MockRatelimit {
+        limit = vi.fn().mockRejectedValue(new Error("Network error"));
+        static slidingWindow = vi.fn().mockReturnValue("sliding-window");
+      },
+    }));
+  });
+
+  afterEach(() => {
+    vi.doUnmock("../redis");
+    vi.doUnmock("@upstash/ratelimit");
+    vi.restoreAllMocks();
+  });
+
+  it("tipo api (não-crítico) - retorna null (fail-open)", async () => {
+    const { checkRateLimit } = await import("../rate-limit");
+
+    const result = await checkRateLimit("192.168.1.1", "api");
+
+    expect(result).toBeNull();
+  });
+
+  it("tipo auth (crítico) - retorna resultado in-memory (fail-closed)", async () => {
+    const { checkRateLimit } = await import("../rate-limit");
+
+    const result = await checkRateLimit("test@example.com", "auth");
+
+    expect(result).not.toBeNull();
+    expect(result!.success).toBe(true);
+    expect(result!.limit).toBe(5);
+  });
+
+  it("loga erro com mensagem e contexto corretos", async () => {
+    const { logger } = await import("@/src/lib/logger");
+    const { checkRateLimit } = await import("../rate-limit");
+
+    await checkRateLimit("192.168.1.1", "api");
+
+    expect(logger.error).toHaveBeenCalledWith(
+      expect.stringContaining("Erro ao verificar rate limit no Redis"),
+      expect.objectContaining({
+        type: "api",
+        identifier: "192.168.1.1",
+        error: "Network error",
+      })
+    );
+  });
+
+  it("mascara email no log de erro de rede", async () => {
+    const { logger } = await import("@/src/lib/logger");
+    const { checkRateLimit } = await import("../rate-limit");
+
+    await checkRateLimit("user@example.com", "auth");
+
+    expect(logger.error).toHaveBeenCalledWith(
+      expect.any(String),
+      expect.objectContaining({ identifier: "us***@example.com" })
+    );
+  });
+});
+
 describe("produção com Redis indisponível", () => {
   beforeEach(() => {
     vi.stubEnv("NODE_ENV", "production");

@@ -3,23 +3,24 @@ import { logger } from "@/src/lib/logger";
 import { db } from "@/src/lib/prisma";
 import { getClientIP, withRateLimit } from "@/src/lib/rate-limit";
 import { productSchema } from "@/src/lib/schemas";
+import { Prisma } from "@prisma/client";
 import { NextResponse } from "next/server";
 
 export async function PUT(
   request: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  const session = await auth();
-
-  if (!session || session.user?.role !== "ADMIN") {
-    return NextResponse.json({ error: "Não autorizado" }, { status: 403 });
-  }
-
-  const clientIP = getClientIP(request);
-  const rateLimitResponse = await withRateLimit(clientIP, "api");
-  if (rateLimitResponse) return rateLimitResponse;
-
   try {
+    const session = await auth();
+
+    if (!session || session.user?.role !== "ADMIN") {
+      return NextResponse.json({ error: "Não autorizado" }, { status: 403 });
+    }
+
+    const clientIP = getClientIP(request);
+    const rateLimitResponse = await withRateLimit(clientIP, "api");
+    if (rateLimitResponse) return rateLimitResponse;
+
     const body = await request.json();
     const { id } = await params;
 
@@ -54,6 +55,19 @@ export async function PUT(
 
     return NextResponse.json(product);
   } catch (error: unknown) {
+    if (
+      error instanceof Prisma.PrismaClientKnownRequestError &&
+      error.code === "P2002"
+    ) {
+      logger.warn("admin/products/[id]:PUT - Conflito de código duplicado", {
+        error: error.message,
+      });
+      return NextResponse.json(
+        { error: "Já existe um produto com este código" },
+        { status: 409 }
+      );
+    }
+
     logger.error("admin/products/[id]:PUT - Erro ao atualizar produto", {
       error: error instanceof Error ? error.message : String(error),
     });
@@ -68,17 +82,17 @@ export async function DELETE(
   request: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  const session = await auth();
-
-  if (!session || session.user?.role !== "ADMIN") {
-    return NextResponse.json({ error: "Não autorizado" }, { status: 403 });
-  }
-
-  const clientIP = getClientIP(request);
-  const rateLimitResponse = await withRateLimit(clientIP, "sensitiveAction");
-  if (rateLimitResponse) return rateLimitResponse;
-
   try {
+    const session = await auth();
+
+    if (!session || session.user?.role !== "ADMIN") {
+      return NextResponse.json({ error: "Não autorizado" }, { status: 403 });
+    }
+
+    const clientIP = getClientIP(request);
+    const rateLimitResponse = await withRateLimit(clientIP, "sensitiveAction");
+    if (rateLimitResponse) return rateLimitResponse;
+
     const { id } = await params;
 
     await db.product.delete({

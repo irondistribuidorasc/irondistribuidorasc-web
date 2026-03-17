@@ -25,17 +25,17 @@ interface CsvProductRow {
 }
 
 export async function POST(request: Request) {
-  const session = await auth();
-
-  if (!session || session.user?.role !== "ADMIN") {
-    return NextResponse.json({ error: "Não autorizado" }, { status: 403 });
-  }
-
-  const clientIP = getClientIP(request);
-  const rateLimitResponse = await withRateLimit(clientIP, "sensitiveAction");
-  if (rateLimitResponse) return rateLimitResponse;
-
   try {
+    const session = await auth();
+
+    if (!session || session.user?.role !== "ADMIN") {
+      return NextResponse.json({ error: "Não autorizado" }, { status: 403 });
+    }
+
+    const clientIP = getClientIP(request);
+    const rateLimitResponse = await withRateLimit(clientIP, "sensitiveAction");
+    if (rateLimitResponse) return rateLimitResponse;
+
     const formData = await request.formData();
     const file = formData.get("file") as File;
 

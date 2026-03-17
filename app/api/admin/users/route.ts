@@ -5,28 +5,26 @@ import { Prisma } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(request: NextRequest) {
-  const session = await auth();
-
-  // Verificar se é admin
-  if (session?.user?.role !== "ADMIN") {
-    return NextResponse.json({ error: "Não autorizado" }, { status: 403 });
-  }
-
-  const { searchParams } = new URL(request.url);
-  const status = searchParams.get("status") || "all";
-  const page = parseInt(searchParams.get("page") || "1");
-  const limit = Math.min(parseInt(searchParams.get("limit") || "20"), 100);
-  const search = searchParams.get("search") || "";
-  const ALLOWED_ORDER_FIELDS = ["createdAt", "name", "email", "approved", "role", "storeName"] as const;
-  const rawOrderBy = searchParams.get("orderBy") || "createdAt";
-  const orderBy = ALLOWED_ORDER_FIELDS.includes(rawOrderBy as typeof ALLOWED_ORDER_FIELDS[number])
-    ? rawOrderBy
-    : "createdAt";
-  const order = searchParams.get("order") === "asc" ? "asc" : "desc";
-
-  const skip = (page - 1) * limit;
-
   try {
+    const session = await auth();
+
+    if (session?.user?.role !== "ADMIN") {
+      return NextResponse.json({ error: "Não autorizado" }, { status: 403 });
+    }
+
+    const { searchParams } = new URL(request.url);
+    const status = searchParams.get("status") || "all";
+    const page = parseInt(searchParams.get("page") || "1");
+    const limit = Math.min(parseInt(searchParams.get("limit") || "20"), 100);
+    const search = searchParams.get("search") || "";
+    const ALLOWED_ORDER_FIELDS = ["createdAt", "name", "email", "approved", "role", "storeName"] as const;
+    const rawOrderBy = searchParams.get("orderBy") || "createdAt";
+    const orderBy = ALLOWED_ORDER_FIELDS.includes(rawOrderBy as typeof ALLOWED_ORDER_FIELDS[number])
+      ? rawOrderBy
+      : "createdAt";
+    const order = searchParams.get("order") === "asc" ? "asc" : "desc";
+
+    const skip = (page - 1) * limit;
     // Construir filtro base
     const whereConditions: Prisma.UserWhereInput = {};
 
@@ -97,14 +95,13 @@ export async function GET(request: NextRequest) {
 }
 
 export async function PATCH(request: NextRequest) {
-  const session = await auth();
-
-  // Verificar se é admin
-  if (session?.user?.role !== "ADMIN") {
-    return NextResponse.json({ error: "Não autorizado" }, { status: 403 });
-  }
-
   try {
+    const session = await auth();
+
+    if (session?.user?.role !== "ADMIN") {
+      return NextResponse.json({ error: "Não autorizado" }, { status: 403 });
+    }
+
     const body = await request.json();
     const { userId, approved } = body;
 
@@ -151,14 +148,13 @@ export async function PATCH(request: NextRequest) {
 }
 
 export async function PUT(request: NextRequest) {
-  const session = await auth();
-
-  // Verificar se é admin
-  if (session?.user?.role !== "ADMIN") {
-    return NextResponse.json({ error: "Não autorizado" }, { status: 403 });
-  }
-
   try {
+    const session = await auth();
+
+    if (session?.user?.role !== "ADMIN") {
+      return NextResponse.json({ error: "Não autorizado" }, { status: 403 });
+    }
+
     const body = await request.json();
     const { userId, name, email, phone, storeName } = body;
 

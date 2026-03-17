@@ -7,17 +7,17 @@ import type { Prisma } from "@prisma/client";
 import { NextResponse } from "next/server";
 
 export async function PATCH(request: Request) {
-  const session = await auth();
-
-  if (!session || session.user?.role !== "ADMIN") {
-    return NextResponse.json({ error: "Não autorizado" }, { status: 403 });
-  }
-
-  const clientIP = getClientIP(request);
-  const rateLimitResponse = await withRateLimit(clientIP, "api");
-  if (rateLimitResponse) return rateLimitResponse;
-
   try {
+    const session = await auth();
+
+    if (!session || session.user?.role !== "ADMIN") {
+      return NextResponse.json({ error: "Não autorizado" }, { status: 403 });
+    }
+
+    const clientIP = getClientIP(request);
+    const rateLimitResponse = await withRateLimit(clientIP, "api");
+    if (rateLimitResponse) return rateLimitResponse;
+
     const body = await request.json();
     const parsed = bulkUpdateSchema.safeParse(body);
 

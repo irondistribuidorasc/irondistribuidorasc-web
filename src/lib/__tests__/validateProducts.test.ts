@@ -250,7 +250,7 @@ describe("validateProducts", () => {
 	});
 
 	it("aceita todas as brands válidas", () => {
-		const brands = ["Samsung", "Xiaomi", "Motorola", "iPhone", "LG", "Nokia", "Zenfone"] as const;
+		const brands = ["Samsung", "Xiaomi", "Motorola", "iPhone", "LG", "Nokia", "Zenfone", "Infinix", "Realme"] as const;
 		const products = brands.map((brand, i) =>
 			makeValidProduct({ id: `p${i}`, brand }),
 		);

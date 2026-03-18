@@ -1,4 +1,4 @@
-export type Brand = "Samsung" | "Xiaomi" | "Motorola" | "iPhone" | "LG" | "Nokia" | "Zenfone";
+export type Brand = "Samsung" | "Xiaomi" | "Motorola" | "iPhone" | "LG" | "Nokia" | "Zenfone" | "Infinix" | "Realme";
 
 export type Category = "display" | "battery" | "charging_board" | "back_cover";
 
@@ -26,6 +26,8 @@ export const brandOptions: Array<{ key: Brand; label: Brand }> = [
   { key: "LG", label: "LG" },
   { key: "Nokia", label: "Nokia" },
   { key: "Zenfone", label: "Zenfone" },
+  { key: "Infinix", label: "Infinix" },
+  { key: "Realme", label: "Realme" },
 ];
 
 export const categoryOptions: Array<{

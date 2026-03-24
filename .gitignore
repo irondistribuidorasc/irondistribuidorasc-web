@@ -45,5 +45,6 @@ next-env.d.ts
 backup-storage/
 supabase/.temp/
 
-# cursor
-.cursor/
+# cursor — versionar rules, skills, agents e settings; ignorar apenas local/prompts
+.cursor/mcp.json
+.cursor/prompts/

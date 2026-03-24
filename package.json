@@ -2,6 +2,9 @@
 	"name": "irondistribuidorasc",
 	"version": "0.1.0",
 	"private": true,
+	"engines": {
+		"node": ">=20"
+	},
 	"pnpm": {
 		"overrides": {
 			"tmp": ">=0.2.4"

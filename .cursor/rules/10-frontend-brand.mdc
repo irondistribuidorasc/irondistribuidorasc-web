@@ -1,0 +1,17 @@
+---
+description: UI, Brand Book, HeroUI e acessibilidade
+globs:
+  - "**/*.tsx"
+alwaysApply: false
+---
+
+# Frontend e marca
+
+- **Obrigatório:** Ler `docs/Brand_Book_Iron.md` antes de UI nova ou refino visual.
+- **Componentes:** `@heroui/react` + Tailwind; fonte **Inter**; espaçamento em múltiplos de **4px**.
+- **Cores:** usar tokens do projeto / Brand Book; evitar hex soltos sem alinhamento à paleta.
+- **Acessibilidade:** contraste mínimo, alvos de toque adequados, labels e estados focáveis quando aplicável.
+
+## Skill de design
+
+- Detalhes e anti-patterns: `.cursor/skills/frontend-design/SKILL.md` e `checklists.md`.

@@ -1,0 +1,19 @@
+---
+description: API Routes, Server Actions, auth, validação e respostas
+globs:
+  - "app/api/**/*.ts"
+  - "app/actions/**/*.ts"
+alwaysApply: false
+---
+
+# API e autenticação
+
+- **Validação de entrada:** Zod (schemas em `src/lib/schemas.ts` e `src/lib/schemas/`).
+- **Sessão:** `getServerSession` / padrões do projeto em `src/lib/auth.ts`; rotas **admin** exigem `role === "ADMIN"`.
+- **Checkout / aprovação:** alinhar com `middleware.ts` (ex.: usuário não aprovado não deve concluir fluxos sensíveis).
+- **Respostas JSON:** formato consistente do projeto; **não** expor stack traces ou detalhes internos ao cliente.
+- **Rate limit:** usar utilitários existentes (`src/lib/rate-limit.ts`) quando aplicável a endpoints públicos.
+
+## Checklist
+
+- Skill: `.cursor/skills/api-route-checklist/SKILL.md`.

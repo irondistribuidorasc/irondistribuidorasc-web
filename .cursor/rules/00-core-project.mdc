@@ -1,0 +1,31 @@
+---
+description: Invariantes globais do repositório (stack, comandos, env, qualidade)
+alwaysApply: true
+---
+
+# Core do projeto
+
+- **Package manager:** `pnpm` (lockfile: `pnpm-lock.yaml`).
+- **Stack:** Next.js 16 (App Router), React 19, TypeScript strict, alias `@/*` (`tsconfig.json`).
+- **Dev server:** `pnpm dev` → http://localhost:3001 (não 3000).
+
+## Comandos oficiais
+
+| Comando | Uso |
+|--------|-----|
+| `pnpm dev` | Desenvolvimento |
+| `pnpm build` | Build + typecheck (antes de PR) |
+| `pnpm start` | Smoke pós-build |
+| `pnpm lint` | ESLint |
+| `pnpm test` / `pnpm test:run` | Vitest |
+| `pnpm test:coverage` | Cobertura (mín. 90% em áreas cobertas) |
+
+## Segredos e env
+
+- Não commitar nem editar `.env*`, `.env.local` em mudanças de feature sem necessidade explícita.
+- Variáveis necessárias: documentar no PR quando adicionar novas.
+
+## Antes de declarar trabalho concluído
+
+- Rodar `pnpm lint` e `pnpm build` quando a mudança afetar build ou tipos.
+- Para alterações em código coberto por testes: `pnpm test:run` ou `pnpm test:coverage` conforme o hook do repositório.

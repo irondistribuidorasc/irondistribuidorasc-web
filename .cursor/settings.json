@@ -1,0 +1,25 @@
+{
+  "plugins": {
+    "supabase": {
+      "enabled": true
+    },
+    "cursor-team-kit": {
+      "enabled": true
+    },
+    "context7-plugin": {
+      "enabled": true
+    },
+    "superpowers": {
+      "enabled": true
+    },
+    "functions": {
+      "enabled": true
+    },
+    "prisma": {
+      "enabled": true
+    },
+    "redis-development": {
+      "enabled": true
+    }
+  }
+}

@@ -1,0 +1,20 @@
+---
+description: Middleware NextAuth, rotas públicas e CSP/headers
+globs:
+  - "middleware.ts"
+  - "next.config.ts"
+alwaysApply: false
+---
+
+# Middleware e segurança HTTP
+
+## middleware.ts
+
+- Ao adicionar **rota pública** ou exceção de auth, atualizar `publicPaths` e a lógica em `callbacks.authorized` de forma consistente.
+- Rotas `/admin`: exigem `role === "ADMIN"` (já aplicado no middleware).
+- Fluxos de checkout: alinhar com redirecionamento para `/conta-pendente` quando `approved === false`.
+
+## next.config.ts
+
+- **CSP** e `connect-src` / `img-src` / domínios de terceiros: ao integrar analytics, mapas ou APIs novas, atualizar a política e `images.remotePatterns` se necessário.
+- Manter headers de segurança alinhados ao que já existe (frame, CSP, HSTS em produção).

@@ -1,0 +1,13 @@
+---
+description: Prisma, schema e migrations
+globs:
+  - "prisma/**/*"
+alwaysApply: false
+---
+
+# Prisma e dados
+
+- **Schema:** `prisma/schema.prisma`; cliente em `src/lib/prisma.ts`.
+- **Env:** `DATABASE_URL` e `DIRECT_URL` (quando exigido pelo deploy) — nunca commitar valores reais.
+- **Migrations:** alterações de schema via `prisma migrate` no fluxo acordado pelo time; não editar histórico de migrations já aplicadas em produção sem coordenação.
+- **Seed:** `prisma/seed.ts` via script em `package.json` (`pnpm` + `prisma db seed`).

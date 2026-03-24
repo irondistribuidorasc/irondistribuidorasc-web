@@ -1,40 +1,63 @@
 # Repository Guidelines
 
-## Visual Identity & Brand Guidelines
-**OBRIGATÓRIO:** Antes de implementar qualquer componente visual, estilo ou elemento de UI, consulte o arquivo `docs/Brand_Book_Iron.md`. Este documento define a identidade visual completa do projeto, incluindo:
+Contrato curto para humanos e assistentes. Detalhes operacionais: [`.cursor/rules/`](.cursor/rules/).
 
-- **Cores:** Paleta brand (vermelho `#DC0714`) e sistema dual Light/Dark
-- **Tipografia:** Inter como fonte principal com hierarquia de pesos
-- **Espaçamento:** Grid baseado em múltiplos de 4px
-- **Componentes:** Padrões de botões, cards, badges e estados
-- **Tom de voz:** Comunicação direta e profissional
-- **Animações:** Micro-interações permitidas (blob, float, shimmer)
-- **Acessibilidade:** Contraste mínimo e tamanhos de toque
+## Identidade visual
 
-Qualquer implementação que desvie dessas diretrizes deve ser justificada e aprovada. O Brand Book é a fonte de verdade para decisões visuais.
+**Obrigatório:** Antes de UI nova ou alteração visual, consultar [`docs/Brand_Book_Iron.md`](docs/Brand_Book_Iron.md). Qualidade estética e padrões de componentes: [`.cursor/skills/frontend-design/SKILL.md`](.cursor/skills/frontend-design/SKILL.md).
 
-### Qualidade Estética (Frontend Design)
-Para diretrizes de qualidade estética e design thinking, consulte `.cursor/skills/frontend-design/SKILL.md`. Este skill define:
+## Stack
 
-- **O que é fixo:** Cores, fonte (Inter), tokens, espaçamento, componentes HeroUI e tom de voz — sempre seguir o Brand Book.
-- **O que é livre:** Layouts, composição espacial, animações, gradientes, efeitos visuais e decorações — criatividade encorajada dentro da identidade da marca.
-- **Anti-patterns:** Lista de padrões genéricos a evitar (fundos planos, hex hardcoded, sombras uniformes, etc.).
-- **Checklists:** Exemplos comparativos de design genérico vs. design alinhado ao Brand Book em `.cursor/skills/frontend-design/checklists.md`.
+| Área | Tecnologia |
+|------|------------|
+| Framework | Next.js 16 (App Router), React 19 |
+| Linguagem | TypeScript (strict) |
+| UI | Tailwind CSS, HeroUI (`@heroui/react`), Inter |
+| Dados | PostgreSQL, Prisma 6 |
+| Auth | NextAuth.js 4 |
+| Testes | Vitest, React Testing Library |
+| Imports | Alias `@/*` ([`tsconfig.json`](tsconfig.json)) |
 
-## Project Structure & Module Organization
-The app router lives in `app/`, with `app/page.tsx` as the primary screen and `app/layout.tsx` providing shared metadata and shell components. Global theming and Tailwind tokens are centralized in `app/globals.css`; prefer colocated component styles only when a pattern cannot be expressed with utilities. Static assets (logos, favicons, mock data) belong in `public/` to benefit from Next.js static routing. Cross-cutting configuration is split across `next.config.ts`, `tsconfig.json`, `eslint.config.mjs`, and `postcss.config.mjs`, so update those files together when introducing new tooling. Use the `@/*` path alias from `tsconfig.json` for shared modules to avoid brittle relative imports.
+## Comandos
 
-## Build, Test, and Development Commands
-Use pnpm to stay in sync with the committed lockfile. `pnpm dev` launches the Next.js dev server at http://localhost:3000 with hot reload. `pnpm build` performs the production build and type checks; run it before raising a pull request. `pnpm start` serves the compiled output for production smoke tests. `pnpm lint` runs the Next.js ESLint preset and should be clean before pushing. `pnpm test` runs unit tests with Vitest. `pnpm test:coverage` runs tests with coverage report (minimum 90% required).
+| Comando | Descrição |
+|---------|-----------|
+| `pnpm dev` | Dev server em http://localhost:3001 |
+| `pnpm build` | Build de produção + typecheck |
+| `pnpm start` | Servidor após build |
+| `pnpm lint` | ESLint |
+| `pnpm test` | Vitest (watch) |
+| `pnpm test:run` | Vitest uma execução |
+| `pnpm test:coverage` | Cobertura (mín. 90% nas áreas configuradas) |
 
-## Coding Style & Naming Conventions
-Write components in TypeScript with functional React patterns and strict typing (see `tsconfig.json`). Keep indentation at two spaces and favor concise, declarative JSX. Exported components use `PascalCase`, hooks and utilities use `camelCase`, and incidental files mirror their default export (`app/components/Hero.tsx`). Compose Tailwind classes from layout to modifiers (`flex items-center gap-4 bg-slate-900 text-white`) and reuse design tokens defined in `globals.css`. Commit only formatters or linters that are enforced by the repo; otherwise match the existing style to minimize churn.
+## Onde ler mais
 
-## Testing Guidelines
-The project uses **Vitest** with **React Testing Library** for unit and integration tests. Tests are located in `src/**/__tests__/` directories. Run `pnpm test` for watch mode or `pnpm test:run` for a single run. Coverage is enforced at 90% minimum for statements, branches, functions, and lines. A **pre-push hook** runs `pnpm test:coverage` automatically to prevent broken code from being pushed. Place colocated specs as `<component>.test.tsx` or group shared suites under `__tests__/`. Keep assertions focused on user-visible behavior.
+| Recurso | Conteúdo |
+|---------|----------|
+| [`.cursor/rules/`](.cursor/rules/) | Regras por domínio (brand, API, Prisma, testes, middleware/CSP) |
+| [`.cursor/skills/`](.cursor/skills/) | Workflows (design, reviews, checklist de API) |
+| [`.cursor/agents/`](.cursor/agents/) | Personas (frontend, backend, code-reviewer) |
+| [`docs/authentication.md`](docs/authentication.md) | Autenticação e fluxos |
+| [`docs/ai/assistants.md`](docs/ai/assistants.md) | Uso de assistentes no projeto |
 
-## Commit & Pull Request Guidelines
-The current history only includes the initial scaffold, so establish clear precedent now: use short, imperative commit subjects (`Add hero section layout`) and optional body bullets for context. Separate unrelated changes into distinct commits to simplify reviews. Pull requests should include: a succinct summary, linked issue or task ID, screenshots for UI work, a test plan describing manual or automated checks, and callouts for risky migrations. Mention reviewers when configuration files, build tooling, or shared layouts change so the impact is well understood.
+## Estrutura principal
 
-## Environment & Configuration Tips
-Secrets and runtime configuration belong in `.env.local`, which is gitignored by default; document any required variables in the pull request. When adding new packages, prefer lightweight, ESM-friendly libraries compatible with Next 16. Keep bundle size in mind—use dynamic imports for rarely used components and audit `pnpm build` warnings before merging.
+- `app/` — rotas App Router, `app/api/` — API routes
+- `src/components/` — componentes React
+- `src/lib/` — auth, Prisma, utilitários, schemas
+- `prisma/` — schema e migrations
+- `public/` — assets estáticos
+
+## Estilo e testes
+
+- Componentes funcionais, JSX conciso, dois espaços de indentação.
+- Testes em `src/**/__tests__/` ou `*.test.ts(x)` / `*.spec.ts(x)`; assertions focadas em comportamento visível.
+- Pre-push: `pnpm test:coverage` (Husky).
+
+## Commits e PRs
+
+Assuntos curtos no imperativo; PRs com resumo, issue vinculada, screenshots se UI, plano de testes, menção a riscos em migrations ou tooling compartilhado.
+
+## Ambiente
+
+Segredos em `.env.local` (gitignored). Novas variáveis: documentar no PR.

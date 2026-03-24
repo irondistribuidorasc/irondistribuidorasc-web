@@ -1,0 +1,14 @@
+---
+description: Vitest, RTL e cobertura
+globs:
+  - "**/*.test.*"
+  - "**/*.spec.*"
+alwaysApply: false
+---
+
+# Testes
+
+- **Runner:** Vitest + React Testing Library (`vitest.config.mts`, `vitest.setup.ts`).
+- **Onde:** `src/**/__tests__/` ou specs colocalizados `*.test.ts(x)` / `*.spec.ts(x)`.
+- **Cobertura:** mínimo **90%** nas áreas configuradas em `vitest.config.mts`; **pre-push** roda `pnpm test:coverage`.
+- **Foco:** comportamento visível ao usuário; mocks mínimos necessários para integrações externas.

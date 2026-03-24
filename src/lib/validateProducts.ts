@@ -6,6 +6,7 @@ const validCategories: Category[] = [
   "battery",
   "charging_board",
   "back_cover",
+  "home_button",
 ];
 
 /**

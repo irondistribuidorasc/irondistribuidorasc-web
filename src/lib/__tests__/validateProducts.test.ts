@@ -264,11 +264,12 @@ describe("validateProducts", () => {
 			"battery",
 			"charging_board",
 			"back_cover",
+			"home_button",
 		] as const;
 		const products = categories.map((category, i) =>
 			makeValidProduct({ id: `p${i}`, category }),
 		);
 		const result = validateProducts(products);
-		expect(result).toHaveLength(4);
+		expect(result).toHaveLength(5);
 	});
 });

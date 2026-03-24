@@ -1,6 +1,11 @@
 export type Brand = "Samsung" | "Xiaomi" | "Motorola" | "iPhone" | "LG" | "Nokia" | "Zenfone" | "Infinix" | "Realme";
 
-export type Category = "display" | "battery" | "charging_board" | "back_cover";
+export type Category =
+  | "display"
+  | "battery"
+  | "charging_board"
+  | "back_cover"
+  | "home_button";
 
 export type Product = {
   id: string;
@@ -54,6 +59,12 @@ export const categoryOptions: Array<{
     key: "back_cover",
     label: "Tampa Traseira",
     description: "Acabamentos premium para devolver o visual original.",
+  },
+  {
+    key: "home_button",
+    label: "Botão Home / Digital Biometria",
+    description:
+      "Botões home e leitores biométricos para reposição e reparo rápido.",
   },
 ];
 

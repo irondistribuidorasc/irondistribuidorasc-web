@@ -60,6 +60,16 @@ export function CategoryNavigation() {
       >
         Tampa Traseira
       </Link>
+      <Link
+        href="/produtos?category=home_button"
+        className={`border-b-2 pb-1 text-sm font-medium transition-colors ${
+          currentCategory === "home_button"
+            ? "border-brand-600 text-brand-600 dark:border-brand-400 dark:text-brand-400"
+            : "border-transparent text-default-600 hover:text-brand-600 dark:hover:text-brand-400"
+        }`}
+      >
+        Botão Home / Digital Biometria
+      </Link>
     </nav>
   );
 }

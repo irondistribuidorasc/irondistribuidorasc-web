@@ -6,6 +6,7 @@ import {
 	ChatBubbleLeftRightIcon,
 	CheckBadgeIcon,
 	DevicePhoneMobileIcon,
+	FingerPrintIcon,
 	MapPinIcon,
 	ShieldCheckIcon,
 	Square2StackIcon,
@@ -366,6 +367,7 @@ export default function HomePageClient() {
 									battery: Battery50Icon,
 									charging_board: BoltIcon,
 									back_cover: Square2StackIcon,
+									home_button: FingerPrintIcon,
 									charging_connector: BoltIcon,
 								}[category.key] || DevicePhoneMobileIcon;
 

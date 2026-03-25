@@ -1,6 +1,7 @@
 import type { Brand, Category, Product } from "@/src/data/products";
+import { brandOptions } from "@/src/data/products";
 
-const validBrands: Brand[] = ["Samsung", "Xiaomi", "Motorola", "iPhone", "LG", "Nokia", "Zenfone", "Infinix", "Realme"];
+const validBrands = brandOptions.map((b) => b.key);
 const validCategories: Category[] = [
   "display",
   "battery",

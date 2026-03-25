@@ -1,4 +1,4 @@
-export type Brand = "Samsung" | "Xiaomi" | "Motorola" | "iPhone" | "LG" | "Nokia" | "Zenfone" | "Infinix" | "Realme";
+export type Brand = "Samsung" | "Xiaomi" | "Motorola" | "iPhone" | "LG" | "Nokia" | "Zenfone" | "Infinix" | "Realme" | "Outros";
 
 export type Category =
   | "display"
@@ -33,7 +33,12 @@ export const brandOptions: Array<{ key: Brand; label: Brand }> = [
   { key: "Zenfone", label: "Zenfone" },
   { key: "Infinix", label: "Infinix" },
   { key: "Realme", label: "Realme" },
+  { key: "Outros", label: "Outros" },
 ];
+
+// A vitrine de marcas na homepage (HomePageClient.tsx) usa lista própria com
+// logos SVG — é uma curadoria visual independente de brandOptions. "Outros" e
+// outras marcas sem logo não devem ser adicionadas lá.
 
 export const categoryOptions: Array<{
   key: Category;

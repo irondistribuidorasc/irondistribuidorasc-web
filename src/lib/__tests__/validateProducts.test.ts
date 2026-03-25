@@ -1,6 +1,7 @@
 import { describe, expect, it, vi } from "vitest";
 
 import type { Product } from "@/src/data/products";
+import { brandOptions } from "@/src/data/products";
 import { validateProducts } from "../validateProducts";
 
 function makeValidProduct(overrides: Partial<Product> = {}): Product {
@@ -250,7 +251,7 @@ describe("validateProducts", () => {
 	});
 
 	it("aceita todas as brands válidas", () => {
-		const brands = ["Samsung", "Xiaomi", "Motorola", "iPhone", "LG", "Nokia", "Zenfone", "Infinix", "Realme"] as const;
+		const brands = brandOptions.map((b) => b.key);
 		const products = brands.map((brand, i) =>
 			makeValidProduct({ id: `p${i}`, brand }),
 		);

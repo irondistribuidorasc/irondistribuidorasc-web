@@ -1,11 +1,58 @@
 export type Brand = "Samsung" | "Xiaomi" | "Motorola" | "iPhone" | "LG" | "Nokia" | "Zenfone" | "Infinix" | "Realme" | "Outros";
 
-export type Category =
-  | "display"
-  | "battery"
-  | "charging_board"
-  | "back_cover"
-  | "home_button";
+const categoryDefinitions = [
+  {
+    key: "display",
+    label: "Display",
+    description: "Painéis originais e homologados, com garantia de 1 ano.",
+  },
+  {
+    key: "battery",
+    label: "Bateria",
+    description: "Alta performance e segurança para reposição atacadista.",
+  },
+  {
+    key: "charging_board",
+    label: "Placa de Carga",
+    description: "Componentes testados para reparos rápidos e confiáveis.",
+  },
+  {
+    key: "back_cover",
+    label: "Tampa Traseira",
+    description: "Acabamentos premium para devolver o visual original.",
+  },
+  {
+    key: "home_button",
+    label: "Botão Home / Digital Biometria",
+    description:
+      "Botões home e leitores biométricos para reposição e reparo rápido.",
+  },
+  {
+    key: "lens",
+    label: "Lente",
+    description:
+      "Lentes e aros de câmera para reposição com encaixe preciso e acabamento limpo.",
+  },
+] as const;
+
+export type Category = (typeof categoryDefinitions)[number]["key"];
+
+export const categoryKeys = categoryDefinitions.map(
+  (category) => category.key,
+) as Category[];
+
+export function isCategory(value: unknown): value is Category {
+  return typeof value === "string" && categoryKeys.includes(value as Category);
+}
+
+export function parseCategory(value: unknown): Category | null {
+  if (typeof value !== "string") {
+    return null;
+  }
+
+  const normalizedValue = value.trim().toLowerCase();
+  return isCategory(normalizedValue) ? normalizedValue : null;
+}
 
 export type Product = {
   id: string;
@@ -44,34 +91,7 @@ export const categoryOptions: Array<{
   key: Category;
   label: string;
   description: string;
-}> = [
-  {
-    key: "display",
-    label: "Display",
-    description: "Painéis originais e homologados, com garantia de 1 ano.",
-  },
-  {
-    key: "battery",
-    label: "Bateria",
-    description: "Alta performance e segurança para reposição atacadista.",
-  },
-  {
-    key: "charging_board",
-    label: "Placa de Carga",
-    description: "Componentes testados para reparos rápidos e confiáveis.",
-  },
-  {
-    key: "back_cover",
-    label: "Tampa Traseira",
-    description: "Acabamentos premium para devolver o visual original.",
-  },
-  {
-    key: "home_button",
-    label: "Botão Home / Digital Biometria",
-    description:
-      "Botões home e leitores biométricos para reposição e reparo rápido.",
-  },
-];
+}> = [...categoryDefinitions];
 
 export const products: Product[] = [
   {

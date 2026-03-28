@@ -1,14 +1,41 @@
 import { describe, expect, it } from "vitest";
 
 import { validateProducts } from "@/src/lib/validateProducts";
-import { getProductsByBrandAndCategory, products } from "../products";
+import {
+  categoryOptions,
+  getProductsByBrandAndCategory,
+  parseCategory,
+  products,
+} from "../products";
 
 describe("data/products", () => {
+  it("expõe a categoria lens na lista canônica", () => {
+    expect(categoryOptions).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          key: "lens",
+          label: "Lente",
+        }),
+      ]),
+    );
+  });
+
 	it("exporta lista de produtos válida", () => {
 		expect(Array.isArray(products)).toBe(true);
 		expect(products.length).toBeGreaterThan(0);
 		expect(() => validateProducts(products)).not.toThrow();
 	});
+
+  describe("parseCategory", () => {
+    it("normaliza a categoria lens vinda de input externo", () => {
+      expect(parseCategory(" Lens ")).toBe("lens");
+    });
+
+    it("retorna null para categorias fora da lista canônica", () => {
+      expect(parseCategory("other")).toBeNull();
+      expect(parseCategory(undefined)).toBeNull();
+    });
+  });
 
 	describe("getProductsByBrandAndCategory", () => {
 		it("filtra produtos por marca e categoria", () => {

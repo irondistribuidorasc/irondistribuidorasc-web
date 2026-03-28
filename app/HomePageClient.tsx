@@ -3,6 +3,7 @@
 import {
 	Battery50Icon,
 	BoltIcon,
+	CameraIcon,
 	ChatBubbleLeftRightIcon,
 	CheckBadgeIcon,
 	DevicePhoneMobileIcon,
@@ -26,12 +27,20 @@ import { ProductCard } from "@/src/components/produtos/ProductCard";
 import { ClientOnly } from "@/src/components/ui/ClientOnly";
 import { ScrollAnimation } from "@/src/components/ui/ScrollAnimation";
 import { WhatsAppFloatingButton } from "@/src/components/ui/WhatsAppFloatingButton";
-import { categoryOptions, products } from "@/src/data/products";
+import { categoryOptions, products, type Category } from "@/src/data/products";
 
 export default function HomePageClient() {
 	const featuredProducts = products
 		.sort((a, b) => (b.popularity || 0) - (a.popularity || 0))
 		.slice(0, 4);
+	const categoryIcons = {
+		display: DevicePhoneMobileIcon,
+		battery: Battery50Icon,
+		charging_board: BoltIcon,
+		back_cover: Square2StackIcon,
+		home_button: FingerPrintIcon,
+		lens: CameraIcon,
+	} satisfies Record<Category, typeof DevicePhoneMobileIcon>;
 
 	return (
 		<div className="relative overflow-hidden">
@@ -361,15 +370,7 @@ export default function HomePageClient() {
 					</div>
 					<div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
 						{categoryOptions.map((category, index) => {
-							const Icon =
-								{
-									display: DevicePhoneMobileIcon,
-									battery: Battery50Icon,
-									charging_board: BoltIcon,
-									back_cover: Square2StackIcon,
-									home_button: FingerPrintIcon,
-									charging_connector: BoltIcon,
-								}[category.key] || DevicePhoneMobileIcon;
+							const Icon = categoryIcons[category.key];
 
 							return (
 								<ScrollAnimation

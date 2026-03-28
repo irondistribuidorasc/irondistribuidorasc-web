@@ -1,3 +1,4 @@
+import { isCategory } from "@/src/data/products";
 import { z } from "zod";
 
 export const passwordSchema = z
@@ -88,7 +89,12 @@ export const productSchema = z.object({
   code: z.string().min(1, "Código é obrigatório"),
   name: z.string().min(1, "Nome é obrigatório"),
   brand: z.string().min(1, "Marca é obrigatória"),
-  category: z.string().min(1, "Categoria é obrigatória"),
+  category: z
+    .string()
+    .trim()
+    .toLowerCase()
+    .min(1, "Categoria é obrigatória")
+    .refine((value) => isCategory(value), "Categoria inválida"),
   model: z.string().min(1, "Modelo é obrigatório"),
   imageUrl: z.string().default("/logo-iron.png"),
   stockQuantity: z.coerce.number().int().nonnegative().default(0),

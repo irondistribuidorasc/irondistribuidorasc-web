@@ -1,5 +1,5 @@
 import ProductCatalog from "@/src/components/produtos/ProductCatalog";
-import type { Brand, Category, Product } from "@/src/data/products";
+import { parseCategory, type Brand, type Category, type Product } from "@/src/data/products";
 import { db } from "@/src/lib/prisma";
 import { Prisma } from "@prisma/client";
 import type { Metadata } from "next";
@@ -30,7 +30,7 @@ type Props = {
 export default async function ProdutosPage(props: Props) {
   const searchParams = await props.searchParams;
   const searchQuery = searchParams.search || "";
-  const category = searchParams.category as Category | undefined;
+  const category = parseCategory(searchParams.category) ?? undefined;
   const brand = searchParams.brand as Brand | undefined;
   const page = Number(searchParams.page) || 1;
   const sort = searchParams.sort || "relevance";

@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import Papa from "papaparse";
 import { auth } from "@/src/lib/auth";
 import { logger } from "@/src/lib/logger";
+import { parseImportedCategory } from "@/src/lib/productImport";
 import { db } from "@/src/lib/prisma";
 import { getClientIP, withRateLimit } from "@/src/lib/rate-limit";
 
@@ -136,11 +137,17 @@ export async function POST(request: Request) {
         continue;
       }
 
+      const parsedCategory = parseImportedCategory(productData.category, i + 1);
+      if ("error" in parsedCategory) {
+        errors.push(parsedCategory.error);
+        continue;
+      }
+
       productsToUpsert.push({
         code: productData.code,
         name: productData.name,
         brand: productData.brand || "Generic",
-        category: productData.category || "other",
+        category: parsedCategory.category,
         model: productData.model || "",
         imageUrl: productData.imageUrl || "/logo-iron.png",
         inStock: parseInt(productData.stockQuantity || "0") > 0,

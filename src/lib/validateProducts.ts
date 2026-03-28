@@ -1,14 +1,7 @@
 import type { Brand, Category, Product } from "@/src/data/products";
-import { brandOptions } from "@/src/data/products";
+import { brandOptions, isCategory } from "@/src/data/products";
 
 const validBrands = brandOptions.map((b) => b.key);
-const validCategories: Category[] = [
-  "display",
-  "battery",
-  "charging_board",
-  "back_cover",
-  "home_button",
-];
 
 /**
  * Valida se um valor é uma marca válida
@@ -21,9 +14,7 @@ function isValidBrand(value: unknown): value is Brand {
  * Valida se um valor é uma categoria válida
  */
 function isValidCategory(value: unknown): value is Category {
-  return (
-    typeof value === "string" && validCategories.includes(value as Category)
-  );
+  return isCategory(value);
 }
 
 /**

@@ -4,10 +4,53 @@ import {
 	forgotPasswordSchema,
 	loginSchema,
 	passwordSchema,
+	productSchema,
 	registerApiSchema,
 	registerSchema,
 	resetPasswordSchema,
 } from "../schemas";
+
+describe("productSchema", () => {
+  const validProductInput = {
+    code: "LEN-SAM-A52",
+    name: "Lente Samsung A52",
+    brand: "Samsung",
+    category: "lens",
+    model: "A52",
+    imageUrl: "/logo-iron.png",
+    stockQuantity: 5,
+    minStockThreshold: 2,
+    price: 19.9,
+    description: "Lente de câmera para reposição",
+    tags: ["camera"],
+    popularity: 10,
+  };
+
+  it("aceita a categoria lens", () => {
+    const result = productSchema.safeParse(validProductInput);
+
+    expect(result.success).toBe(true);
+  });
+
+  it("normaliza categoria com espaços e maiúsculas", () => {
+    const result = productSchema.safeParse({
+      ...validProductInput,
+      category: " Lens ",
+    });
+
+    expect(result.success).toBe(true);
+    expect(result.data?.category).toBe("lens");
+  });
+
+  it("rejeita categorias fora da lista canônica", () => {
+    const result = productSchema.safeParse({
+      ...validProductInput,
+      category: "invalid_category",
+    });
+
+    expect(result.success).toBe(false);
+  });
+});
 
 describe("schemas", () => {
 	it("passwordSchema valida requisitos", () => {

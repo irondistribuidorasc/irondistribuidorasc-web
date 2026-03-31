@@ -196,19 +196,23 @@ export function Header() {
         </NavbarContent>
       </Navbar>
 
-      {/* Sub-header for Desktop Navigation */}
-      <div className="hidden md:flex w-full border-b border-divider bg-background py-2">
-        <div className="mx-auto w-full max-w-7xl px-6 flex justify-center">
-          <Suspense fallback={<div className="h-6 w-full" />}>
+      {/* Category navigation */}
+      <div
+        data-testid="category-subheader"
+        className="w-full border-b border-divider bg-background/95 py-2 backdrop-blur"
+      >
+        <div className="mx-auto flex w-full max-w-7xl flex-col gap-3 px-4 md:flex-row md:items-center md:justify-between md:px-6">
+          <Suspense fallback={<div className="min-h-11 w-full" />}>
             <CategoryNavigation />
           </Suspense>
           {session?.user?.role === "ADMIN" && (
             <Link
               href="/admin"
-              className={`ml-8 text-sm font-medium transition ${
+              aria-current={pathname === "/admin" ? "page" : undefined}
+              className={`hidden rounded-full border border-divider px-4 py-2 text-sm font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2 focus-visible:ring-offset-background md:inline-flex md:min-h-11 md:items-center md:bg-content1 ${
                 pathname === "/admin"
-                  ? "text-brand-600 dark:text-brand-400"
-                  : "text-slate-700 hover:text-brand-600 dark:text-slate-300 dark:hover:text-brand-400"
+                  ? "border-brand-600 bg-brand-50 text-brand-700 dark:border-brand-500 dark:bg-brand-900/20 dark:text-brand-300"
+                  : "text-default-600 hover:border-brand-200 hover:text-brand-600 dark:hover:border-brand-500/40 dark:hover:text-brand-400"
               }`}
             >
               Administração

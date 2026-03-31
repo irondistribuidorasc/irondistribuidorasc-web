@@ -35,4 +35,16 @@ describe("CategoryNavigation", () => {
       "/produtos?category=lens",
     );
   });
+
+  it("renderiza a nova categoria Flex de Carga com o slug charging_flex", () => {
+    render(<CategoryNavigation />);
+
+    const links = screen.getAllByRole("link", { name: "Flex de Carga" });
+
+    expect(
+      links.some(
+        (link) => link.getAttribute("href") === "/produtos?category=charging_flex",
+      ),
+    ).toBe(true);
+  });
 });

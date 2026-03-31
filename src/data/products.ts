@@ -17,6 +17,26 @@ const categoryDefinitions = [
     description: "Componentes testados para reparos rápidos e confiáveis.",
   },
   {
+    key: "charging_flex",
+    label: "Flex de Carga",
+    description: "Flex de carga para reposição segura com encaixe preciso.",
+  },
+  {
+    key: "charging_connector",
+    label: "CC - Conector de Carga",
+    description: "Conectores de carga testados para restaurar energia e dados.",
+  },
+  {
+    key: "lcd_flex",
+    label: "Flex de Imagem LCD",
+    description: "Flex de imagem para manter a comunicação estável do display.",
+  },
+  {
+    key: "power_flex",
+    label: "Flex Power",
+    description: "Flex do botão power com acionamento confiável para reparos ágeis.",
+  },
+  {
     key: "back_cover",
     label: "Tampa Traseira",
     description: "Acabamentos premium para devolver o visual original.",
@@ -32,6 +52,17 @@ const categoryDefinitions = [
     label: "Lente",
     description:
       "Lentes e aros de câmera para reposição com encaixe preciso e acabamento limpo.",
+  },
+  {
+    key: "front_camera",
+    label: "Câmera Frontal",
+    description: "Câmeras frontais para selfies nítidas e reposição com qualidade.",
+  },
+  {
+    key: "rear_camera",
+    label: "Câmera Traseira",
+    description:
+      "Câmeras traseiras para restaurar foco, definição e captura com confiança.",
   },
 ] as const;
 

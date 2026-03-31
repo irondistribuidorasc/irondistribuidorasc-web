@@ -37,9 +37,15 @@ export default function HomePageClient() {
 		display: DevicePhoneMobileIcon,
 		battery: Battery50Icon,
 		charging_board: BoltIcon,
+		charging_flex: BoltIcon,
+		charging_connector: BoltIcon,
+		lcd_flex: DevicePhoneMobileIcon,
+		power_flex: FingerPrintIcon,
 		back_cover: Square2StackIcon,
 		home_button: FingerPrintIcon,
 		lens: CameraIcon,
+		front_camera: CameraIcon,
+		rear_camera: CameraIcon,
 	} satisfies Record<Category, typeof DevicePhoneMobileIcon>;
 
 	return (

@@ -9,6 +9,12 @@ describe("parseImportedCategory", () => {
     });
   });
 
+  it("aceita uma das novas categorias no CSV", () => {
+    expect(parseImportedCategory(" charging_flex ", 6)).toEqual({
+      category: "charging_flex",
+    });
+  });
+
   it("retorna erro quando a categoria está ausente", () => {
     expect(parseImportedCategory("", 4)).toEqual({
       error: "Linha 4: Categoria é obrigatória e deve usar um slug válido",

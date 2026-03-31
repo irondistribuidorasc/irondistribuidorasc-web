@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from "vitest";
 
 import type { Product } from "@/src/data/products";
-import { brandOptions } from "@/src/data/products";
+import { brandOptions, categoryKeys } from "@/src/data/products";
 import { validateProducts } from "../validateProducts";
 
 function makeValidProduct(overrides: Partial<Product> = {}): Product {
@@ -260,21 +260,13 @@ describe("validateProducts", () => {
 	});
 
 	it("aceita todas as categories válidas", () => {
-		const categories = [
-			"display",
-			"battery",
-			"charging_board",
-			"back_cover",
-			"home_button",
-			"lens",
-		] as const;
-		const products = categories.map((category, i) =>
+		const products = categoryKeys.map((category, i) =>
 			makeValidProduct({
 				id: `p${i}`,
-				category: category as Product["category"],
+				category,
 			}),
 		);
 		const result = validateProducts(products);
-		expect(result).toHaveLength(6);
+		expect(result).toHaveLength(categoryKeys.length);
 	});
 });

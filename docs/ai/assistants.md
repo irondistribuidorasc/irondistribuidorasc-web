@@ -13,6 +13,7 @@ Este projeto versiona regras, skills e agents em [`.cursor/`](../../.cursor/) pa
 | Arquivo | Escopo |
 |---------|--------|
 | `00-core-project.mdc` | Sempre (stack, pnpm, porta 3001, env, qualidade) |
+| `05-sdd-workflow.mdc` | Sempre (Spec-Driven Development obrigatório em toda tarefa) |
 | `10-frontend-brand.mdc` | `**/*.tsx` — Brand Book, HeroUI |
 | `20-api-auth.mdc` | `app/api/**`, `app/actions/**` |
 | `30-prisma-data.mdc` | `prisma/**` |

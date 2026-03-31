@@ -2,6 +2,11 @@
 
 Contrato curto para humanos e assistentes. Detalhes operacionais: [`.cursor/rules/`](.cursor/rules/).
 
+## Workflow de IA
+
+- **Obrigatório:** Toda tarefa do projeto deve seguir o método Spec-Driven Development (SDD).
+- Antes de implementar, definir e validar a spec da tarefa com objetivo, escopo, critérios de sucesso e impactos da mudança.
+
 ## Identidade visual
 
 **Obrigatório:** Antes de UI nova ou alteração visual, consultar [`docs/Brand_Book_Iron.md`](docs/Brand_Book_Iron.md). Qualidade estética e padrões de componentes: [`.cursor/skills/frontend-design/SKILL.md`](.cursor/skills/frontend-design/SKILL.md).

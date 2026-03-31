@@ -1,0 +1,11 @@
+---
+description: Exige Spec-Driven Development (SDD) em toda tarefa
+alwaysApply: true
+---
+
+# Spec-Driven Development
+
+- **Obrigatório:** Toda tarefa do projeto deve seguir o método Spec-Driven Development (SDD).
+- **Escopo:** O uso de SDD é mandatório em todos os contextos, sem exceções implícitas.
+- **Aplicação:** Antes de implementar, esclarecer objetivo, escopo, critérios de sucesso e impactos da mudança.
+- **Execução:** A implementação deve seguir a spec definida e validada para a tarefa.

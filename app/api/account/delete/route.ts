@@ -1,13 +1,14 @@
 import { compare } from "bcrypt";
 import { NextResponse } from "next/server";
 import { auth } from "@/src/lib/auth";
+import { anonymizeAccountForDeletion } from "@/src/lib/account-deletion";
 import { logger } from "@/src/lib/logger";
 import { db } from "@/src/lib/prisma";
 import { getClientIP, withRateLimit } from "@/src/lib/rate-limit";
 
 /**
  * DELETE /api/account/delete
- * Exclui permanentemente a conta do usuário e todos os dados associados (LGPD Art. 18)
+ * Anonimiza a conta do usuário e remove credenciais de acesso (LGPD Art. 18)
  *
  * Requer confirmação de senha para segurança adicional
  */
@@ -96,20 +97,22 @@ export async function DELETE(request: Request) {
 			emailDomain: user.email?.split("@")[1] || "unknown",
 		});
 
-		// Excluir usuário (cascata configurada no Prisma para deletar dados relacionados)
-		// A ordem do cascade: Orders -> OrderItems, Notifications, Sessions, Accounts, User
-		await db.user.delete({
-			where: { id: user.id },
+		await db.$transaction(async (tx) => {
+			await anonymizeAccountForDeletion(tx, {
+				userId: user.id,
+				previousEmail: user.email,
+			});
 		});
 
-		logger.info("account/delete - Conta excluída com sucesso", {
+		logger.info("account/delete - Conta anonimizada com sucesso", {
 			userId: user.id,
 			maskedEmail,
 		});
 
 		return NextResponse.json(
 			{
-				message: "Sua conta e todos os dados foram excluídos permanentemente.",
+				message:
+					"Sua conta foi excluída e seus dados pessoais foram anonimizados.",
 				deletedAt: new Date().toISOString(),
 			},
 			{ status: 200 },

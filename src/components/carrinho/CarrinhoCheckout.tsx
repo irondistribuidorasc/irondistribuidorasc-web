@@ -1,6 +1,11 @@
 "use client";
 
 import { type CustomerDetails, useCart } from "@/src/contexts/CartContext";
+import {
+  getCheckoutValidationMessage,
+  isCheckoutCustomerReady,
+  isValidCheckoutState,
+} from "@/src/lib/checkout-validation";
 import { logger } from "@/src/lib/logger";
 import { maskCEP, maskCPFOrCNPJ, maskPhone } from "@/src/lib/masks";
 import { buildOrderWhatsAppMessage, getWhatsAppUrl } from "@/src/lib/whatsapp";
@@ -37,36 +42,6 @@ import { toast } from "sonner";
 const PROFILE_SYNC_DEBOUNCE_MS = 800;
 const STATUS_RESET_DELAY_MS = 2000;
 
-const VALID_STATES = new Set([
-  "AC",
-  "AL",
-  "AP",
-  "AM",
-  "BA",
-  "CE",
-  "DF",
-  "ES",
-  "GO",
-  "MA",
-  "MT",
-  "MS",
-  "MG",
-  "PA",
-  "PB",
-  "PR",
-  "PE",
-  "PI",
-  "RJ",
-  "RN",
-  "RS",
-  "RO",
-  "RR",
-  "SC",
-  "SP",
-  "SE",
-  "TO",
-]);
-
 const PAYMENT_METHODS = [
   { key: "PIX", label: "Pix" },
   { key: "CREDIT_CARD", label: "Cartão de Crédito" },
@@ -101,15 +76,9 @@ export function CarrinhoCheckout() {
   const editedFieldsRef = useRef<Set<keyof CustomerDetails>>(new Set());
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
-  const isStateValid = VALID_STATES.has(customer.state.toUpperCase());
-  const isPaymentMethodValid = Boolean(customer.paymentMethod);
-  const isCustomerInfoValid = Boolean(
-    customer.name.trim() &&
-      customer.city.trim() &&
-      customer.state.trim() &&
-      isStateValid &&
-      isPaymentMethodValid
-  );
+  const isStateValid = isValidCheckoutState(customer.state);
+  const isCustomerInfoValid = isCheckoutCustomerReady(customer);
+  const checkoutValidationMessage = getCheckoutValidationMessage(customer);
   const canFinalize = items.length > 0 && isCustomerInfoValid;
 
   // Initialize editing mode based on validity of customer info
@@ -354,7 +323,7 @@ export function CarrinhoCheckout() {
   const getStateErrorMessage = () => {
     if (!showErrors) return undefined;
     if (!customer.state.trim()) return "Informe o estado (UF).";
-    if (!VALID_STATES.has(customer.state.toUpperCase())) return "UF inválida.";
+    if (!isStateValid) return "UF inválida.";
     return undefined;
   };
 
@@ -459,8 +428,15 @@ export function CarrinhoCheckout() {
                 onValueChange={handleCustomerChange("phone")}
                 onFocus={() => handleFieldFocus("phone")}
                 onBlur={handleFieldBlur}
+                isInvalid={showErrors && !customer.phone.trim()}
+                errorMessage={
+                  showErrors && !customer.phone.trim()
+                    ? "Informe o telefone para contato."
+                    : undefined
+                }
                 autoComplete={getAutoCompleteValue("phone", "tel")}
                 maxLength={16}
+                isRequired
               />
               <Input
                 label="Documento (CPF/CNPJ)"
@@ -479,10 +455,17 @@ export function CarrinhoCheckout() {
                 onValueChange={handleCustomerChange("addressLine1")}
                 onFocus={() => handleFieldFocus("addressLine1")}
                 onBlur={handleFieldBlur}
+                isInvalid={showErrors && !customer.addressLine1.trim()}
+                errorMessage={
+                  showErrors && !customer.addressLine1.trim()
+                    ? "Informe o endereço."
+                    : undefined
+                }
                 autoComplete={getAutoCompleteValue(
                   "addressLine1",
                   "street-address"
                 )}
+                isRequired
                 onKeyDown={(e) => {
                   if (e.key === " ") {
                     e.nativeEvent.stopPropagation();
@@ -535,9 +518,7 @@ export function CarrinhoCheckout() {
                 onFocus={() => handleFieldFocus("state")}
                 onBlur={handleFieldBlur}
                 isInvalid={
-                  showErrors &&
-                  (!customer.state.trim() ||
-                    !VALID_STATES.has(customer.state.toUpperCase()))
+                  showErrors && (!customer.state.trim() || !isStateValid)
                 }
                 errorMessage={getStateErrorMessage()}
                 maxLength={2}
@@ -551,8 +532,15 @@ export function CarrinhoCheckout() {
                 onValueChange={handleCustomerChange("postalCode")}
                 onFocus={() => handleFieldFocus("postalCode")}
                 onBlur={handleFieldBlur}
+                isInvalid={showErrors && !customer.postalCode.trim()}
+                errorMessage={
+                  showErrors && !customer.postalCode.trim()
+                    ? "Informe o CEP."
+                    : undefined
+                }
                 autoComplete={getAutoCompleteValue("postalCode", "postal-code")}
                 maxLength={9}
+                isRequired
               />
               <Textarea
                 label="Observações"
@@ -735,11 +723,9 @@ export function CarrinhoCheckout() {
           {isApproved ? "Fechar pedido" : "Aguardando aprovação"}
         </Button>
       </div>
-      {showErrors && !isCustomerInfoValid && (
+      {showErrors && checkoutValidationMessage && (
         <p className="text-center text-sm text-error-600 dark:text-error-400">
-          {!isStateValid && customer.state.trim()
-            ? "UF inválida. Informe uma sigla de estado válida (ex: SC, SP, RJ)."
-            : "Preencha os campos obrigatórios (nome, cidade e estado válido) para finalizar."}
+          {checkoutValidationMessage}
         </p>
       )}
 

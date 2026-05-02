@@ -48,3 +48,6 @@ supabase/.temp/
 # cursor — versionar rules, skills, agents e settings; ignorar apenas local/prompts
 .cursor/mcp.json
 .cursor/prompts/
+
+# local agent state
+.omc/

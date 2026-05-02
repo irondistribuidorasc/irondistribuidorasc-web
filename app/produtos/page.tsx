@@ -1,6 +1,8 @@
 import ProductCatalog from "@/src/components/produtos/ProductCatalog";
-import { parseCategory, type Brand, type Category, type Product } from "@/src/data/products";
+import { parseCategory, type Brand } from "@/src/data/products";
+import { auth } from "@/src/lib/auth";
 import { db } from "@/src/lib/prisma";
+import { canViewB2BPrices, toPublicProduct } from "@/src/lib/product-visibility";
 import { Prisma } from "@prisma/client";
 import type { Metadata } from "next";
 
@@ -13,8 +15,7 @@ export const metadata: Metadata = {
   },
 };
 
-// Revalidate every 60 seconds
-export const revalidate = 60;
+export const dynamic = "force-dynamic";
 
 type Props = {
   searchParams: Promise<{
@@ -28,6 +29,8 @@ type Props = {
 };
 
 export default async function ProdutosPage(props: Props) {
+  const session = await auth();
+  const canViewPrices = canViewB2BPrices(session);
   const searchParams = await props.searchParams;
   const searchQuery = searchParams.search || "";
   const category = parseCategory(searchParams.category) ?? undefined;
@@ -67,10 +70,10 @@ export default async function ProdutosPage(props: Props) {
 
   switch (sort) {
     case "price_asc":
-      orderBy = { price: "asc" };
+      orderBy = canViewPrices ? { price: "asc" } : { popularity: "desc" };
       break;
     case "price_desc":
-      orderBy = { price: "desc" };
+      orderBy = canViewPrices ? { price: "desc" } : { popularity: "desc" };
       break;
     case "relevance":
     default:
@@ -97,22 +100,9 @@ export default async function ProdutosPage(props: Props) {
 
   const totalPages = Math.ceil(total / limit);
 
-  // Map Prisma products to the Product type expected by the frontend
-  const mappedProducts: Product[] = products.map((p) => ({
-    id: p.id,
-    code: p.code,
-    name: p.name,
-    brand: p.brand as Brand,
-    category: p.category as Category,
-    model: p.model,
-    imageUrl: p.imageUrl,
-    inStock: p.inStock,
-    restockDate: p.restockDate ? p.restockDate.toISOString() : undefined,
-    price: p.price,
-    description: p.description || undefined,
-    tags: p.tags,
-    popularity: p.popularity,
-  }));
+  const mappedProducts = products.map((product) =>
+    toPublicProduct(product, canViewPrices)
+  );
 
   return (
     <ProductCatalog

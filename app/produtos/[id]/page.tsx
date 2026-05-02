@@ -1,15 +1,23 @@
 import { ProductInfo } from "@/src/components/produtos/ProductInfo";
-import type { Brand, Category } from "@/src/data/products";
+import { auth } from "@/src/lib/auth";
 import { db } from "@/src/lib/prisma";
+import {
+  buildProductJsonLd,
+  canViewB2BPrices,
+  toPublicProduct,
+} from "@/src/lib/product-visibility";
 import { Metadata, ResolvingMetadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
+import { headers } from "next/headers";
 import { notFound } from "next/navigation";
 
 type Props = {
   params: Promise<{ id: string }>;
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 };
+
+export const dynamic = "force-dynamic";
 
 export async function generateMetadata(
   { params }: Props,
@@ -40,6 +48,9 @@ export async function generateMetadata(
 }
 
 export default async function ProductPage({ params }: Props) {
+  const nonce = (await headers()).get("x-nonce") ?? undefined;
+  const session = await auth();
+  const canViewPrices = canViewB2BPrices(session);
   const { id } = await params;
   const product = await db.product.findUnique({
     where: { id },
@@ -49,50 +60,13 @@ export default async function ProductPage({ params }: Props) {
     notFound();
   }
 
-  // Map Prisma product to frontend Product type
-  const mappedProduct = {
-    ...product,
-    brand: product.brand as Brand,
-    category: product.category as Category,
-    restockDate: product.restockDate
-      ? product.restockDate.toISOString()
-      : undefined,
-    description: product.description || undefined,
-  };
-
-  const jsonLd = {
-    "@context": "https://schema.org",
-    "@type": "Product",
-    name: product.name,
-    image: product.imageUrl,
-    description:
-      product.description || `Compre ${product.name} na Iron Distribuidora.`,
-    sku: product.code,
-    brand: {
-      "@type": "Brand",
-      name: product.brand,
-    },
-    offers: {
-      "@type": "Offer",
-      url: `https://irondistribuidorasc.com.br/produtos/${product.id}`,
-      priceCurrency: "BRL",
-      price: product.price,
-      availability: product.inStock
-        ? "https://schema.org/InStock"
-        : "https://schema.org/OutOfStock",
-      itemCondition: "https://schema.org/NewCondition",
-    },
-    // Placeholder for reviews since we don't have them yet
-    aggregateRating: {
-      "@type": "AggregateRating",
-      ratingValue: "5",
-      reviewCount: "1",
-    },
-  };
+  const mappedProduct = toPublicProduct(product, canViewPrices);
+  const jsonLd = buildProductJsonLd(product, canViewPrices);
 
   return (
     <div className="min-h-screen bg-content1">
       <script
+        nonce={nonce}
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />

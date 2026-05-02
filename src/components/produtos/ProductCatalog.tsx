@@ -3,14 +3,14 @@
 import { Pagination } from "@/src/components/produtos/Pagination";
 import { ProductFilters } from "@/src/components/produtos/ProductFilters";
 import { ProductGrid } from "@/src/components/produtos/ProductGrid";
-import type { Brand, Category, Product } from "@/src/data/products";
+import type { Brand, Category, PublicProduct } from "@/src/data/products";
 import { useProductFilters } from "@/src/hooks/useProductFilters";
 import type { SortOption } from "@/src/lib/productUtils";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 
 type ProductCatalogProps = {
-  products: Product[];
+  products: PublicProduct[];
   totalProducts: number;
   totalPages: number;
   currentPage: number;
@@ -29,7 +29,7 @@ export default function ProductCatalog({
   initialBrand,
 }: ProductCatalogProps) {
   const { data: session } = useSession();
-  const isAuthenticated = !!session?.user;
+  const canSortByPrice = session?.user?.approved === true;
 
   const {
     paginatedProducts,
@@ -145,9 +145,11 @@ export default function ProductCatalog({
                   id="sort"
                   value={sortOption}
                   onChange={(e) => setSortOption(e.target.value as SortOption)}
-                  disabled={!isAuthenticated}
+                  disabled={!canSortByPrice}
                   title={
-                    !isAuthenticated ? "Faça login para ordenar" : undefined
+                    !canSortByPrice
+                      ? "Aprovação necessária para ordenar por preço"
+                      : undefined
                   }
                   className="rounded-lg border-divider bg-background py-2 pl-3 pr-2 text-sm font-medium text-foreground focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500 disabled:cursor-not-allowed disabled:opacity-50"
                 >

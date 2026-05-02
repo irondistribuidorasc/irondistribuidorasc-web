@@ -1,4 +1,5 @@
 import { logger } from "@/src/lib/logger";
+import { hashPasswordResetToken } from "@/src/lib/password-reset-tokens";
 import { db } from "@/src/lib/prisma";
 import { getClientIP, withRateLimit } from "@/src/lib/rate-limit";
 import { passwordSchema } from "@/src/lib/schemas";
@@ -17,7 +18,12 @@ export async function POST(request: Request) {
 
     const { token, newPassword } = await request.json();
 
-    if (!token || !newPassword) {
+    if (
+      typeof token !== "string" ||
+      typeof newPassword !== "string" ||
+      !token ||
+      !newPassword
+    ) {
       return NextResponse.json(
         { message: "Token e nova senha são obrigatórios." },
         { status: 400 }
@@ -34,9 +40,11 @@ export async function POST(request: Request) {
       );
     }
 
-    // Verificar se o token existe e é válido
+    const hashedToken = hashPasswordResetToken(token);
+
+    // Verificar se o hash do token existe e é válido
     const verificationToken = await db.verificationToken.findUnique({
-      where: { token },
+      where: { token: hashedToken },
     });
 
     if (!verificationToken) {
@@ -47,7 +55,7 @@ export async function POST(request: Request) {
     }
 
     if (new Date() > verificationToken.expires) {
-      await db.verificationToken.delete({ where: { token } });
+      await db.verificationToken.delete({ where: { token: hashedToken } });
       return NextResponse.json(
         { message: "Token expirado. Solicite uma nova recuperação de senha." },
         { status: 400 }
@@ -64,7 +72,7 @@ export async function POST(request: Request) {
     });
 
     // Deletar o token usado
-    await db.verificationToken.delete({ where: { token } });
+    await db.verificationToken.delete({ where: { token: hashedToken } });
 
     logger.info("reset-password:POST - Senha redefinida com sucesso", {
       email: verificationToken.identifier,

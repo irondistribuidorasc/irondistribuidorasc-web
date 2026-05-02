@@ -1,10 +1,10 @@
-import type { Product } from "@/src/data/products";
+import type { PublicProduct } from "@/src/data/products";
 import { Button } from "@heroui/react";
 import Link from "next/link";
 import { ProductCard } from "./ProductCard";
 
 type ProductGridProps = {
-  products: Product[];
+  products: PublicProduct[];
   isLoading?: boolean;
 };
 
@@ -72,4 +72,3 @@ export function ProductGrid({ products, isLoading = false }: ProductGridProps) {
     </div>
   );
 }
-

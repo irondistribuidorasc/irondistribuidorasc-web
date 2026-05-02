@@ -1,8 +1,9 @@
 "use client";
 
 import { useCart } from "@/src/contexts/CartContext";
-import type { Product } from "@/src/data/products";
+import type { PublicProduct } from "@/src/data/products";
 import { formatPrice, formatRestockDate } from "@/src/lib/productUtils";
+import { hasVisiblePrice } from "@/src/lib/product-visibility";
 import { Button } from "@heroui/react";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
@@ -10,7 +11,7 @@ import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 
 type ProductCardProps = {
-  product: Product;
+  product: PublicProduct;
 };
 
 const FEEDBACK_DURATION_MS = 600;
@@ -23,7 +24,7 @@ export function ProductCard({ product }: ProductCardProps) {
 
   const isAuthenticated = !!session?.user;
   const isApproved = session?.user?.approved === true;
-  const canViewPrices = isAuthenticated && isApproved;
+  const canViewPrices = isAuthenticated && isApproved && hasVisiblePrice(product);
 
   // Cleanup do timeout ao desmontar
   useEffect(() => {
@@ -35,6 +36,10 @@ export function ProductCard({ product }: ProductCardProps) {
   }, []);
 
   const handleAddToCart = () => {
+    if (!canViewPrices) {
+      return;
+    }
+
     setIsAdding(true);
     addItem(product);
     openCart();
@@ -126,7 +131,7 @@ export function ProductCard({ product }: ProductCardProps) {
           fullWidth
           color="primary"
           onPress={handleAddToCart}
-          isDisabled={!product.inStock || isAdding}
+          isDisabled={!canViewPrices || !product.inStock || isAdding}
           className="mt-2 bg-brand-600 text-sm font-semibold text-white transition-colors hover:bg-brand-700"
           aria-label={
             product.inStock
@@ -136,6 +141,8 @@ export function ProductCard({ product }: ProductCardProps) {
         >
           {isAdding
             ? "Adicionado!"
+            : !canViewPrices
+            ? "Acesso restrito"
             : product.inStock
             ? "Adicionar ao carrinho"
             : "Indisponível"}

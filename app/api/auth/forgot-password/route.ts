@@ -1,8 +1,8 @@
-import { randomBytes } from "node:crypto";
 import { addHours } from "date-fns";
 import { NextResponse } from "next/server";
 import { Resend } from "resend";
 import { logger } from "@/src/lib/logger";
+import { createPasswordResetToken } from "@/src/lib/password-reset-tokens";
 import { db } from "@/src/lib/prisma";
 import { getClientIP, withRateLimit } from "@/src/lib/rate-limit";
 import { forgotPasswordSchema } from "@/src/lib/schemas";
@@ -46,15 +46,19 @@ export async function POST(request: Request) {
       );
     }
 
-    // Gerar token seguro
-    const token = randomBytes(32).toString("hex");
+    // Gerar token seguro. O token puro vai apenas no link; o banco recebe o hash.
+    const { token, hashedToken } = createPasswordResetToken();
     const expires = addHours(new Date(), 1); // Expira em 1 hora
 
-    // Salvar token no banco
+    await db.verificationToken.deleteMany({
+      where: { identifier: normalizedEmail },
+    });
+
+    // Salvar apenas o hash do token no banco
     await db.verificationToken.create({
       data: {
         identifier: normalizedEmail,
-        token,
+        token: hashedToken,
         expires,
       },
     });

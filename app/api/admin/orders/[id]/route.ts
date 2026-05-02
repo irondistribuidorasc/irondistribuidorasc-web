@@ -1,8 +1,21 @@
 import { auth } from "@/src/lib/auth";
+import {
+  buildStockDeductionsForOrderItems,
+  buildStockRestorationsForOrderItems,
+  type AdminOrderStatus,
+  shouldDeductStockForStatusTransition,
+  shouldRestoreStockForStatusTransition,
+} from "@/src/lib/admin-order-items";
 import { logger } from "@/src/lib/logger";
 import { db } from "@/src/lib/prisma";
 import { OrderStatus } from "@/types/order";
 import { NextRequest, NextResponse } from "next/server";
+
+class OrderNotFoundError extends Error {}
+
+class OrderStatusConflictError extends Error {}
+
+class OrderStockError extends Error {}
 
 /**
  * PATCH /api/admin/orders/[id]
@@ -42,64 +55,10 @@ export async function PATCH(
       return NextResponse.json({ error: "Status inválido" }, { status: 400 });
     }
 
-    // Verificar se o pedido existe
-    const existingOrder = await db.order.findUnique({
-      where: { id },
-    });
-
-    if (!existingOrder) {
-      return NextResponse.json(
-        { error: "Pedido não encontrado" },
-        { status: 404 }
-      );
-    }
-
     // Atualizar status do pedido e estoque em uma transação
     const updatedOrder = await db.$transaction(async (tx) => {
-      // Se o novo status for CONFIRMED e o anterior não era, deduzir estoque
-      if (status === "CONFIRMED" && existingOrder.status !== "CONFIRMED") {
-        // Buscar itens do pedido para saber quais produtos atualizar
-        const orderItems = await tx.orderItem.findMany({
-          where: { orderId: id },
-        });
-
-        for (const item of orderItems) {
-          const product = await tx.product.findUnique({
-            where: { id: item.productId },
-            select: { id: true, stockQuantity: true },
-          });
-
-          if (!product) {
-            logger.warn("admin/orders/[id]:PATCH - Produto não encontrado para item do pedido, pulando atualização de estoque", {
-              productId: item.productId,
-              orderItemId: item.id,
-            });
-            continue;
-          }
-
-          if (product.stockQuantity < item.quantity) {
-            logger.warn("admin/orders/[id]:PATCH - Estoque insuficiente para dedução completa", {
-              productId: item.productId,
-              currentStock: product.stockQuantity,
-              requestedQuantity: item.quantity,
-            });
-          }
-
-          const newStock = Math.max(0, product.stockQuantity - item.quantity);
-          await tx.product.update({
-            where: { id: item.productId },
-            data: {
-              stockQuantity: newStock,
-              inStock: newStock > 0,
-            },
-          });
-        }
-      }
-
-      // Atualizar o pedido
-      const updatedOrder = await tx.order.update({
+      const existingOrder = await tx.order.findUnique({
         where: { id },
-        data: { status },
         include: {
           items: true,
           user: {
@@ -112,21 +71,194 @@ export async function PATCH(
         },
       });
 
+      if (!existingOrder) {
+        throw new OrderNotFoundError("Pedido não encontrado");
+      }
+
+      const shouldDeductStock = shouldDeductStockForStatusTransition(
+        existingOrder.status as AdminOrderStatus,
+        status as AdminOrderStatus
+      );
+      const shouldRestoreStock = shouldRestoreStockForStatusTransition(
+        existingOrder.status as AdminOrderStatus,
+        status as AdminOrderStatus
+      );
+
+      let updatedOrder = existingOrder;
+
+      if (shouldDeductStock || shouldRestoreStock) {
+        const transitionClaim = await tx.order.updateMany({
+          where: {
+            id,
+            status: existingOrder.status,
+          },
+          data: { status },
+        });
+
+        if (transitionClaim.count !== 1) {
+          const currentOrder = await tx.order.findUnique({
+            where: { id },
+            include: {
+              items: true,
+              user: {
+                select: {
+                  id: true,
+                  name: true,
+                  email: true,
+                },
+              },
+            },
+          });
+
+          if (currentOrder?.status === status) {
+            return currentOrder;
+          }
+
+          throw new OrderStatusConflictError(
+            "Status do pedido mudou durante a atualização"
+          );
+        }
+
+        const products = await tx.product.findMany({
+          where: {
+            id: {
+              in: existingOrder.items.map((item) => item.productId),
+            },
+          },
+          select: {
+            id: true,
+            code: true,
+            name: true,
+            price: true,
+            stockQuantity: true,
+          },
+        });
+
+        if (shouldDeductStock) {
+          const stockDeductions = buildStockDeductionsForOrderItems({
+            items: existingOrder.items,
+            products,
+          });
+
+          for (const deduction of stockDeductions) {
+            const remainingStock = deduction.currentStock - deduction.quantity;
+            const updateResult = await tx.product.updateMany({
+              where: {
+                id: deduction.productId,
+                stockQuantity: { gte: deduction.quantity },
+              },
+              data: {
+                stockQuantity: { decrement: deduction.quantity },
+                inStock: remainingStock > 0,
+              },
+            });
+
+            if (updateResult.count !== 1) {
+              throw new OrderStockError(
+                `Estoque insuficiente para ${deduction.productName ?? "produto"}`
+              );
+            }
+          }
+        }
+
+        if (shouldRestoreStock) {
+          const stockRestorations = buildStockRestorationsForOrderItems({
+            items: existingOrder.items,
+            products,
+          });
+
+          for (const restoration of stockRestorations) {
+            const updateResult = await tx.product.updateMany({
+              where: {
+                id: restoration.productId,
+              },
+              data: {
+                stockQuantity: { increment: restoration.quantity },
+                inStock: true,
+              },
+            });
+
+            if (updateResult.count !== 1) {
+              throw new OrderStockError(
+                `Falha ao restaurar estoque para ${restoration.productName ?? "produto"}`
+              );
+            }
+          }
+        }
+
+        const refreshedOrder = await tx.order.findUnique({
+          where: { id },
+          include: {
+            items: true,
+            user: {
+              select: {
+                id: true,
+                name: true,
+                email: true,
+              },
+            },
+          },
+        });
+
+        if (!refreshedOrder) {
+          throw new OrderNotFoundError("Pedido não encontrado");
+        }
+
+        updatedOrder = refreshedOrder;
+      } else if (existingOrder.status !== status) {
+        updatedOrder = await tx.order.update({
+          where: { id },
+          data: { status },
+          include: {
+            items: true,
+            user: {
+              select: {
+                id: true,
+                name: true,
+                email: true,
+              },
+            },
+          },
+        });
+      }
+
       // Criar notificação para o usuário
-      await tx.notification.create({
-        data: {
-          userId: updatedOrder.userId,
-          title: "Atualização de Pedido",
-          message: `Seu pedido #${updatedOrder.orderNumber} mudou para ${status}.`,
-          link: `/meus-pedidos?orderId=${updatedOrder.id}`,
-        },
-      });
+      if (existingOrder.status !== updatedOrder.status) {
+        await tx.notification.create({
+          data: {
+            userId: updatedOrder.userId,
+            title: "Atualização de Pedido",
+            message: `Seu pedido #${updatedOrder.orderNumber} mudou para ${status}.`,
+            link: `/meus-pedidos?orderId=${updatedOrder.id}`,
+          },
+        });
+      }
 
       return updatedOrder;
     });
 
     return NextResponse.json(updatedOrder);
   } catch (error) {
+    if (error instanceof OrderNotFoundError) {
+      return NextResponse.json(
+        { error: "Pedido não encontrado" },
+        { status: 404 }
+      );
+    }
+
+    if (
+      error instanceof OrderStatusConflictError ||
+      error instanceof OrderStockError ||
+      (error instanceof Error &&
+        (error.message.includes("Estoque insuficiente") ||
+          error.message.includes("Produto não encontrado")))
+    ) {
+      return NextResponse.json(
+        { error: error instanceof Error ? error.message : "Conflito de status" },
+        { status: 409 }
+      );
+    }
+
     logger.error("admin/orders/[id]:PATCH - Erro ao atualizar status do pedido", {
       error: error instanceof Error ? error.message : String(error),
     });

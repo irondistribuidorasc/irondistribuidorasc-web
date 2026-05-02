@@ -138,7 +138,9 @@ function SearchInput() {
                 </p>
                 <div className="flex items-center gap-2 text-xs text-default-400">
                   <span>{product.brand}</span>
-                  {status === "authenticated" && session?.user?.approved && (
+                  {status === "authenticated" &&
+                    session?.user?.approved &&
+                    typeof product.price === "number" && (
                     <>
                       <span>•</span>
                       <span className="font-medium text-brand-600 dark:text-brand-400">

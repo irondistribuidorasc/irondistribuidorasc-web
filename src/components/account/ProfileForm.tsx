@@ -511,8 +511,8 @@ export function ProfileForm() {
 									Esta ação não pode ser desfeita!
 								</p>
 								<ul className="text-sm text-default-600 list-disc list-inside space-y-1">
-									<li>Seu perfil e informações pessoais serão excluídos</li>
-									<li>Seu histórico de pedidos será removido</li>
+									<li>Seu acesso e dados pessoais serão removidos</li>
+									<li>Pedidos já realizados serão mantidos de forma anonimizada</li>
 									<li>Você perderá acesso à sua conta</li>
 								</ul>
 							</div>

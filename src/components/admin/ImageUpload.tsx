@@ -1,7 +1,6 @@
 "use client";
 
 import { logger } from "@/src/lib/logger";
-import { supabase } from "@/src/lib/supabase";
 import { PhotoIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import { Button, Progress } from "@heroui/react";
 import NextImage from "next/image";
@@ -84,23 +83,20 @@ export default function ImageUpload({
         type: "image/jpeg",
       });
 
-      const fileExt = file.name.split(".").pop();
-      const fileName = `${Math.random().toString(36).substring(2)}.${fileExt}`;
-      const filePath = `${fileName}`;
+      const formData = new FormData();
+      formData.append("file", resizedFile);
 
-      const { error: uploadError } = await supabase.storage
-        .from("products")
-        .upload(filePath, resizedFile, {
-          upsert: false,
-        });
+      const response = await fetch("/api/admin/products/image", {
+        method: "POST",
+        body: formData,
+      });
 
-      if (uploadError) {
-        throw uploadError;
+      const data = await response.json();
+      if (!response.ok) {
+        throw new Error(data.error ?? "Erro ao enviar imagem");
       }
 
-      const { data } = supabase.storage.from("products").getPublicUrl(filePath);
-
-      onChange(data.publicUrl);
+      onChange(data.url);
       toast.success("Imagem enviada com sucesso!");
     } catch (error) {
       logger.error("Error uploading image", { error });

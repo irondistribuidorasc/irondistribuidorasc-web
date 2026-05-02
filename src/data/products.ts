@@ -101,6 +101,10 @@ export type Product = {
   popularity?: number;
 };
 
+export type PublicProduct = Omit<Product, "price"> & {
+  price?: number;
+};
+
 export const brandOptions: Array<{ key: Brand; label: Brand }> = [
   { key: "Samsung", label: "Samsung" },
   { key: "Xiaomi", label: "Xiaomi" },

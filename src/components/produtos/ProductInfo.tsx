@@ -1,15 +1,16 @@
 "use client";
 
 import { useCart } from "@/src/contexts/CartContext";
-import type { Product } from "@/src/data/products";
+import type { PublicProduct } from "@/src/data/products";
 import { formatPrice, formatRestockDate } from "@/src/lib/productUtils";
+import { hasVisiblePrice } from "@/src/lib/product-visibility";
 import { Button } from "@heroui/react";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 
 type ProductInfoProps = {
-  product: Product;
+  product: PublicProduct;
 };
 
 const FEEDBACK_DURATION_MS = 600;
@@ -22,7 +23,7 @@ export function ProductInfo({ product }: ProductInfoProps) {
 
   const isAuthenticated = !!session?.user;
   const isApproved = session?.user?.approved === true;
-  const canViewPrices = isAuthenticated && isApproved;
+  const canViewPrices = isAuthenticated && isApproved && hasVisiblePrice(product);
 
   // Cleanup timeout on unmount
   useEffect(() => {
@@ -34,6 +35,10 @@ export function ProductInfo({ product }: ProductInfoProps) {
   }, []);
 
   const handleAddToCart = () => {
+    if (!canViewPrices) {
+      return;
+    }
+
     setIsAdding(true);
     addItem(product);
     openCart();

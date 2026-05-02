@@ -2,28 +2,17 @@ import { NextResponse } from "next/server";
 import Papa from "papaparse";
 import { auth } from "@/src/lib/auth";
 import { logger } from "@/src/lib/logger";
-import { parseImportedCategory } from "@/src/lib/productImport";
+import {
+  normalizeImportedProductRow,
+  type ImportedProductData,
+  type ImportedProductRow,
+} from "@/src/lib/productImport";
 import { db } from "@/src/lib/prisma";
 import { getClientIP, withRateLimit } from "@/src/lib/rate-limit";
 
 // Constantes de validação de upload
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 const ALLOWED_MIME_TYPES = ["text/csv", "application/csv", "text/plain"];
-
-interface CsvProductRow {
-  code: string;
-  name: string;
-  price: string;
-  brand?: string;
-  category?: string;
-  model?: string;
-  imageUrl?: string;
-  stockQuantity?: string;
-  minStockThreshold?: string;
-  description?: string;
-  tags?: string;
-  popularity?: string;
-}
 
 export async function POST(request: Request) {
   try {
@@ -103,9 +92,9 @@ export async function POST(request: Request) {
       );
     }
 
-    const productsToUpsert = [];
-    const errors = [];
-    const data = parseResult.data as CsvProductRow[];
+    const productsToUpsert: ImportedProductData[] = [];
+    const errors: string[] = [];
+    const data = parseResult.data as ImportedProductRow[];
 
     // Limitar número de produtos por importação para evitar sobrecarga
     const MAX_PRODUCTS_PER_IMPORT = 1000;
@@ -119,45 +108,13 @@ export async function POST(request: Request) {
     }
 
     for (let i = 0; i < data.length; i++) {
-      const productData = data[i];
-
-      // Basic validation
-      if (!productData.code || !productData.name || !productData.price) {
-        errors.push(
-          `Linha ${i + 1}: Campos obrigatórios ausentes (code, name ou price)`
-        );
+      const normalizedProduct = normalizeImportedProductRow(data[i], i + 1);
+      if ("error" in normalizedProduct) {
+        errors.push(normalizedProduct.error);
         continue;
       }
 
-      const price = Number.parseFloat(productData.price);
-      if (Number.isNaN(price)) {
-        errors.push(
-          `Linha ${i + 1}: Preço inválido para produto ${productData.code}`
-        );
-        continue;
-      }
-
-      const parsedCategory = parseImportedCategory(productData.category, i + 1);
-      if ("error" in parsedCategory) {
-        errors.push(parsedCategory.error);
-        continue;
-      }
-
-      productsToUpsert.push({
-        code: productData.code,
-        name: productData.name,
-        brand: productData.brand || "Generic",
-        category: parsedCategory.category,
-        model: productData.model || "",
-        imageUrl: productData.imageUrl || "/logo-iron.png",
-        inStock: parseInt(productData.stockQuantity || "0") > 0,
-        stockQuantity: parseInt(productData.stockQuantity || "0"),
-        minStockThreshold: parseInt(productData.minStockThreshold || "10"),
-        price: price,
-        description: productData.description || "",
-        tags: productData.tags ? productData.tags.split(";") : [],
-        popularity: parseInt(productData.popularity || "0"),
-      });
+      productsToUpsert.push(normalizedProduct.product);
     }
 
     let successCount = 0;

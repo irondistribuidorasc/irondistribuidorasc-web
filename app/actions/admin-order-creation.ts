@@ -3,6 +3,10 @@
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { auth } from "@/src/lib/auth";
+import {
+	buildAdminOrderItems,
+	shouldDeductStockForInitialStatus,
+} from "@/src/lib/admin-order-items";
 import { logger } from "@/src/lib/logger";
 import { db as prisma } from "@/src/lib/prisma";
 
@@ -10,7 +14,7 @@ import { db as prisma } from "@/src/lib/prisma";
 const OrderItemSchema = z.object({
 	productId: z.string(),
 	quantity: z.number().min(1),
-	price: z.number().min(0),
+	price: z.number().min(0).optional(),
 });
 
 const AddressSchema = z.object({
@@ -239,57 +243,50 @@ export async function createAdminOrder(data: CreateOrderInput) {
 		result.data;
 
 	try {
-		// Fetch user details for snapshot
-		const user = await prisma.user.findUnique({
-			where: { id: userId },
-		});
-
-		if (!user) {
-			return { success: false, error: "Usuário não encontrado" };
-		}
-
-		// Fetch products to get details
-		const productIds = items.map((i) => i.productId);
-		const products = await prisma.product.findMany({
-			where: { id: { in: productIds } },
-		});
-
-		const productMap = new Map(products.map((p) => [p.id, p]));
-
-		// Calculate total and prepare items
-		let calculatedTotal = 0;
-		const orderItemsData = items.map((item) => {
-			const product = productMap.get(item.productId);
-			if (!product) {
-				throw new Error(`Produto não encontrado: ${item.productId}`);
-			}
-			const itemTotal = item.price * item.quantity;
-			calculatedTotal += itemTotal;
-
-			return {
-				productId: item.productId,
-				productCode: product.code,
-				productName: product.name,
-				quantity: item.quantity,
-				price: item.price,
-				total: itemTotal,
-			};
-		});
-
 		// Generate order number
 		const orderNumber = `ADM-${Date.now().toString().slice(-8)}`;
-
-		// Use provided address or fallback to user's address
-		const orderAddress = {
-			addressLine1: address?.addressLine1 || user.addressLine1 || "",
-			addressLine2: address?.addressLine2 || user.addressLine2 || null,
-			city: address?.city || user.city || "",
-			state: address?.state || user.state || "",
-			postalCode: address?.postalCode || user.postalCode || "",
-		};
+		const shouldDeductStock = shouldDeductStockForInitialStatus(status);
 
 		// Create order and update user address in transaction
 		const order = await prisma.$transaction(async (tx) => {
+			const user = await tx.user.findUnique({
+				where: { id: userId },
+			});
+
+			if (!user) {
+				throw new Error("Usuário não encontrado");
+			}
+
+			const products = await tx.product.findMany({
+				where: { id: { in: items.map((item) => item.productId) } },
+				select: {
+					id: true,
+					code: true,
+					name: true,
+					price: true,
+					stockQuantity: true,
+				},
+			});
+
+			const {
+				items: orderItemsData,
+				stockDeductions,
+				total: calculatedTotal,
+			} = buildAdminOrderItems({
+				items,
+				products,
+				shouldDeductStock,
+			});
+
+			// Use provided address or fallback to user's address
+			const orderAddress = {
+				addressLine1: address?.addressLine1 || user.addressLine1 || "",
+				addressLine2: address?.addressLine2 || user.addressLine2 || null,
+				city: address?.city || user.city || "",
+				state: address?.state || user.state || "",
+				postalCode: address?.postalCode || user.postalCode || "",
+			};
+
 			// Se o endereço foi fornecido, atualiza o perfil do usuário para facilitar pedidos futuros
 			if (address?.addressLine1) {
 				await tx.user.update({
@@ -304,7 +301,7 @@ export async function createAdminOrder(data: CreateOrderInput) {
 				});
 			}
 
-			return await tx.order.create({
+			const createdOrder = await tx.order.create({
 				data: {
 					userId,
 					orderNumber,
@@ -327,6 +324,26 @@ export async function createAdminOrder(data: CreateOrderInput) {
 					},
 				},
 			});
+
+			for (const deduction of stockDeductions) {
+				const remainingStock = deduction.currentStock - deduction.quantity;
+				const updateResult = await tx.product.updateMany({
+					where: {
+						id: deduction.productId,
+						stockQuantity: { gte: deduction.quantity },
+					},
+					data: {
+						stockQuantity: { decrement: deduction.quantity },
+						inStock: remainingStock > 0,
+					},
+				});
+
+				if (updateResult.count !== 1) {
+					throw new Error("Estoque insuficiente para concluir o pedido");
+				}
+			}
+
+			return createdOrder;
 		});
 
 		revalidatePath("/admin/pedidos");

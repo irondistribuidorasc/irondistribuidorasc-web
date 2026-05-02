@@ -1,6 +1,7 @@
 import { Analytics } from "@vercel/analytics/next";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
+import { headers } from "next/headers";
 import { CookieConsent } from "@/src/components/layout/CookieConsent";
 import { Footer } from "@/src/components/layout/Footer";
 import { Header } from "@/src/components/layout/Header";
@@ -140,11 +141,12 @@ export const metadata: Metadata = {
 	},
 };
 
-export default function RootLayout({
+export default async function RootLayout({
 	children,
 }: Readonly<{
 	children: React.ReactNode;
 }>) {
+	const nonce = (await headers()).get("x-nonce") ?? undefined;
 	const jsonLd = {
 		"@context": "https://schema.org",
 		"@type": "Organization",
@@ -183,6 +185,7 @@ export default function RootLayout({
 		<html lang="pt-BR" suppressHydrationWarning>
 			<head>
 				<script
+					nonce={nonce}
 					type="application/ld+json"
 					dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
 				/>

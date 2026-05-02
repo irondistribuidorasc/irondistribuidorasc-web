@@ -1,21 +1,22 @@
 "use server";
 
 import { logger } from "@/src/lib/logger";
+import { auth } from "@/src/lib/auth";
 import { db } from "@/src/lib/prisma";
+import {
+  canViewB2BPrices,
+  type PublicSearchResult,
+  toPublicSearchResult,
+} from "@/src/lib/product-visibility";
 
-export type SearchResult = {
-  id: string;
-  name: string;
-  imageUrl: string | null;
-  price: number;
-  code: string;
-  brand: string;
-};
+export type SearchResult = PublicSearchResult;
 
 export async function searchProducts(query: string): Promise<SearchResult[]> {
   if (!query || query.length < 2) return [];
 
   try {
+    const session = await auth();
+    const canViewPrices = canViewB2BPrices(session);
     const products = await db.product.findMany({
       where: {
         OR: [
@@ -37,7 +38,9 @@ export async function searchProducts(query: string): Promise<SearchResult[]> {
         name: "asc",
       },
     });
-    return products;
+    return products.map((product) =>
+      toPublicSearchResult(product, canViewPrices)
+    );
   } catch (error) {
     logger.error("actions/search-products - Erro ao buscar produtos", {
       error: error instanceof Error ? error.message : String(error),

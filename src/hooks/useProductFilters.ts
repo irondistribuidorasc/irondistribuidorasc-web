@@ -1,13 +1,13 @@
 "use client";
 
-import type { Brand, Category, Product } from "@/src/data/products";
+import type { Brand, Category, PublicProduct } from "@/src/data/products";
 import type { ProductFilters, SortOption } from "@/src/lib/productUtils";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useMemo, useTransition } from "react";
 
 type UseProductFiltersReturn = {
   // Produtos processados (pass-through do server)
-  paginatedProducts: Product[];
+  paginatedProducts: PublicProduct[];
   totalProducts: number;
   totalPages: number;
 
@@ -40,7 +40,7 @@ type UseProductFiltersReturn = {
 const ITEMS_PER_PAGE = 60;
 
 export function useProductFilters(
-  products: Product[],
+  products: PublicProduct[],
   totalProducts: number,
   totalPages: number,
   currentPage: number,

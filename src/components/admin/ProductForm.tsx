@@ -5,7 +5,7 @@ import { logger } from "@/src/lib/logger";
 import { type ProductSchema, productSchema } from "@/src/lib/schemas";
 import { Button, Input, Select, SelectItem, Textarea } from "@heroui/react";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 import { toast } from "sonner";
 import type { ZodType } from "zod";
 import ImageUpload from "./ImageUpload";
@@ -36,9 +36,24 @@ export default function ProductForm({
   initialData,
   onSuccess,
 }: ProductFormProps) {
+  const defaultValues: ProductSchema = {
+    code: initialData?.code || "",
+    name: initialData?.name || "",
+    brand: initialData?.brand || "",
+    category: initialData?.category || "",
+    model: initialData?.model || "",
+    price: initialData?.price || 0,
+    imageUrl: initialData?.imageUrl || "/logo-iron.png",
+    description: initialData?.description || "",
+    tags: initialData?.tags || [],
+    popularity: initialData?.popularity || 0,
+    stockQuantity: initialData?.stockQuantity || 0,
+    minStockThreshold: initialData?.minStockThreshold || 10,
+  };
+
   const {
+    control,
     setValue,
-    watch,
     handleSubmit,
     reset,
     formState: { errors, isSubmitting },
@@ -46,23 +61,14 @@ export default function ProductForm({
     resolver: zodResolver(
       productSchema as ZodType<ProductSchema, ProductSchema>,
     ),
-    defaultValues: {
-      code: initialData?.code || "",
-      name: initialData?.name || "",
-      brand: initialData?.brand || "",
-      category: initialData?.category || "",
-      model: initialData?.model || "",
-      price: initialData?.price || 0,
-      imageUrl: initialData?.imageUrl || "/logo-iron.png",
-      description: initialData?.description || "",
-      tags: initialData?.tags || [],
-      popularity: initialData?.popularity || 0,
-      stockQuantity: initialData?.stockQuantity || 0,
-      minStockThreshold: initialData?.minStockThreshold || 10,
-    },
+    defaultValues,
   });
 
-  const formData = watch();
+  const watchedValues = useWatch({ control }) as Partial<ProductSchema> | undefined;
+  const formData: ProductSchema = {
+    ...defaultValues,
+    ...watchedValues,
+  };
 
   const onSubmit = async (data: ProductSchema) => {
     try {

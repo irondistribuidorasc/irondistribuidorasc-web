@@ -12,7 +12,8 @@ Aplicação web full-stack (Next.js) para e-commerce B2B: clientes se registram,
 
 ## Pré-requisitos
 
-- Node.js 20+ (ver `.nvmrc`)
+- Node.js 24+ LTS (ver `.nvmrc`)
+- pnpm 11.x
 - [pnpm](https://pnpm.io/)
 - Instância PostgreSQL (local ou remota)
 

@@ -57,6 +57,7 @@ model Account {
   user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([provider, providerAccountId])
+  @@index([userId])
 }
 
 model Session {
@@ -65,6 +66,8 @@ model Session {
   userId       String
   expires      DateTime
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
 }
 
 
@@ -73,7 +76,7 @@ model VerificationToken {
   token      String   @unique
   expires    DateTime
 
-  @@unique([identifier, token])
+  @@id([identifier, token])
 }
 
 model Product {
@@ -128,7 +131,6 @@ model Order {
   updatedAt   DateTime    @updatedAt
 
   @@index([userId])
-  @@index([orderNumber])
 }
 
 enum OrderStatus {

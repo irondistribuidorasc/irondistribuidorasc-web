@@ -33,9 +33,6 @@
 			"path": "node_modules/cz-git"
 		}
 	},
-	"prisma": {
-		"seed": "npx tsx prisma/seed.ts"
-	},
 	"dependencies": {
 		"@auth/prisma-adapter": "^2.11.1",
 		"@heroicons/react": "^2.1.5",

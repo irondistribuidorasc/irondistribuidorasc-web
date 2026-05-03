@@ -29,16 +29,19 @@ Arquivo fonte:
 
 ```text
 supabase/migrations/20260502200330_products_storage_upload_policy.sql
+supabase/migrations/20260503173234_remove_products_public_write_policies.sql
+supabase/migrations/20260503173258_remove_products_public_listing_policies.sql
 ```
 
-Esse SQL:
+Esses SQLs:
 
 - cria/atualiza o bucket `products`;
 - mantem o bucket publico para leitura das imagens;
 - restringe MIME types para `image/jpeg`, `image/png` e `image/webp`;
 - limita o tamanho em 5 MB;
 - remove policies nomeadas conhecidas de upload direto publico;
-- nao cria policy de `insert`, `update` ou `delete` para `anon`/`authenticated`.
+- remove policies amplas de listagem publica do bucket;
+- nao mantem policy de `select`, `insert`, `update` ou `delete` para `anon`/`authenticated`.
 
 ## Aplicacao
 
@@ -68,8 +71,10 @@ from pg_policies
 where schemaname = 'storage'
   and tablename = 'objects'
   and (
-    qual ilike '%products%'
+    policyname ilike '%products%'
+    or qual ilike '%products%'
     or with_check ilike '%products%'
+    or policyname ilike 'Allow Public Uploads%'
   )
 order by policyname;
 ```
@@ -80,7 +85,8 @@ Resultado esperado:
 - `public = true`;
 - `file_size_limit = 5242880`;
 - `allowed_mime_types` contem apenas `image/jpeg`, `image/png`, `image/webp`;
-- nenhuma policy permite `insert`, `update` ou `delete` amplo para `anon`/`authenticated`.
+- nenhuma policy em `storage.objects` referencia o bucket `products`;
+- nenhuma policy permite listagem, `insert`, `update` ou `delete` amplo para `anon`/`authenticated`.
 
 ## Observacao
 

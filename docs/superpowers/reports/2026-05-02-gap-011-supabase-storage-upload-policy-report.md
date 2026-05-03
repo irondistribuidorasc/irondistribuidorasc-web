@@ -22,6 +22,9 @@ O componente de upload de imagem nao envia mais arquivos diretamente do browser 
   - geracao de path seguro.
 - `src/components/admin/ImageUpload.tsx` passou a chamar a API interna em vez de `supabase.storage.from(...).upload(...)` no browser.
 - Criada migration Supabase `supabase/migrations/20260502200330_products_storage_upload_policy.sql`.
+- Criadas migrations complementares para remover policies legadas do Dashboard:
+  - `supabase/migrations/20260503173234_remove_products_public_write_policies.sql`;
+  - `supabase/migrations/20260503173258_remove_products_public_listing_policies.sql`.
 - Criada documentacao operacional `docs/operations/supabase-storage-products.md`.
 - `docs/system-pillars.md` foi atualizado para refletir o novo fluxo.
 
@@ -29,7 +32,8 @@ O componente de upload de imagem nao envia mais arquivos diretamente do browser 
 
 - Upload: apenas admin autenticado pelo NextAuth.
 - Escrita no bucket: server-side com `SUPABASE_SERVICE_ROLE_KEY`.
-- Leitura: bucket `products` publico para imagens de catalogo.
+- Leitura: bucket `products` publico para imagens de catalogo via URL publica.
+- Listagem: sem policy publica em `storage.objects`.
 - Tipos aceitos: `image/jpeg`, `image/png`, `image/webp`.
 - Tamanho maximo: 5 MB.
 
@@ -43,13 +47,14 @@ O componente de upload de imagem nao envia mais arquivos diretamente do browser 
 | `pnpm test:coverage` | Passou: 26 arquivos, 241 testes, cobertura geral 96.81% statements e 91.23% branches |
 | `pnpm build` com variaveis placeholder nao secretas | Passou |
 | `git diff --check` | Passou |
-| `supabase migration list --local` | Bloqueado: Supabase local/Postgres nao esta rodando em `127.0.0.1:54322` |
+| MCP Supabase `apply_migration` em producao | Passou: `products_storage_upload_policy`, `remove_products_public_write_policies`, `remove_products_public_listing_policies` |
+| MCP Supabase verificacao de bucket/policies | Passou: bucket `products` publico, 5 MB, MIME types restritos, sem policies publicas de listagem/escrita |
 
-## Validacao Operacional Pendente
+## Validacao Operacional
 
-Aplicar a migration no projeto Supabase alvo e executar as queries de verificacao documentadas em `docs/operations/supabase-storage-products.md`.
+Migrations aplicadas no projeto Supabase `vvgxwlnxyhtxvariqnba`.
 
-Tambem e necessario configurar `SUPABASE_SERVICE_ROLE_KEY` no ambiente server-side antes de testar upload real.
+Ainda e necessario garantir `SUPABASE_SERVICE_ROLE_KEY` no ambiente server-side antes de testar upload real.
 
 ## Proximo Passo Recomendado
 

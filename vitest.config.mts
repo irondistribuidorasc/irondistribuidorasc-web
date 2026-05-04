@@ -19,6 +19,8 @@ export default defineConfig({
 		include: [
 			"src/**/__tests__/**/*.{test,spec}.{ts,tsx}",
 			"src/**/*.{test,spec}.{ts,tsx}",
+			"app/**/__tests__/**/*.{test,spec}.{ts,tsx}",
+			"app/**/*.{test,spec}.{ts,tsx}",
 		],
 		coverage: {
 			provider: "v8",

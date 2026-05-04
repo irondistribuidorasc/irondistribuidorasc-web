@@ -43,19 +43,19 @@ export async function POST(request: Request) {
     const hashedToken = hashPasswordResetToken(token);
 
     // Verificar se o hash do token existe e é válido
-    const verificationToken = await db.verificationToken.findUnique({
-      where: { token: hashedToken },
+    const resetToken = await db.passwordResetToken.findUnique({
+      where: { tokenHash: hashedToken },
     });
 
-    if (!verificationToken) {
+    if (!resetToken) {
       return NextResponse.json(
         { message: "Token inválido ou expirado." },
         { status: 400 }
       );
     }
 
-    if (new Date() > verificationToken.expires) {
-      await db.verificationToken.delete({ where: { token: hashedToken } });
+    if (new Date() > resetToken.expires) {
+      await db.passwordResetToken.delete({ where: { tokenHash: hashedToken } });
       return NextResponse.json(
         { message: "Token expirado. Solicite uma nova recuperação de senha." },
         { status: 400 }
@@ -67,15 +67,15 @@ export async function POST(request: Request) {
 
     // Atualizar senha do usuário
     await db.user.update({
-      where: { email: verificationToken.identifier },
+      where: { email: resetToken.email },
       data: { hashedPassword },
     });
 
     // Deletar o token usado
-    await db.verificationToken.delete({ where: { token: hashedToken } });
+    await db.passwordResetToken.delete({ where: { tokenHash: hashedToken } });
 
     logger.info("reset-password:POST - Senha redefinida com sucesso", {
-      email: verificationToken.identifier,
+      email: resetToken.email,
     });
 
     return NextResponse.json(

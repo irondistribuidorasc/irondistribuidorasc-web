@@ -50,15 +50,16 @@ export async function POST(request: Request) {
     const { token, hashedToken } = createPasswordResetToken();
     const expires = addHours(new Date(), 1); // Expira em 1 hora
 
-    await db.verificationToken.deleteMany({
-      where: { identifier: normalizedEmail },
+    // Invalidar tokens anteriores do mesmo email
+    await db.passwordResetToken.deleteMany({
+      where: { email: normalizedEmail },
     });
 
-    // Salvar apenas o hash do token no banco
-    await db.verificationToken.create({
+    // Salvar apenas o hash do token na tabela dedicada
+    await db.passwordResetToken.create({
       data: {
-        identifier: normalizedEmail,
-        token: hashedToken,
+        email: normalizedEmail,
+        tokenHash: hashedToken,
         expires,
       },
     });

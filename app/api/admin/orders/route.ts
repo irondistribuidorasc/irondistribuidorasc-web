@@ -59,8 +59,34 @@ export async function GET(req: NextRequest) {
     // Buscar pedidos com paginação
     const orders = await db.order.findMany({
       where,
-      include: {
-        items: true,
+      select: {
+        id: true,
+        orderNumber: true,
+        status: true,
+        total: true,
+        paymentMethod: true,
+        customerName: true,
+        customerEmail: true,
+        customerPhone: true,
+        addressLine1: true,
+        city: true,
+        state: true,
+        postalCode: true,
+        notes: true,
+        whatsappMessageSent: true,
+        createdAt: true,
+        updatedAt: true,
+        items: {
+          select: {
+            id: true,
+            productId: true,
+            productCode: true,
+            productName: true,
+            quantity: true,
+            price: true,
+            total: true,
+          },
+        },
         user: {
           select: {
             id: true,

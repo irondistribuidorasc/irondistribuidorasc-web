@@ -19,9 +19,41 @@ export async function GET() {
       where: {
         userId: session.user.id,
       },
-      include: {
-        items: true,
-        feedback: true,
+      select: {
+        id: true,
+        orderNumber: true,
+        status: true,
+        total: true,
+        paymentMethod: true,
+        customerName: true,
+        customerEmail: true,
+        customerPhone: true,
+        addressLine1: true,
+        city: true,
+        state: true,
+        postalCode: true,
+        notes: true,
+        createdAt: true,
+        updatedAt: true,
+        items: {
+          select: {
+            id: true,
+            productId: true,
+            productCode: true,
+            productName: true,
+            quantity: true,
+            price: true,
+            total: true,
+          },
+        },
+        feedback: {
+          select: {
+            id: true,
+            rating: true,
+            comment: true,
+            createdAt: true,
+          },
+        },
       },
       orderBy: {
         createdAt: "desc",

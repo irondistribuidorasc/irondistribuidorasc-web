@@ -4,7 +4,6 @@ import { logger } from "@/src/lib/logger";
 import { db } from "@/src/lib/prisma";
 import { getClientIP, withRateLimit } from "@/src/lib/rate-limit";
 import { createOrderSchema } from "@/src/lib/schemas";
-import { Prisma } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
 
 /**
@@ -119,89 +118,45 @@ export async function POST(req: NextRequest) {
       });
     }
 
-    // Gerar número sequencial do pedido
-    const lastOrder = await db.order.findFirst({
-      orderBy: {
-        createdAt: "desc",
+    // Gerar número sequencial do pedido via sequence PostgreSQL (atômico)
+    const seqResult = await db.$queryRaw<{ nextval: bigint }[]>`
+      SELECT nextval('order_number_seq') as nextval
+    `;
+    const orderNumber = seqResult[0].nextval.toString();
+
+    // Criar pedido com items
+    const order = await db.order.create({
+      data: {
+        userId: session.user.id,
+        orderNumber,
+        status: "PENDING",
+        total,
+        customerName: payload.customer.name,
+        customerEmail: payload.customer.email,
+        customerPhone: payload.customer.phone,
+        customerDocNumber: payload.customer.docNumber || null,
+        addressLine1: payload.customer.addressLine1,
+        addressLine2: payload.customer.addressLine2 || null,
+        city: payload.customer.city,
+        state: payload.customer.state,
+        postalCode: payload.customer.postalCode,
+        notes: payload.notes || null,
+        paymentMethod:
+          (payload.paymentMethod as
+            | "PIX"
+            | "CREDIT_CARD"
+            | "DEBIT_CARD"
+            | "CASH"
+            | "OTHER") || "OTHER",
+        whatsappMessageSent: true,
+        items: {
+          create: orderItems,
+        },
       },
-      select: {
-        orderNumber: true,
+      include: {
+        items: true,
       },
     });
-
-    let nextNumber = 1001;
-    if (lastOrder?.orderNumber) {
-      const lastNumber = parseInt(lastOrder.orderNumber, 10);
-      if (!Number.isNaN(lastNumber)) {
-        nextNumber = lastNumber + 1;
-      }
-    }
-
-    let order;
-    let attempts = 0;
-    const maxAttempts = 5;
-
-    while (attempts < maxAttempts) {
-      try {
-        const orderNumber = nextNumber.toString();
-
-        // Criar pedido com items
-        order = await db.order.create({
-          data: {
-            userId: session.user.id,
-            orderNumber,
-            status: "PENDING",
-            total,
-            customerName: payload.customer.name,
-            customerEmail: payload.customer.email,
-            customerPhone: payload.customer.phone,
-            customerDocNumber: payload.customer.docNumber || null,
-            addressLine1: payload.customer.addressLine1,
-            addressLine2: payload.customer.addressLine2 || null,
-            city: payload.customer.city,
-            state: payload.customer.state,
-            postalCode: payload.customer.postalCode,
-            notes: payload.notes || null,
-            paymentMethod:
-              (payload.paymentMethod as
-                | "PIX"
-                | "CREDIT_CARD"
-                | "DEBIT_CARD"
-                | "CASH"
-                | "OTHER") || "OTHER",
-            whatsappMessageSent: true,
-            items: {
-              create: orderItems,
-            },
-          },
-          include: {
-            items: true,
-          },
-        });
-
-        // Se chegou aqui, sucesso
-        break;
-      } catch (error) {
-        // Se for erro de constraint unique no orderNumber, tenta o próximo número
-        if (
-          error instanceof Prisma.PrismaClientKnownRequestError &&
-          error.code === "P2002"
-        ) {
-          logger.warn("orders/create - Colisão de orderNumber", {
-            orderNumber: nextNumber,
-            nextAttempt: nextNumber + 1,
-          });
-          nextNumber++;
-          attempts++;
-          continue;
-        }
-        throw error;
-      }
-    }
-
-    if (!order) {
-      throw new Error("Falha ao gerar número do pedido após várias tentativas");
-    }
 
     logger.info("orders/create - Pedido criado com sucesso", {
       orderId: order.id,

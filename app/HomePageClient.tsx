@@ -27,12 +27,13 @@ import { ProductCard } from "@/src/components/produtos/ProductCard";
 import { ClientOnly } from "@/src/components/ui/ClientOnly";
 import { ScrollAnimation } from "@/src/components/ui/ScrollAnimation";
 import { WhatsAppFloatingButton } from "@/src/components/ui/WhatsAppFloatingButton";
-import { categoryOptions, products, type Category } from "@/src/data/products";
+import { categoryOptions, type Category, type Product } from "@/src/data/products";
 
-export default function HomePageClient() {
-	const featuredProducts = products
-		.sort((a, b) => (b.popularity || 0) - (a.popularity || 0))
-		.slice(0, 4);
+interface HomePageClientProps {
+	featuredProducts: Product[];
+}
+
+export default function HomePageClient({ featuredProducts }: HomePageClientProps) {
 	const categoryIcons = {
 		display: DevicePhoneMobileIcon,
 		battery: Battery50Icon,

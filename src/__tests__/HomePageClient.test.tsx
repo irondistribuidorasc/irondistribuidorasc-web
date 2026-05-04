@@ -5,7 +5,7 @@ import type { ReactNode } from "react";
 import { describe, expect, it, vi } from "vitest";
 
 import HomePageClient from "@/app/HomePageClient";
-import { categoryOptions } from "@/src/data/products";
+import { categoryOptions, products } from "@/src/data/products";
 
 vi.mock("next/image", () => ({
   default: (props: {
@@ -89,7 +89,10 @@ vi.mock("@heroui/react", () => ({
 
 describe("HomePageClient", () => {
   it("renderiza as novas categorias sem quebrar a home", () => {
-    render(<HomePageClient />);
+    const featuredProducts = products
+      .sort((a, b) => (b.popularity || 0) - (a.popularity || 0))
+      .slice(0, 4);
+    render(<HomePageClient featuredProducts={featuredProducts} />);
 
     const newCategoryLabels = categoryOptions
       .filter((category) =>

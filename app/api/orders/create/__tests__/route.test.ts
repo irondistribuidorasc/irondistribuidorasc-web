@@ -11,9 +11,9 @@ vi.mock("@/src/lib/prisma", () => ({
       findMany: vi.fn(),
     },
     order: {
-      findFirst: vi.fn(),
       create: vi.fn(),
     },
+    $queryRaw: vi.fn(),
   },
 }));
 
@@ -175,7 +175,7 @@ describe("POST /api/orders/create", () => {
       },
     ] as unknown as Awaited<ReturnType<typeof db.product.findMany>>);
 
-    vi.mocked(db.order.findFirst).mockResolvedValue(null);
+    vi.mocked(db.$queryRaw).mockResolvedValue([{ nextval: 1001n }]);
     vi.mocked(db.order.create).mockResolvedValue({
       id: "order-1",
       orderNumber: "1001",

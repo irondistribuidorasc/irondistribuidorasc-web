@@ -1,4 +1,5 @@
 import { Metadata } from "next";
+import { products } from "@/src/data/products";
 import HomePageClient from "./HomePageClient";
 
 export const metadata: Metadata = {
@@ -11,5 +12,9 @@ export const metadata: Metadata = {
 };
 
 export default function HomePage() {
-  return <HomePageClient />;
+  const featuredProducts = products
+    .sort((a, b) => (b.popularity || 0) - (a.popularity || 0))
+    .slice(0, 4);
+
+  return <HomePageClient featuredProducts={featuredProducts} />;
 }

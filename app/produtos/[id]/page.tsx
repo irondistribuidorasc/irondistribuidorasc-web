@@ -17,7 +17,20 @@ type Props = {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 };
 
-export const dynamic = "force-dynamic";
+export const revalidate = 300; // 5 minutos
+
+export async function generateStaticParams() {
+  try {
+    const products = await db.product.findMany({
+      select: { id: true },
+      take: 1000,
+    });
+    return products.map((p) => ({ id: p.id }));
+  } catch {
+    // Fallback quando DB não está disponível no build (ex: CI sem DB)
+    return [];
+  }
+}
 
 export async function generateMetadata(
   { params }: Props,

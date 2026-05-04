@@ -8,6 +8,7 @@ import {
 } from "@/src/lib/admin-order-items";
 import { logger } from "@/src/lib/logger";
 import { db } from "@/src/lib/prisma";
+import { getClientIP, withRateLimit } from "@/src/lib/rate-limit";
 import { OrderStatus } from "@/types/order";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -26,6 +27,12 @@ export async function PATCH(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const clientIP = getClientIP(req);
+    const rateLimitResponse = await withRateLimit(clientIP, "sensitiveAction");
+    if (rateLimitResponse) {
+      return rateLimitResponse;
+    }
+
     const { id } = await params;
     const session = await auth();
 

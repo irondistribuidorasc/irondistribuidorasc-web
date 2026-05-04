@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/src/lib/auth";
+import { validateCsrfOrigin } from "@/src/lib/csrf";
 import { logger } from "@/src/lib/logger";
 import { db } from "@/src/lib/prisma";
 import { z } from "zod";
@@ -13,6 +14,11 @@ export async function PATCH(
 	{ params }: { params: Promise<{ id: string }> },
 ) {
 	try {
+		const csrfResponse = validateCsrfOrigin(req);
+		if (csrfResponse) {
+			return csrfResponse;
+		}
+
 		const session = await auth();
 		const { id } = await params;
 

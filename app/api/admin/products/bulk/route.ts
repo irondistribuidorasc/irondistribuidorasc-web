@@ -1,13 +1,19 @@
 import { auth } from "@/src/lib/auth";
+import { validateCsrfOrigin } from "@/src/lib/csrf";
 import { logger } from "@/src/lib/logger";
 import { db } from "@/src/lib/prisma";
 import { getClientIP, withRateLimit } from "@/src/lib/rate-limit";
 import { bulkUpdateSchema } from "@/src/lib/schemas";
 import type { Prisma } from "@prisma/client";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
-export async function PATCH(request: Request) {
+export async function PATCH(request: NextRequest) {
   try {
+    const csrfResponse = validateCsrfOrigin(request);
+    if (csrfResponse) {
+      return csrfResponse;
+    }
+
     const session = await auth();
 
     if (!session || session.user?.role !== "ADMIN") {

@@ -1,4 +1,5 @@
 import { auth } from "@/src/lib/auth";
+import { validateCsrfOrigin } from "@/src/lib/csrf";
 import { logger } from "@/src/lib/logger";
 import { db } from "@/src/lib/prisma";
 import { Prisma } from "@prisma/client";
@@ -96,6 +97,11 @@ export async function GET(request: NextRequest) {
 
 export async function PATCH(request: NextRequest) {
   try {
+    const csrfResponse = validateCsrfOrigin(request);
+    if (csrfResponse) {
+      return csrfResponse;
+    }
+
     const session = await auth();
 
     if (session?.user?.role !== "ADMIN") {
@@ -149,6 +155,11 @@ export async function PATCH(request: NextRequest) {
 
 export async function PUT(request: NextRequest) {
   try {
+    const csrfResponse = validateCsrfOrigin(request);
+    if (csrfResponse) {
+      return csrfResponse;
+    }
+
     const session = await auth();
 
     if (session?.user?.role !== "ADMIN") {

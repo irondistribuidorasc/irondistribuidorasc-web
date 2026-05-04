@@ -1,6 +1,8 @@
 import { auth } from "@/src/lib/auth";
+import { validateCsrfOrigin } from "@/src/lib/csrf";
 import { logger } from "@/src/lib/logger";
 import { db } from "@/src/lib/prisma";
+import { getClientIP, withRateLimit } from "@/src/lib/rate-limit";
 import { createOrderSchema } from "@/src/lib/schemas";
 import { Prisma } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
@@ -11,6 +13,17 @@ import { NextRequest, NextResponse } from "next/server";
  */
 export async function POST(req: NextRequest) {
   try {
+    const clientIP = getClientIP(req);
+    const rateLimitResponse = await withRateLimit(clientIP, "api");
+    if (rateLimitResponse) {
+      return rateLimitResponse;
+    }
+
+    const csrfResponse = validateCsrfOrigin(req);
+    if (csrfResponse) {
+      return csrfResponse;
+    }
+
     const session = await auth();
 
     if (!session?.user?.id) {

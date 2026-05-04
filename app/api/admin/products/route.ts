@@ -1,9 +1,10 @@
 import { auth } from "@/src/lib/auth";
+import { validateCsrfOrigin } from "@/src/lib/csrf";
 import { logger } from "@/src/lib/logger";
 import { db } from "@/src/lib/prisma";
 import { productSchema } from "@/src/lib/schemas";
 import { Prisma } from "@prisma/client";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(request: Request) {
   try {
@@ -215,8 +216,13 @@ export async function GET(request: Request) {
   }
 }
 
-export async function POST(request: Request) {
+export async function POST(request: NextRequest) {
   try {
+    const csrfResponse = validateCsrfOrigin(request);
+    if (csrfResponse) {
+      return csrfResponse;
+    }
+
     const session = await auth();
 
     if (!session || session.user?.role !== "ADMIN") {

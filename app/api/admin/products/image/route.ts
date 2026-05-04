@@ -1,5 +1,6 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/src/lib/auth";
+import { validateCsrfOrigin } from "@/src/lib/csrf";
 import { logger } from "@/src/lib/logger";
 import {
   buildProductImagePath,
@@ -8,8 +9,13 @@ import {
 } from "@/src/lib/product-image-upload";
 import { getSupabaseAdminClient } from "@/src/lib/supabase-admin";
 
-export async function POST(request: Request) {
+export async function POST(request: NextRequest) {
   try {
+    const csrfResponse = validateCsrfOrigin(request);
+    if (csrfResponse) {
+      return csrfResponse;
+    }
+
     const session = await auth();
 
     if (session?.user?.role !== "ADMIN") {
@@ -26,9 +32,13 @@ export async function POST(request: Request) {
       );
     }
 
+    const arrayBuffer = await file.arrayBuffer();
+    const buffer = new Uint8Array(arrayBuffer);
+
     const validation = validateProductImageUpload({
       type: file.type,
       size: file.size,
+      buffer,
     });
 
     if (!validation.valid) {

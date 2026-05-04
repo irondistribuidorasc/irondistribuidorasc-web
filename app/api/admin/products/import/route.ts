@@ -1,6 +1,7 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import Papa from "papaparse";
 import { auth } from "@/src/lib/auth";
+import { validateCsrfOrigin } from "@/src/lib/csrf";
 import { logger } from "@/src/lib/logger";
 import {
   normalizeImportedProductRow,
@@ -14,8 +15,13 @@ import { getClientIP, withRateLimit } from "@/src/lib/rate-limit";
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 const ALLOWED_MIME_TYPES = ["text/csv", "application/csv", "text/plain"];
 
-export async function POST(request: Request) {
+export async function POST(request: NextRequest) {
   try {
+    const csrfResponse = validateCsrfOrigin(request);
+    if (csrfResponse) {
+      return csrfResponse;
+    }
+
     const session = await auth();
 
     if (!session || session.user?.role !== "ADMIN") {

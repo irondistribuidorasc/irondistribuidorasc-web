@@ -1,4 +1,9 @@
 import { isCategory } from "@/src/data/products";
+import {
+  isValidDocNumber,
+  isValidPhone,
+  isValidPostalCode,
+} from "./validation";
 import { z } from "zod";
 
 export const passwordSchema = z
@@ -22,8 +27,17 @@ export const registerSchema = z
   .object({
     name: z.string().min(3, "Nome deve ter pelo menos 3 caracteres"),
     email: z.string().email("E-mail inválido"),
-    phone: z.string().optional(),
-    docNumber: z.string().optional(),
+    phone: z
+      .string()
+      .optional()
+      .refine((val) => !val || isValidPhone(val), "Telefone inválido"),
+    docNumber: z
+      .string()
+      .optional()
+      .refine(
+        (val) => !val || isValidDocNumber(val),
+        "CPF/CNPJ inválido"
+      ),
     password: passwordSchema,
     confirmPassword: z.string(),
     acceptedTerms: z.literal(true, {
@@ -39,8 +53,19 @@ export const registerSchema = z
 export const registerApiSchema = z.object({
   name: z.string().min(3, "Nome deve ter pelo menos 3 caracteres"),
   email: z.string().email("E-mail inválido"),
-  phone: z.string().optional().nullable(),
-  docNumber: z.string().optional().nullable(),
+  phone: z
+    .string()
+    .optional()
+    .nullable()
+    .refine((val) => !val || isValidPhone(val), "Telefone inválido"),
+  docNumber: z
+    .string()
+    .optional()
+    .nullable()
+    .refine(
+      (val) => !val || isValidDocNumber(val),
+      "CPF/CNPJ inválido"
+    ),
   password: passwordSchema,
 });
 
@@ -69,13 +94,25 @@ export const createOrderItemSchema = z.object({
 export const createOrderCustomerSchema = z.object({
   name: z.string().min(1, "Nome do cliente é obrigatório"),
   email: z.string().email("Email do cliente inválido"),
-  phone: z.string().min(1, "Telefone do cliente é obrigatório"),
-  docNumber: z.string().optional(),
+  phone: z
+    .string()
+    .min(1, "Telefone do cliente é obrigatório")
+    .refine(isValidPhone, "Telefone inválido"),
+  docNumber: z
+    .string()
+    .optional()
+    .refine(
+      (val) => !val || isValidDocNumber(val),
+      "CPF/CNPJ inválido"
+    ),
   addressLine1: z.string().min(1, "Endereço é obrigatório"),
   addressLine2: z.string().optional(),
   city: z.string().min(1, "Cidade é obrigatória"),
   state: z.string().min(2, "Estado é obrigatório"),
-  postalCode: z.string().min(1, "CEP é obrigatório"),
+  postalCode: z
+    .string()
+    .min(1, "CEP é obrigatório")
+    .refine(isValidPostalCode, "CEP inválido"),
 });
 
 export const createOrderSchema = z.object({

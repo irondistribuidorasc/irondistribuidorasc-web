@@ -1,4 +1,5 @@
 import type { NextConfig } from "next";
+import withBundleAnalyzer from "@next/bundle-analyzer";
 
 const securityHeaders = [
 	// Previne clickjacking
@@ -10,11 +11,6 @@ const securityHeaders = [
 	{
 		key: "X-Content-Type-Options",
 		value: "nosniff",
-	},
-	// Habilita proteção XSS do navegador
-	{
-		key: "X-XSS-Protection",
-		value: "1; mode=block",
 	},
 	// Política de referrer
 	{
@@ -57,4 +53,6 @@ const nextConfig: NextConfig = {
 	},
 };
 
-export default nextConfig;
+export default withBundleAnalyzer({
+	enabled: process.env.ANALYZE === "true",
+})(nextConfig);

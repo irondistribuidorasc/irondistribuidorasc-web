@@ -34,6 +34,8 @@ model User {
   sessions      Session[]
   orders        Order[]
   notifications Notification[]
+
+  @@index([role, createdAt])
 }
 
 enum Role {
@@ -97,12 +99,18 @@ model Product {
   popularity  Int      @default(0)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+
+  @@index([category])
+  @@index([brand])
+  @@index([popularity])
+  @@index([price])
+  @@index([createdAt])
 }
 
 model Order {
   id          String      @id @default(cuid())
   userId      String
-  user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user        User        @relation(fields: [userId], references: [id], onDelete: Restrict)
   orderNumber String      @unique
   status      OrderStatus @default(PENDING)
   total       Float
@@ -131,6 +139,8 @@ model Order {
   updatedAt   DateTime    @updatedAt
 
   @@index([userId])
+  @@index([status])
+  @@index([createdAt])
 }
 
 enum OrderStatus {

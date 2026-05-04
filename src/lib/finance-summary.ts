@@ -1,6 +1,11 @@
 import type { OrderStatus } from "@/types/order";
 
-export const FINANCIAL_ORDER_STATUSES = ["DELIVERED"] as const;
+export const FINANCIAL_ORDER_STATUSES = [
+	"CONFIRMED",
+	"PROCESSING",
+	"SHIPPED",
+	"DELIVERED",
+] as const;
 
 type FinancialPaymentMethod =
   | "PIX"

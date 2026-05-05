@@ -109,4 +109,6 @@ docs/          # Documentação (Brand Book, autenticação, IA)
 
 ## Licença
 
-Projeto privado (`private: true` no `package.json`).
+Copyright © 2026 Leonardo Brizolla / Iron Distribuidora SC. Todos os direitos reservados.
+
+Este repositório é público apenas para fins de portfólio e transparência. **Nenhuma permissão é concedida** para copiar, modificar, redistribuir ou utilizar o código-fonte (integral ou parcialmente) para qualquer finalidade sem autorização prévia por escrito. Consulte o arquivo [LICENSE](./LICENSE) para os termos completos.

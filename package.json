@@ -16,6 +16,7 @@
 		"test": "vitest",
 		"test:run": "vitest run",
 		"test:coverage": "vitest run --coverage",
+		"analyze": "ANALYZE=true pnpm build",
 		"commit": "cz",
 		"postinstall": "dotenv -e .env.local -e .env -- prisma generate || true",
 		"prepare": "husky",

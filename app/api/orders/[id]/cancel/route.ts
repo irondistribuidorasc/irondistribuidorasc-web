@@ -18,8 +18,21 @@ export async function POST(
 
     const order = await db.order.findUnique({
       where: { id },
-      include: {
-        items: true,
+      select: {
+        id: true,
+        userId: true,
+        status: true,
+        items: {
+          select: {
+            id: true,
+            productId: true,
+            productCode: true,
+            productName: true,
+            quantity: true,
+            price: true,
+            total: true,
+          },
+        },
       },
     });
 
@@ -43,8 +56,23 @@ export async function POST(
       data: {
         status: "CANCELLED",
       },
-      include: {
-        items: true,
+      select: {
+        id: true,
+        orderNumber: true,
+        status: true,
+        total: true,
+        createdAt: true,
+        items: {
+          select: {
+            id: true,
+            productId: true,
+            productCode: true,
+            productName: true,
+            quantity: true,
+            price: true,
+            total: true,
+          },
+        },
       },
     });
 

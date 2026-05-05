@@ -53,7 +53,11 @@ export async function GET(req: NextRequest) {
 			// Feedbacks paginados
 			db.orderFeedback.findMany({
 				where,
-				include: {
+				select: {
+					id: true,
+					rating: true,
+					comment: true,
+					createdAt: true,
 					order: {
 						select: {
 							id: true,

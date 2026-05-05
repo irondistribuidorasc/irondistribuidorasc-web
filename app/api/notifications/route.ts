@@ -16,6 +16,14 @@ export async function GET() {
         where: {
           userId: session.user.id,
         },
+        select: {
+          id: true,
+          title: true,
+          message: true,
+          read: true,
+          link: true,
+          createdAt: true,
+        },
         orderBy: {
           createdAt: "desc",
         },

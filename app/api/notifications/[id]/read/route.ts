@@ -18,6 +18,10 @@ export async function PATCH(
     // Verify notification belongs to user
     const notification = await db.notification.findUnique({
       where: { id },
+      select: {
+        id: true,
+        userId: true,
+      },
     });
 
     if (!notification) {
@@ -31,6 +35,14 @@ export async function PATCH(
     const updatedNotification = await db.notification.update({
       where: { id },
       data: { read: true },
+      select: {
+        id: true,
+        title: true,
+        message: true,
+        read: true,
+        link: true,
+        createdAt: true,
+      },
     });
 
     return NextResponse.json(updatedNotification);

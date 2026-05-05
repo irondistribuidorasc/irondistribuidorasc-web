@@ -40,7 +40,7 @@ export default function ProductForm({
     code: initialData?.code || "",
     name: initialData?.name || "",
     brand: initialData?.brand || "",
-    category: initialData?.category || "",
+    category: (initialData?.category || "") as ProductSchema["category"],
     model: initialData?.model || "",
     price: initialData?.price || 0,
     imageUrl: initialData?.imageUrl || "/logo-iron.png",
@@ -149,7 +149,7 @@ export default function ProductForm({
           label="Categoria"
           placeholder="Selecione a categoria"
           selectedKeys={formData.category ? [formData.category] : []}
-          onChange={(e) => setValue("category", e.target.value)}
+          onChange={(e) => setValue("category", e.target.value as ProductSchema["category"])}
           isRequired
           isInvalid={!!errors.category}
           errorMessage={errors.category?.message}

@@ -1,0 +1,25 @@
+{
+  "timestamp": "2026-05-05T14:24:15.617Z",
+  "coverage": {
+    "lines": {
+      "pct": 97.47
+    },
+    "statements": {
+      "pct": 96.72
+    },
+    "functions": {
+      "pct": 97.29
+    },
+    "branches": {
+      "pct": 90.2
+    }
+  },
+  "duplication": {
+    "percentage": 1.76,
+    "fragments": 17
+  },
+  "violations": {
+    "qualityRules": 6,
+    "oversizedFiles": 7
+  }
+}

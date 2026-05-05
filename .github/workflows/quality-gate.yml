@@ -1,0 +1,119 @@
+name: Quality Gate
+
+on:
+  pull_request:
+    branches: [main]
+
+permissions:
+  pull-requests: write
+  contents: write
+
+concurrency:
+  group: quality-gate-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  quality-gate:
+    runs-on: ubuntu-latest
+
+    env:
+      CI: true
+      DATABASE_URL: postgresql://user:pass@localhost:5432/db
+      DIRECT_URL: postgresql://user:pass@localhost:5432/db
+      NEXTAUTH_SECRET: placeholder-secret
+      NEXTAUTH_URL: http://localhost:3001
+      NEXT_PUBLIC_SUPABASE_URL: https://example.supabase.co
+      NEXT_PUBLIC_SUPABASE_ANON_KEY: placeholder-anon-key
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref }}
+          fetch-depth: 0
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 11.0.4
+          run_install: false
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+
+      # Step 1 — Install
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      # Step 2 — Audit CRITICAL (blocks)
+      - name: Audit critical vulnerabilities
+        run: pnpm audit --audit-level=critical --prod
+
+      # Step 3 — Audit HIGH (warns)
+      - name: Audit high vulnerabilities
+        run: pnpm audit --audit-level=high --prod
+        continue-on-error: true
+
+      # Step 4 — Type check
+      - name: Type check
+        run: pnpm type-check
+
+      # Step 5 — Lint (human-readable + machine JSON)
+      - name: Lint
+        run: pnpm lint
+
+      - name: Lint JSON output
+        run: pnpm lint:json
+
+      # Step 6 — Tests + coverage
+      - name: Tests and coverage
+        run: pnpm test:coverage
+
+      # Step 6.5 — Duplication scan
+      - name: Duplication scan
+        run: pnpm dup:check
+
+      # Step 7 — Ratchet
+      - name: Quality Gate ratchet
+        id: gate
+        run: node scripts/quality-gate.js --no-update
+
+      # Step 8a — Sticky PR comment
+      - name: Sticky PR comment
+        uses: marocchino/sticky-pull-request-comment@v2
+        if: always()
+        with:
+          header: quality-gate
+          path: coverage/quality-gate-report.md
+
+      # Step 8b — Step summary
+      - name: Write step summary
+        if: always()
+        run: cat coverage/quality-gate-report.md >> $GITHUB_STEP_SUMMARY
+
+      # Step 8c — Artifacts
+      - name: Upload coverage artifacts
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: coverage-html
+          path: coverage/
+          retention-days: 14
+
+      # Advance baseline if metrics improved (only same-repo PRs, not forks)
+      - name: Advance baseline
+        if: >
+          success() &&
+          github.event.pull_request.head.repo.full_name == github.repository
+        run: |
+          node scripts/quality-gate.js
+          if ! git diff --quiet quality-gate-baseline.json; then
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add quality-gate-baseline.json
+            git commit -m "chore: advance quality gate baseline [skip ci]"
+            git push
+          fi

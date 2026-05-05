@@ -80,46 +80,6 @@ export const metadata: Metadata = {
 		],
 		apple: [
 			{
-				url: "/favicons/icons/favicon-57x57.png",
-				sizes: "57x57",
-				type: "image/png",
-			},
-			{
-				url: "/favicons/icons/favicon-60x60.png",
-				sizes: "60x60",
-				type: "image/png",
-			},
-			{
-				url: "/favicons/icons/favicon-72x72.png",
-				sizes: "72x72",
-				type: "image/png",
-			},
-			{
-				url: "/favicons/icons/favicon-76x76.png",
-				sizes: "76x76",
-				type: "image/png",
-			},
-			{
-				url: "/favicons/icons/favicon-114x114.png",
-				sizes: "114x114",
-				type: "image/png",
-			},
-			{
-				url: "/favicons/icons/favicon-120x120.png",
-				sizes: "120x120",
-				type: "image/png",
-			},
-			{
-				url: "/favicons/icons/favicon-144x144.png",
-				sizes: "144x144",
-				type: "image/png",
-			},
-			{
-				url: "/favicons/icons/favicon-152x152.png",
-				sizes: "152x152",
-				type: "image/png",
-			},
-			{
 				url: "/favicons/icons/favicon-180x180.png",
 				sizes: "180x180",
 				type: "image/png",
@@ -152,7 +112,7 @@ export default async function RootLayout({
 		"@type": "Organization",
 		name: "IRON DISTRIBUIDORA SC",
 		url: "https://irondistribuidorasc.com.br",
-		logo: "https://irondistribuidorasc.com.br/logo-iron.png",
+		logo: "https://irondistribuidorasc.com.br/logo-iron.webp",
 		description:
 			"Distribuidora de peças para celular com garantia de 1 ano. Atendemos Itapema, Tijucas, Porto Belo e São João Batista.",
 		telephone: "+55-48-99114-7117",

@@ -101,7 +101,7 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                     >
                       <div className="relative h-16 w-16 overflow-hidden rounded bg-default-100">
                         <Image
-                          src={product.imageUrl || "/logo-iron.png"}
+                          src={product.imageUrl || "/logo-iron.webp"}
                           alt={product.name}
                           fill
                           className="object-cover"

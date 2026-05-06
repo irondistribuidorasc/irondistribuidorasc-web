@@ -131,7 +131,7 @@ export function normalizeImportedProductRow(
       brand: productData.brand?.trim() || "Generic",
       category: parsedCategory.category,
       model: productData.model?.trim() || "",
-      imageUrl: productData.imageUrl?.trim() || "/logo-iron.png",
+      imageUrl: productData.imageUrl?.trim() || "/logo-iron.webp",
       inStock: stockQuantity > 0,
       stockQuantity,
       minStockThreshold,

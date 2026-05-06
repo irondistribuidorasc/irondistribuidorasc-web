@@ -1,4 +1,5 @@
 import { db } from "@/src/lib/prisma";
+import { canReachDatabase } from "@/src/lib/database-availability";
 import { MetadataRoute } from "next";
 
 export const dynamic = "force-dynamic";
@@ -37,25 +38,31 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // Tenta buscar produtos do banco, mas não falha se não conseguir
   // (ex: durante build sem acesso ao DB)
   let productUrls: MetadataRoute.Sitemap = [];
-  try {
-    const products = await db.product.findMany({
-      select: {
-        id: true,
-        updatedAt: true,
-      },
-    });
+  if (await canReachDatabase()) {
+    try {
+      const products = await db.product.findMany({
+        select: {
+          id: true,
+          updatedAt: true,
+        },
+      });
 
-    productUrls = products.map((product) => ({
-      url: `${baseUrl}/produtos/${product.id}`,
-      lastModified: product.updatedAt,
-      changeFrequency: "weekly" as const,
-      priority: 0.8,
-    }));
-  } catch {
-    // Durante o build, o banco pode não estar acessível
-    // O sitemap será gerado apenas com as páginas estáticas
+      productUrls = products.map((product) => ({
+        url: `${baseUrl}/produtos/${product.id}`,
+        lastModified: product.updatedAt,
+        changeFrequency: "weekly" as const,
+        priority: 0.8,
+      }));
+    } catch {
+      // Durante o build, o banco pode não estar acessível
+      // O sitemap será gerado apenas com as páginas estáticas
+      console.warn(
+        "[sitemap] Não foi possível buscar produtos do banco de dados"
+      );
+    }
+  } else {
     console.warn(
-      "[sitemap] Não foi possível buscar produtos do banco de dados"
+      "[sitemap] Banco de dados indisponível, gerando apenas páginas estáticas"
     );
   }
 

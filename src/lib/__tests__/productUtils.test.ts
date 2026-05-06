@@ -20,7 +20,7 @@ function makeProduct(overrides: Partial<Product>): Product {
 		brand: "Samsung",
 		category: "display",
 		model: "A01",
-		imageUrl: "/logo-iron.png",
+		imageUrl: "/logo-iron.webp",
 		inStock: true,
 		price: 10,
 		...overrides,

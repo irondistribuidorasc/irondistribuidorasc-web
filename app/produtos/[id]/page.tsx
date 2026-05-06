@@ -1,5 +1,6 @@
 import { ProductInfo } from "@/src/components/produtos/ProductInfo";
 import { auth } from "@/src/lib/auth";
+import { PRODUCT_PUBLIC_SELECT } from "@/src/lib/product-queries";
 import { db } from "@/src/lib/prisma";
 import {
   buildProductJsonLd,
@@ -11,6 +12,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { headers } from "next/headers";
 import { notFound } from "next/navigation";
+import { cache } from "react";
+import { canReachDatabase } from "@/src/lib/database-availability";
 
 type Props = {
   params: Promise<{ id: string }>;
@@ -19,7 +22,18 @@ type Props = {
 
 export const revalidate = 300; // 5 minutos
 
+const getProductById = cache(async (id: string) => {
+  return db.product.findUnique({
+    where: { id },
+    select: PRODUCT_PUBLIC_SELECT,
+  });
+});
+
 export async function generateStaticParams() {
+  if (!(await canReachDatabase())) {
+    return [];
+  }
+
   try {
     const products = await db.product.findMany({
       select: { id: true },
@@ -37,9 +51,7 @@ export async function generateMetadata(
   parent: ResolvingMetadata
 ): Promise<Metadata> {
   const { id } = await params;
-  const product = await db.product.findUnique({
-    where: { id },
-  });
+  const product = await getProductById(id);
 
   if (!product) {
     return {
@@ -65,9 +77,7 @@ export default async function ProductPage({ params }: Props) {
   const session = await auth();
   const canViewPrices = canViewB2BPrices(session);
   const { id } = await params;
-  const product = await db.product.findUnique({
-    where: { id },
-  });
+  const product = await getProductById(id);
 
   if (!product) {
     notFound();

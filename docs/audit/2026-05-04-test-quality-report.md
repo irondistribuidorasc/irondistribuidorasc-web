@@ -10,15 +10,15 @@
 
 | Categoria | Severidade | Principais Achados |
 |-----------|------------|-------------------|
-| API Routes | **P1** | 30 rotas, **zero testes**. Coverage config exclui `app/api/` |
-| Branch Coverage | **P2** | 5 arquivos com branches não cobertas (CartContext, rate-limit, checkout-validation, csp, schemas) |
-| Integração | **P1** | Zero testes end-to-end (registro → login → checkout → pedido) |
-| Schema Tests | **P2** | `createOrderSchema`, `bulkUpdateSchema`, `orderFeedbackSchema` sem testes |
-| Segurança | **P1** | Auth bypass, admin guards, rate limit happy path não testados |
+| API Routes | **P1** | Rotas críticas agora têm testes dedicados, mas `app/api/` ainda fica fora do gate global |
+| Branch Coverage | **P2** | Branch coverage em 90.92%, ainda com alguns ramos residuais em `rate-limit`, `schemas` e `CartContext` |
+| Integração | **P1** | Fluxos end-to-end ainda não existem |
+| Schema Tests | **P2** | Schemas críticos já ganharam cobertura, mas integrações de pedido/admin continuam relevantes |
+| Segurança | **P1** | Guards principais cobertos; falta cobertura de fluxo completo e regressão de integração |
 
 ---
 
-## 1. API Routes — Zero Cobertura
+## 1. API Routes — Cobertura Direcionada
 
 **Severidade:** P1
 
@@ -27,27 +27,19 @@
 include: ["src/{lib,hooks,contexts,data}/**/*.{ts,tsx}"],
 ```
 
-Isso **exclui explicitamente** `app/api/` do coverage. Além disso, **não existe nenhum arquivo de teste** sob `app/api/`.
+Isso **exclui explicitamente** `app/api/` do coverage global. Ainda assim, já existem testes dedicados para rotas críticas de auth, checkout e backoffice:
 
-**30 API routes completamente sem testes.** Rotas críticas:
-
-| Categoria | Rota | Risco sem teste |
-|-----------|------|----------------|
-| Auth | `POST /api/register` | Validação de input, hash de senha |
-| Auth | `POST /api/auth/forgot-password` | Rate limit, envio de email |
-| Auth | `POST /api/auth/reset-password` | Validação de token |
-| Checkout | `POST /api/orders/create` | Cálculo de preço, validação de estoque, criação atômica |
-| Orders | `GET /api/orders` | Listagem com ownership |
-| Orders | `GET /api/orders/[id]` | Ownership check |
-| Orders | `PATCH /api/orders/[id]/cancel` | Transição de status |
-| Admin | `GET /api/admin/products` | Listagem, filtros, search |
-| Admin | `POST /api/admin/products` | CRUD com auth admin |
-| Admin | `POST /api/admin/products/import` | Validação de CSV |
-| Admin | `POST /api/admin/products/image` | Upload, validação MIME |
-| Admin | `GET /api/admin/orders` | Listagem com include |
-| Admin | `PATCH /api/admin/orders/[id]` | Transição de status + estoque |
-| Admin | `GET /api/admin/users` | Listagem de usuários |
-| Admin | `GET /api/admin/finance` | Cálculo financeiro |
+- `POST /api/register`
+- `POST /api/auth/forgot-password`
+- `POST /api/auth/reset-password`
+- `POST /api/orders/create`
+- `GET /api/orders`
+- `GET /api/admin/products`
+- `POST /api/admin/products`
+- `GET /api/admin/orders`
+- `GET /api/admin/users`
+- `PATCH /api/admin/users`
+- `GET /api/admin/finance`
 
 ---
 
@@ -106,11 +98,11 @@ Isso **exclui explicitamente** `app/api/` do coverage. Além disso, **não exist
 
 ---
 
-## 3. Testes de Integração — Zero
+## 3. Testes de Integração — Ainda Ausentes
 
 **Severidade:** P1
 
-Nenhum teste cobre fluxos completos:
+Ainda não há fluxo completo cobrindo:
 
 | Fluxo | Status | Impacto |
 |-------|--------|---------|
@@ -122,11 +114,11 @@ Nenhum teste cobre fluxos completos:
 
 ---
 
-## 4. Schema Validation Tests — Incompletos
+## 4. Schema Validation Tests — Mais Cobertos, Mas Não Fechados
 
 ### 4.1 Schemas sem testes
 
-`src/lib/__tests__/schemas.test.ts` cobre apenas `loginSchema` e `registerSchema`. **Faltam testes para:**
+`src/lib/__tests__/schemas.test.ts` já cobre `loginSchema`, `registerSchema`, `forgotPasswordSchema`, `resetPasswordSchema` e `productSchema`. Ainda valem testes mais finos para payloads de pedido e backoffice:
 
 - `createOrderSchema`
 - `createOrderItemSchema`
@@ -205,21 +197,21 @@ Considerar adicionar `app/api/` ao `include` do vitest.config.mts, ou criar suit
 
 | Métrica | Valor | Threshold | Status |
 |---------|-------|-----------|--------|
-| Test files | 28 | — | ✅ |
-| Tests | 248 | — | ✅ |
-| Stmts | 96.61% | 90% | ✅ |
-| Branch | 90.82% | 90% | ✅ (borderline) |
-| Funcs | 97.07% | 90% | ✅ |
-| Lines | 97.14% | 90% | ✅ |
-| API routes tested | 0/30 | — | ❌ |
+| Test files | 39 | — | ✅ |
+| Tests | 315 | — | ✅ |
+| Stmts | 97.21% | 90% | ✅ |
+| Branch | 90.92% | 90% | ✅ (borderline) |
+| Funcs | 97.39% | 90% | ✅ |
+| Lines | 98.11% | 90% | ✅ |
+| API routes tested | Parcial | — | ✅ |
 | Integration tests | 0 | — | ❌ |
-| Security tests | 0 | — | ❌ |
+| Security tests | Parcial | — | ✅ |
 
 ---
 
 ## 8. Riscos Identificados
 
-1. **Borderline branch coverage (90.82%)** — próximo de quebrar o gate. Qualquer novo código com branches não testadas pode falhar o pre-push.
+1. **Borderline branch coverage (90.92%)** — próximo de quebrar o gate. Qualquer novo código com branches não testadas pode falhar o pre-push.
 2. **API routes sem testes** — mudanças em auth, checkout ou admin podem introduzir regressões silenciosas.
 3. **Rate limit happy path não testado** — se o limiter do Redis quebrar em produção, só descobriremos quando for atacado.
 4. **Schema de checkout não testado** — validação de pedido pode aceitar dados inválidos sem quebrar testes.

@@ -390,7 +390,7 @@ describe("produção com Redis indisponível", () => {
     });
   });
 
-  describe("withRateLimit para tipos críticos", () => {
+describe("withRateLimit para tipos críticos", () => {
     it("retorna null quando dentro do limite", async () => {
       const { withRateLimit } = await import("../rate-limit");
 
@@ -408,6 +408,50 @@ describe("produção com Redis indisponível", () => {
       const result = await withRateLimit("192.168.1.1", "auth");
       expect(result).not.toBeNull();
       expect(result!.status).toBe(429);
+    });
+  });
+});
+
+describe("rate-limit com Redis disponível", () => {
+  beforeEach(() => {
+    vi.resetModules();
+    vi.clearAllMocks();
+
+    vi.doMock("../redis", () => ({
+      redis: {},
+      isRedisAvailable: vi.fn(() => true),
+    }));
+
+    vi.doMock("@upstash/ratelimit", () => ({
+      Ratelimit: class MockRatelimit {
+        limit = vi.fn().mockResolvedValue({
+          success: true,
+          limit: 5,
+          remaining: 4,
+          reset: Date.now() + 60_000,
+        });
+
+        static slidingWindow = vi.fn().mockReturnValue("sliding-window");
+      },
+    }));
+  });
+
+  afterEach(() => {
+    vi.doUnmock("../redis");
+    vi.doUnmock("@upstash/ratelimit");
+    vi.restoreAllMocks();
+  });
+
+  it("retorna resultado de sucesso quando o limiter responde", async () => {
+    const { checkRateLimit } = await import("../rate-limit");
+
+    const result = await checkRateLimit("192.168.1.1", "api");
+
+    expect(result).toEqual({
+      success: true,
+      limit: 5,
+      remaining: 4,
+      reset: expect.any(Number),
     });
   });
 });

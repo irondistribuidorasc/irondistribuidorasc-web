@@ -1,6 +1,7 @@
 import ProductCatalog from "@/src/components/produtos/ProductCatalog";
 import { parseCategory, type Brand } from "@/src/data/products";
 import { auth } from "@/src/lib/auth";
+import { PRODUCT_PUBLIC_SELECT } from "@/src/lib/product-queries";
 import { db } from "@/src/lib/prisma";
 import { canViewB2BPrices, toPublicProduct } from "@/src/lib/product-visibility";
 import { Prisma } from "@prisma/client";
@@ -91,6 +92,7 @@ export default async function ProdutosPage(props: Props) {
   const [products, total] = await Promise.all([
     db.product.findMany({
       where,
+      select: PRODUCT_PUBLIC_SELECT,
       skip,
       take: limit,
       orderBy,

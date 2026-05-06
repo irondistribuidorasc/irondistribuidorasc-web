@@ -42,6 +42,18 @@ describe("checkout validation", () => {
     );
   });
 
+  it("formata a mensagem quando só um campo está ausente", () => {
+    const customer = {
+      ...completeCustomer,
+      phone: "",
+    };
+
+    expect(getMissingCheckoutFields(customer)).toEqual(["telefone"]);
+    expect(getCheckoutValidationMessage(customer)).toBe(
+      "Preencha os campos obrigatórios: telefone."
+    );
+  });
+
   it("rejeita UF inexistente mesmo com dois caracteres", () => {
     const customer = {
       ...completeCustomer,

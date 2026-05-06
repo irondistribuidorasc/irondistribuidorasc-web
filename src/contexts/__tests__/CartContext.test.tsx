@@ -28,7 +28,7 @@ function makeProduct(overrides: Partial<Product> = {}): Product {
 		brand: "Samsung",
 		category: "display",
 		model: "A01",
-		imageUrl: "/logo-iron.png",
+		imageUrl: "/logo-iron.webp",
 		inStock: true,
 		price: 10,
 		...overrides,
@@ -136,10 +136,10 @@ describe("CartContext", () => {
 		expect(screen.getByTestId("total")).toHaveTextContent("0");
 	});
 
-	it("não atualiza customer quando session é null", async () => {
-		useSessionMock.mockReturnValue({
-			data: null,
-		});
+  it("não atualiza customer quando session é null", async () => {
+    useSessionMock.mockReturnValue({
+      data: null,
+    });
 
 		const product = makeProduct({ id: "p1", name: "P1" });
 
@@ -149,9 +149,71 @@ describe("CartContext", () => {
 			</CartProvider>,
 		);
 
-		// Customer deve estar vazio
-		expect(screen.getByTestId("customer-name")).toHaveTextContent("");
-	});
+    // Customer deve estar vazio
+    expect(screen.getByTestId("customer-name")).toHaveTextContent("");
+  });
+
+  it("ignora autofill quando a session não traz dados úteis e não reaplica após preencher", async () => {
+    const session = {
+      data: {
+        user: {
+          name: "",
+          phone: "",
+          docNumber: "",
+          addressLine1: "",
+          addressLine2: "",
+          city: "",
+          state: "",
+          postalCode: "",
+        },
+      },
+    };
+
+    useSessionMock.mockImplementation(() => ({ ...session }));
+
+    const product = makeProduct({ id: "p1", name: "P1" });
+
+    const { rerender } = render(
+      <CartProvider>
+        <TestConsumer product={product} />
+      </CartProvider>,
+    );
+
+    expect(screen.getByTestId("customer-name")).toHaveTextContent("");
+
+    useSessionMock.mockImplementation(() => ({
+      data: {
+        user: {
+          name: "Maria",
+          phone: "48991147117",
+          docNumber: "12345678901",
+          addressLine1: "Rua 2",
+          addressLine2: "",
+          city: "Florianópolis",
+          state: "SC",
+          postalCode: "88000000",
+        },
+      },
+    }));
+
+    rerender(
+      <CartProvider>
+        <TestConsumer product={product} />
+      </CartProvider>,
+    );
+
+    expect(await screen.findByTestId("customer-name")).toHaveTextContent(
+      "Maria",
+    );
+
+    rerender(
+      <CartProvider>
+        <TestConsumer product={product} />
+      </CartProvider>,
+    );
+
+    expect(screen.getByTestId("customer-name")).toHaveTextContent("Maria");
+  });
 
 	it("useCart lança erro fora do provider", () => {
 		// evita erro no console por boundary

@@ -41,7 +41,7 @@ export function Footer() {
 					<div className="space-y-6">
 						<Link href="/" className="flex items-center gap-2">
 							<Image
-								src="/logo-iron.png"
+								src="/logo-iron.webp"
 								alt="IRON DISTRIBUIDORA SC"
 								width={48}
 								height={48}

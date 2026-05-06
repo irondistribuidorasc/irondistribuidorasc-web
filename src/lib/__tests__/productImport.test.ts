@@ -47,7 +47,7 @@ describe("normalizeImportedProductRow", () => {
         brand: "Generic",
         category: "lens",
         model: "",
-        imageUrl: "/logo-iron.png",
+        imageUrl: "/logo-iron.webp",
         inStock: false,
         stockQuantity: 0,
         minStockThreshold: 10,

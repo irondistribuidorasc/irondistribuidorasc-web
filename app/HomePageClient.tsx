@@ -78,7 +78,7 @@ export default function HomePageClient({ featuredProducts }: HomePageClientProps
 								<div className="relative">
 									<div className="absolute -inset-1 rounded-full bg-gradient-to-r from-brand-500 to-violet-500 opacity-30 blur dark:to-white" />
 									<Image
-										src="/logo-iron.png"
+										src="/logo-iron.webp"
 										alt="IRON DISTRIBUIDORA SC"
 										width={96}
 										height={96}
@@ -149,7 +149,7 @@ export default function HomePageClient({ featuredProducts }: HomePageClientProps
 								<div className="absolute -inset-1 rounded-3xl bg-gradient-to-r from-brand-500 to-violet-500 opacity-20 blur-xl dark:to-white" />
 								<div className="relative rounded-3xl border border-divider bg-background/80 p-8 shadow-2xl backdrop-blur-xl">
 									<Image
-										src="/logo-iron.png"
+										src="/logo-iron.webp"
 										alt="IRON DISTRIBUIDORA SC"
 										width={160}
 										height={160}

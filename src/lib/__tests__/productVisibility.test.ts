@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { PRODUCT_PUBLIC_SELECT } from "@/src/lib/product-queries";
 import {
   buildProductJsonLd,
   canViewB2BPrices,
@@ -14,7 +15,7 @@ const product = {
   brand: "Samsung",
   category: "display",
   model: "A02",
-  imageUrl: "/logo-iron.png",
+  imageUrl: "/logo-iron.webp",
   inStock: true,
   restockDate: null,
   price: 89.9,
@@ -103,5 +104,25 @@ describe("buildProductJsonLd", () => {
 
     expect(jsonLd.description).toContain(product.name);
     expect(jsonLd.offers.availability).toBe("https://schema.org/OutOfStock");
+  });
+});
+
+describe("product query select", () => {
+  it("seleciona apenas os campos públicos necessários para catálogo e detalhe", () => {
+    expect(PRODUCT_PUBLIC_SELECT).toMatchObject({
+      id: true,
+      code: true,
+      name: true,
+      brand: true,
+      category: true,
+      model: true,
+      imageUrl: true,
+      inStock: true,
+      restockDate: true,
+      price: true,
+      description: true,
+      tags: true,
+      popularity: true,
+    });
   });
 });

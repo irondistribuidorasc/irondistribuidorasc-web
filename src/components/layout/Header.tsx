@@ -120,7 +120,7 @@ export function Header() {
         <NavbarBrand className="flex flex-none grow-0 min-w-0 mr-2">
           <Link href="/" className="flex items-center md:gap-2 min-w-0">
             <Image
-              src="/logo-iron.png"
+              src="/logo-iron.webp"
               alt="IRON DISTRIBUIDORA SC"
               width={48}
               height={48}

@@ -645,7 +645,7 @@ export function CarrinhoCheckout() {
                 >
                   <div className="relative h-20 w-20 flex-shrink-0 overflow-hidden rounded bg-default-100">
                     <Image
-                      src={product.imageUrl || "/logo-iron.png"}
+                      src={product.imageUrl || "/logo-iron.webp"}
                       alt={product.name}
                       fill
                       className="object-cover"

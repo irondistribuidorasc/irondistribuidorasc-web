@@ -17,7 +17,7 @@ describe("productSchema", () => {
     brand: "Samsung",
     category: "lens",
     model: "A52",
-    imageUrl: "/logo-iron.png",
+    imageUrl: "/logo-iron.webp",
     stockQuantity: 5,
     minStockThreshold: 2,
     price: 19.9,
@@ -49,6 +49,22 @@ describe("productSchema", () => {
     });
 
     expect(result.success).toBe(false);
+  });
+
+  it("aceita restockDate válida e rejeita data inválida", () => {
+    const validResult = productSchema.safeParse({
+      ...validProductInput,
+      restockDate: "2026-05-01",
+    });
+
+    expect(validResult.success).toBe(true);
+
+    const invalidResult = productSchema.safeParse({
+      ...validProductInput,
+      restockDate: "not-a-date",
+    });
+
+    expect(invalidResult.success).toBe(false);
   });
 });
 

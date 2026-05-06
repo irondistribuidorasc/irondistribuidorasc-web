@@ -51,14 +51,14 @@ export async function GET(request: Request) {
     // Filtro de estoque baixo requer comparação entre dois campos do mesmo registro
     // Prisma não suporta isso nativamente, então usamos raw query com tagged template
     if (lowStock) {
-      const searchPattern = search ? `%${search.toLowerCase()}%` : null;
+      const searchPattern = search ? `%${search}%` : null;
 
       // Query segura usando tagged template literals do Prisma
       if (search && category && brand) {
         const countResult = await db.$queryRaw<{ count: bigint }[]>`
           SELECT COUNT(*)::bigint as count FROM "Product"
           WHERE "stockQuantity" <= "minStockThreshold"
-          AND (LOWER("name") LIKE ${searchPattern} OR LOWER("code") LIKE ${searchPattern} OR LOWER("model") LIKE ${searchPattern})
+          AND ("name" ILIKE ${searchPattern} OR "code" ILIKE ${searchPattern} OR "model" ILIKE ${searchPattern})
           AND "category" = ${category}
           AND "brand" = ${brand}
         `;
@@ -67,7 +67,7 @@ export async function GET(request: Request) {
         products = await db.$queryRaw`
           SELECT * FROM "Product"
           WHERE "stockQuantity" <= "minStockThreshold"
-          AND (LOWER("name") LIKE ${searchPattern} OR LOWER("code") LIKE ${searchPattern} OR LOWER("model") LIKE ${searchPattern})
+          AND ("name" ILIKE ${searchPattern} OR "code" ILIKE ${searchPattern} OR "model" ILIKE ${searchPattern})
           AND "category" = ${category}
           AND "brand" = ${brand}
           ORDER BY "createdAt" DESC
@@ -77,7 +77,7 @@ export async function GET(request: Request) {
         const countResult = await db.$queryRaw<{ count: bigint }[]>`
           SELECT COUNT(*)::bigint as count FROM "Product"
           WHERE "stockQuantity" <= "minStockThreshold"
-          AND (LOWER("name") LIKE ${searchPattern} OR LOWER("code") LIKE ${searchPattern} OR LOWER("model") LIKE ${searchPattern})
+          AND ("name" ILIKE ${searchPattern} OR "code" ILIKE ${searchPattern} OR "model" ILIKE ${searchPattern})
           AND "category" = ${category}
         `;
         total = Number(countResult[0]?.count ?? 0);
@@ -85,7 +85,7 @@ export async function GET(request: Request) {
         products = await db.$queryRaw`
           SELECT * FROM "Product"
           WHERE "stockQuantity" <= "minStockThreshold"
-          AND (LOWER("name") LIKE ${searchPattern} OR LOWER("code") LIKE ${searchPattern} OR LOWER("model") LIKE ${searchPattern})
+          AND ("name" ILIKE ${searchPattern} OR "code" ILIKE ${searchPattern} OR "model" ILIKE ${searchPattern})
           AND "category" = ${category}
           ORDER BY "createdAt" DESC
           LIMIT ${limit} OFFSET ${skip}
@@ -94,7 +94,7 @@ export async function GET(request: Request) {
         const countResult = await db.$queryRaw<{ count: bigint }[]>`
           SELECT COUNT(*)::bigint as count FROM "Product"
           WHERE "stockQuantity" <= "minStockThreshold"
-          AND (LOWER("name") LIKE ${searchPattern} OR LOWER("code") LIKE ${searchPattern} OR LOWER("model") LIKE ${searchPattern})
+          AND ("name" ILIKE ${searchPattern} OR "code" ILIKE ${searchPattern} OR "model" ILIKE ${searchPattern})
           AND "brand" = ${brand}
         `;
         total = Number(countResult[0]?.count ?? 0);
@@ -102,7 +102,7 @@ export async function GET(request: Request) {
         products = await db.$queryRaw`
           SELECT * FROM "Product"
           WHERE "stockQuantity" <= "minStockThreshold"
-          AND (LOWER("name") LIKE ${searchPattern} OR LOWER("code") LIKE ${searchPattern} OR LOWER("model") LIKE ${searchPattern})
+          AND ("name" ILIKE ${searchPattern} OR "code" ILIKE ${searchPattern} OR "model" ILIKE ${searchPattern})
           AND "brand" = ${brand}
           ORDER BY "createdAt" DESC
           LIMIT ${limit} OFFSET ${skip}
@@ -128,14 +128,14 @@ export async function GET(request: Request) {
         const countResult = await db.$queryRaw<{ count: bigint }[]>`
           SELECT COUNT(*)::bigint as count FROM "Product"
           WHERE "stockQuantity" <= "minStockThreshold"
-          AND (LOWER("name") LIKE ${searchPattern} OR LOWER("code") LIKE ${searchPattern} OR LOWER("model") LIKE ${searchPattern})
+          AND ("name" ILIKE ${searchPattern} OR "code" ILIKE ${searchPattern} OR "model" ILIKE ${searchPattern})
         `;
         total = Number(countResult[0]?.count ?? 0);
 
         products = await db.$queryRaw`
           SELECT * FROM "Product"
           WHERE "stockQuantity" <= "minStockThreshold"
-          AND (LOWER("name") LIKE ${searchPattern} OR LOWER("code") LIKE ${searchPattern} OR LOWER("model") LIKE ${searchPattern})
+          AND ("name" ILIKE ${searchPattern} OR "code" ILIKE ${searchPattern} OR "model" ILIKE ${searchPattern})
           ORDER BY "createdAt" DESC
           LIMIT ${limit} OFFSET ${skip}
         `;

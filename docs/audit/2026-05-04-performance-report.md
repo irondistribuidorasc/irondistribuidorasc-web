@@ -10,30 +10,28 @@
 
 | Categoria | Severidade | Principais Achados |
 |-----------|------------|-------------------|
-| Prisma Queries | **P1** | Over-fetching generalizado, missing indexes críticos, duplicação de queries |
-| Bundle Size | **P1** | 3.5 MB JS+CSS, import de dados estáticos no client, CSS 250 KB |
-| Imagens | **P2** | Logo PNG 960 KB, favicons 1.6 MB, sem AVIF |
-| Cache/ISR | **P1** | App inteiro forçado em dynamic rendering, zero ISR, zero cache em APIs |
+| Prisma Queries | **P1** | Over-fetching nos pontos mais críticos foi reduzido, índices de busca e sequence de pedido já entraram |
+| Bundle Size | **P2** | CSS ainda grande e alguns componentes pesados continuam no client |
+| Imagens | **P2** | Logo principal foi trocado para WebP; favicons ainda podem ser enxugados |
+| Cache/ISR | **P2** | `produtos/[id]` e `sitemap` já têm fallback/revalidate, mas o layout ainda força dynamic rendering |
 
 **Impacto no usuário:**
 - TTFB alto em todas as páginas por falta de cache e static rendering
-- Busca no catálogo faz full table scan (sem índices GIN)
+- A busca pesada já foi aliviada em staging com `pg_trgm` e índices GIN, mas ainda há consultas/admins que podem ser refinadas
 - Bundle inicial pesado prejudica LCP e INP em mobile
 
 ---
 
 ## 1. Prisma Queries
 
-### 1.1 Over-fetching Generalizado
+### 1.1 Over-fetching Reduzido nos Pontos Críticos
 
 **Severidade:** P1
 
-Múltiplas queries buscam todas as colunas quando apenas um subconjunto é necessário:
+As queries mais visíveis já foram enxugadas com `select` explícito no catálogo e no detalhe de produto. Ainda restam pontos de listagem/admin que podem ser revisados depois:
 
 | Arquivo | Query | Colunas não usadas buscadas |
 |---------|-------|----------------------------|
-| `app/produtos/page.tsx:91` | `db.product.findMany()` | `description`, `tags`, `restockDate` |
-| `app/produtos/[id]/page.tsx:27,55` | `db.product.findUnique()` | `tags`, `restockDate`, `minStockThreshold`, `stockQuantity`, `popularity` |
 | `app/api/admin/orders/route.ts:60` | `db.order.findMany({ include: { items: true } })` | Todas colunas de `OrderItem` quando apenas `productName`, `quantity`, `price` são usadas na listagem |
 | `app/api/admin/products/route.ts:187` | `db.product.findMany()` | Todas colunas na listagem admin |
 
@@ -43,7 +41,7 @@ Múltiplas queries buscam todas as colunas quando apenas um subconjunto é neces
 
 **Severidade:** P1
 
-Todas as buscas com `ILIKE '%term%'` fazem full table scan porque não há índices GIN:
+Antes da migration, todas as buscas com `ILIKE '%term%'` faziam full table scan porque não havia índices GIN. O estado atual em staging já inclui a migration com `pg_trgm` extension e índices GIN:
 
 | Modelo | Coluna(s) | Uso | Índice Recomendado |
 |--------|-----------|-----|-------------------|
@@ -58,7 +56,7 @@ Todas as buscas com `ILIKE '%term%'` fazem full table scan porque não há índi
 | User | `name`, `storeName` | Busca admin | `pg_trgm` GIN |
 | Product | `stockQuantity`, `minStockThreshold` | Raw query `stockQuantity <= minStockThreshold` | Expression index ou coluna computada |
 
-**Fix:** Criar migration com `pg_trgm` extension + índices GIN; adicionar B-tree indexes no schema.
+**Status:** a migration com `pg_trgm` extension + índices GIN já foi aplicada em staging, junto com os `@@index` no schema.
 
 ### 1.3 Query Duplicada
 
@@ -70,7 +68,7 @@ Todas as buscas com `ILIKE '%term%'` fazem full table scan porque não há índi
 
 Next.js App Router **não deduplica** automaticamente entre `generateMetadata` e o page component.
 
-**Fix:** Wrappar em `React.cache`:
+**Status:** a página de produto já usa `React.cache`:
 ```ts
 const getProduct = React.cache((id: string) => db.product.findUnique({...}));
 ```
@@ -94,7 +92,7 @@ const getProduct = React.cache((id: string) => db.product.findUnique({...}));
 
 Duas requests concorrentes podem ler o mesmo `lastOrder` antes de qualquer inserir.
 
-**Fix:** Usar database sequence ou `cuid`/`uuid` para eliminar a race condition. Se sequencial for requisito de negócio, usar `SELECT FOR UPDATE` ou sequence nativa do PostgreSQL.
+**Status:** a criação de pedido já migrou para sequence PostgreSQL atômica.
 
 ### 1.6 Transaction Ineficiente
 
@@ -122,9 +120,9 @@ Duas requests concorrentes podem ler o mesmo `lastOrder` antes de qualquer inser
 
 ### 2.2 Import de Dados Estáticos no Client
 
-**Severidade:** P1
+**Severidade:** P2
 
-`app/HomePageClient.tsx` importa o array inteiro de `src/data/products.ts` (470 linhas) para o client bundle. Esse arquivo é dados estáticos de produtos.
+O `HomePageClient` ainda puxa componentes pesados e depende de HeroUI/framer-motion, mas o logo grande foi trocado para WebP e não há mais referência ao PNG de 960 KB.
 
 **Fix:** Fetchar do servidor ou passar apenas o subset necessário via props do RSC.
 
@@ -164,13 +162,11 @@ const MobileMenu = dynamic(() => import('@/components/layout/MobileMenu'), { ssr
 
 ## 3. Imagens
 
-### 3.1 Logo PNG Grande
+### 3.1 Logo Principal
 
-**Severidade:** P2
+**Status:** resolvido
 
-`public/logo-iron.png`: **960 KB** (PNG). Referenciado em Header, Footer, HomePageClient.
-
-**Fix:** Converter para WebP/AVIF; target < 100 KB. Next.js resize ajuda, mas o source é excessivo.
+`public/logo-iron.webp`: **53 KB**. As referências de runtime e seed/template foram migradas para o formato menor.
 
 ### 3.2 Favicons
 
@@ -182,11 +178,9 @@ const MobileMenu = dynamic(() => import('@/components/layout/MobileMenu'), { ssr
 
 ### 3.3 Formato AVIF
 
-**Severidade:** P2
+**Status:** resolvido
 
-`next.config.ts` não especifica `formats`. Default é apenas WebP.
-
-**Fix:** Adicionar:
+`next.config.ts` agora entrega:
 ```ts
 images: {
   formats: ['image/avif', 'image/webp'],
@@ -212,19 +206,11 @@ O middleware `proxy.ts` está ativo (convenção do Next.js 16). A chamada a `he
 
 ### 4.2 Zero ISR
 
-**Severidade:** P1
+**Severidade:** P2
 
-Nenhuma página usa ISR (`export const revalidate = N` ou `generateStaticParams`).
+`/produtos/[id]` agora usa `revalidate = 300` e `generateStaticParams` com fallback quando o banco não responde. `sitemap.xml` também passa a falhar de forma segura se o banco estiver fora.
 
-Páginas que deveriam ser estáticas:
-- `/produtos/[id]` — dados de produto mudam pouco; ideal para ISR com `revalidate = 3600`
-- `/sitemap.xml` — fetcha todos os produtos a cada request do crawler
-- `/termos-de-uso`, `/politica-de-privacidade`, `/garantia` — conteúdo estático
-
-**Fix:**
-- `/produtos/[id]`: remover `force-dynamic`, adicionar `generateStaticParams` + `revalidate = 3600`
-- `/sitemap.xml`: adicionar `revalidate = 86400`
-- Páginas legais: deixar como static default
+Ainda sobra o `headers()` no layout, que mantém o app dinâmico por causa do nonce do CSP.
 
 ### 4.3 API Routes sem Cache Headers
 
@@ -253,7 +239,7 @@ Redis configurado (`src/lib/redis.ts`) mas **usado apenas para rate limiting**. 
 
 **Severidade:** P2
 
-Nenhum uso de `React.cache` ou `unstable_cache` para deduplicar queries Prisma dentro de uma request.
+O caso mais visível já foi tratado com `React.cache` na página de produto. Ainda assim, outras queries Prisma repetidas na mesma request podem se beneficiar de cache local.
 
 **Fix:** Wrappar queries frequentes em `React.cache` para deduplicação intra-request.
 
@@ -264,14 +250,12 @@ Nenhum uso de `React.cache` ou `unstable_cache` para deduplicar queries Prisma d
 | Prioridade | Ação | Impacto |
 |------------|------|---------|
 | **P0** | Remover `headers()` de `app/layout.tsx` (ou ativar middleware) para restaurar static rendering | TTFB reduzido em todas as páginas |
-| **P0** | Adicionar `pg_trgm` GIN indexes para busca textual | Full table scan → index scan |
-| **P1** | Adicionar `select` em todas as queries de listagem | Reduz payload DB e network |
-| **P1** | Implementar ISR em `/produtos/[id]` e `/sitemap.xml` | Elimina DB hit em cada request |
-| **P1** | Resolver race condition em `orderNumber` | Consistência de dados |
-| **P1** | Remover import de `products.ts` do client bundle | Reduz JS inicial |
+| **P1** | Refinar `select` em listagens admin remanescentes | Reduz payload DB e network |
+| **P2** | Manter ISR/fallback em `/produtos/[id]` e `/sitemap.xml` | Evita regressão de build |
+| **P2** | Continuar reduzindo import do client bundle | Reduz JS inicial |
 | **P2** | Instalar `@next/bundle-analyzer` e auditar bundles | Identifica bloat exato |
 | **P2** | Adicionar `next/dynamic` para componentes pesados | Reduz JS inicial |
-| **P2** | Otimizar `logo-iron.png` e favicons | Reduz assets estáticos |
+| **P2** | Otimizar `logo-iron.webp` e favicons | Reduz assets estáticos |
 | **P2** | Adicionar `formats: ['image/avif', 'image/webp']` | Melhor compressão de imagens |
 | **P2** | Consolidar raw queries em `admin/products/route.ts` | Manutenibilidade |
 | **P2** | Implementar Redis cache para catálogo | Reduz carga no DB |
@@ -284,4 +268,3 @@ Nenhum uso de `React.cache` ou `unstable_cache` para deduplicar queries Prisma d
 |----|---------|---------|
 | D-PERF-01 | Aceitar staleness de quantos segundos no catálogo? | Define `revalidate` de ISR e cache Redis |
 | D-PERF-02 | Quais APIs admin podem ter cache? | Define `Cache-Control` em read-only routes |
-| D-PERF-03 | Ordem sequencial de `orderNumber` é requisito de negócio? | Define se usa sequence PostgreSQL ou UUID |

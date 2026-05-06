@@ -1,0 +1,15 @@
+export const PRODUCT_PUBLIC_SELECT = {
+  id: true,
+  code: true,
+  name: true,
+  brand: true,
+  category: true,
+  model: true,
+  imageUrl: true,
+  inStock: true,
+  restockDate: true,
+  price: true,
+  description: true,
+  tags: true,
+  popularity: true,
+} as const;

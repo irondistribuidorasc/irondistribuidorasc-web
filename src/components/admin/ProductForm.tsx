@@ -43,7 +43,7 @@ export default function ProductForm({
     category: (initialData?.category || "") as ProductSchema["category"],
     model: initialData?.model || "",
     price: initialData?.price || 0,
-    imageUrl: initialData?.imageUrl || "/logo-iron.png",
+    imageUrl: initialData?.imageUrl || "/logo-iron.webp",
     description: initialData?.description || "",
     tags: initialData?.tags || [],
     popularity: initialData?.popularity || 0,

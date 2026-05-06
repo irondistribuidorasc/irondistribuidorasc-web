@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { buildContentSecurityPolicy } from "../csp";
+import { buildContentSecurityPolicy, createCspNonce } from "../csp";
 
 describe("buildContentSecurityPolicy", () => {
   it("remove unsafe-inline de script-src em producao e usa nonce", () => {
@@ -36,6 +36,13 @@ describe("buildContentSecurityPolicy", () => {
 
     expect(policy).not.toContain("\n");
     expect(policy).not.toMatch(/\s{2,}/);
+  });
+
+  it("gera nonce base64 não vazio", () => {
+    const nonce = createCspNonce();
+
+    expect(nonce).toMatch(/^[A-Za-z0-9+/=]+$/);
+    expect(nonce).not.toHaveLength(0);
   });
 });
 

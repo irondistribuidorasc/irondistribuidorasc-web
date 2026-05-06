@@ -133,7 +133,7 @@ export const productSchema = z.object({
     .min(1, "Categoria é obrigatória")
     .refine((value) => isCategory(value), "Categoria inválida"),
   model: z.string().min(1, "Modelo é obrigatório"),
-  imageUrl: z.string().default("/logo-iron.png"),
+  imageUrl: z.string().default("/logo-iron.webp"),
   stockQuantity: z.coerce.number().int().nonnegative().default(0),
   minStockThreshold: z.coerce.number().int().nonnegative().default(10),
   restockDate: z

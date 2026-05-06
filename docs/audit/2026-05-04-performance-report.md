@@ -28,7 +28,9 @@
 
 **Severidade:** P1
 
-As queries mais visíveis já foram enxugadas com `select` explícito no catálogo e no detalhe de produto. Ainda restam pontos de listagem/admin que podem ser revisados depois:
+As queries mais visíveis já foram enxugadas com `select` explícito no catálogo e no detalhe de produto. Ainda restam pontos de listagem/admin que podem ser revisados depois.
+
+Os branches de estoque baixo em `admin/products` também passaram a devolver colunas explícitas em vez de `SELECT *`.
 
 | Arquivo | Query | Colunas não usadas buscadas |
 |---------|-------|----------------------------|

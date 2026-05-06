@@ -6,6 +6,25 @@ import { productSchema } from "@/src/lib/schemas";
 import { Prisma } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
 
+const PRODUCT_LIST_SELECT = Prisma.raw(`
+  "id",
+  "code",
+  "name",
+  "brand",
+  "category",
+  "model",
+  "imageUrl",
+  "inStock",
+  "stockQuantity",
+  "minStockThreshold",
+  "price",
+  "description",
+  "tags",
+  "popularity",
+  "createdAt",
+  "updatedAt"
+`);
+
 export async function GET(request: Request) {
   try {
     const session = await auth();
@@ -65,7 +84,7 @@ export async function GET(request: Request) {
         total = Number(countResult[0]?.count ?? 0);
 
         products = await db.$queryRaw`
-          SELECT * FROM "Product"
+          SELECT ${PRODUCT_LIST_SELECT} FROM "Product"
           WHERE "stockQuantity" <= "minStockThreshold"
           AND ("name" ILIKE ${searchPattern} OR "code" ILIKE ${searchPattern} OR "model" ILIKE ${searchPattern})
           AND "category" = ${category}
@@ -83,7 +102,7 @@ export async function GET(request: Request) {
         total = Number(countResult[0]?.count ?? 0);
 
         products = await db.$queryRaw`
-          SELECT * FROM "Product"
+          SELECT ${PRODUCT_LIST_SELECT} FROM "Product"
           WHERE "stockQuantity" <= "minStockThreshold"
           AND ("name" ILIKE ${searchPattern} OR "code" ILIKE ${searchPattern} OR "model" ILIKE ${searchPattern})
           AND "category" = ${category}
@@ -100,7 +119,7 @@ export async function GET(request: Request) {
         total = Number(countResult[0]?.count ?? 0);
 
         products = await db.$queryRaw`
-          SELECT * FROM "Product"
+          SELECT ${PRODUCT_LIST_SELECT} FROM "Product"
           WHERE "stockQuantity" <= "minStockThreshold"
           AND ("name" ILIKE ${searchPattern} OR "code" ILIKE ${searchPattern} OR "model" ILIKE ${searchPattern})
           AND "brand" = ${brand}
@@ -117,7 +136,7 @@ export async function GET(request: Request) {
         total = Number(countResult[0]?.count ?? 0);
 
         products = await db.$queryRaw`
-          SELECT * FROM "Product"
+          SELECT ${PRODUCT_LIST_SELECT} FROM "Product"
           WHERE "stockQuantity" <= "minStockThreshold"
           AND "category" = ${category}
           AND "brand" = ${brand}
@@ -133,7 +152,7 @@ export async function GET(request: Request) {
         total = Number(countResult[0]?.count ?? 0);
 
         products = await db.$queryRaw`
-          SELECT * FROM "Product"
+          SELECT ${PRODUCT_LIST_SELECT} FROM "Product"
           WHERE "stockQuantity" <= "minStockThreshold"
           AND ("name" ILIKE ${searchPattern} OR "code" ILIKE ${searchPattern} OR "model" ILIKE ${searchPattern})
           ORDER BY "createdAt" DESC
@@ -148,7 +167,7 @@ export async function GET(request: Request) {
         total = Number(countResult[0]?.count ?? 0);
 
         products = await db.$queryRaw`
-          SELECT * FROM "Product"
+          SELECT ${PRODUCT_LIST_SELECT} FROM "Product"
           WHERE "stockQuantity" <= "minStockThreshold"
           AND "category" = ${category}
           ORDER BY "createdAt" DESC
@@ -163,7 +182,7 @@ export async function GET(request: Request) {
         total = Number(countResult[0]?.count ?? 0);
 
         products = await db.$queryRaw`
-          SELECT * FROM "Product"
+          SELECT ${PRODUCT_LIST_SELECT} FROM "Product"
           WHERE "stockQuantity" <= "minStockThreshold"
           AND "brand" = ${brand}
           ORDER BY "createdAt" DESC
@@ -178,7 +197,7 @@ export async function GET(request: Request) {
         total = Number(countResult[0]?.count ?? 0);
 
         products = await db.$queryRaw`
-          SELECT * FROM "Product"
+          SELECT ${PRODUCT_LIST_SELECT} FROM "Product"
           WHERE "stockQuantity" <= "minStockThreshold"
           ORDER BY "createdAt" DESC
           LIMIT ${limit} OFFSET ${skip}

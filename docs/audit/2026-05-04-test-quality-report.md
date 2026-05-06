@@ -10,10 +10,10 @@
 
 | Categoria | Severidade | Principais Achados |
 |-----------|------------|-------------------|
-| API Routes | **P1** | Rotas críticas agora têm testes dedicados, mas `app/api/` ainda fica fora do gate global |
+| API Routes | **P1** | Rotas críticas agora têm testes dedicados, incluindo upload admin, mas `app/api/` ainda fica fora do gate global |
 | Branch Coverage | **P2** | Branch coverage em 90.92%, ainda com alguns ramos residuais em `rate-limit`, `schemas` e `CartContext` |
 | Integração | **P1** | Fluxos end-to-end ainda não existem |
-| Schema Tests | **P2** | Schemas críticos já ganharam cobertura, mas integrações de pedido/admin continuam relevantes |
+| Schema Tests | **P2** | Schemas críticos já ganharam cobertura, incluindo pedido e lote, mas integrações de pedido/admin continuam relevantes |
 | Segurança | **P1** | Guards principais cobertos; falta cobertura de fluxo completo e regressão de integração |
 
 ---
@@ -40,6 +40,7 @@ Isso **exclui explicitamente** `app/api/` do coverage global. Ainda assim, já e
 - `GET /api/admin/users`
 - `PATCH /api/admin/users`
 - `GET /api/admin/finance`
+- `POST /api/admin/products/image`
 
 ---
 
@@ -110,7 +111,7 @@ Ainda não há fluxo completo cobrindo:
 | Admin: Login → Criar produto → Editar produto → Deletar | ❌ Sem teste | CRUD admin sem regressão |
 | Admin: Criar pedido manual → Confirmar → Cancelar | ❌ Sem teste | Ciclo de vida do pedido não testado |
 | Importação CSV de produtos | ❌ Sem teste | Validação de importação não testada end-to-end |
-| Upload de imagem | ❌ Sem teste | Rota de upload não testada |
+| Upload de imagem | ✅ Com teste | Rota de upload coberta por teste de rota |
 
 ---
 
@@ -119,6 +120,8 @@ Ainda não há fluxo completo cobrindo:
 ### 4.1 Schemas sem testes
 
 `src/lib/__tests__/schemas.test.ts` já cobre `loginSchema`, `registerSchema`, `forgotPasswordSchema`, `resetPasswordSchema` e `productSchema`. Ainda valem testes mais finos para payloads de pedido e backoffice:
+
+`src/lib/__tests__/schemas.test.ts` também cobre agora:
 
 - `createOrderSchema`
 - `createOrderItemSchema`
@@ -185,7 +188,7 @@ Ainda não há fluxo completo cobrindo:
 | 1 | Registro → Login → Checkout | Teste de integração com banco em memória (SQLite) ou mockado |
 | 2 | Admin CRUD produto | Testar POST/GET/PATCH/DELETE com session admin |
 | 3 | Admin ciclo de pedido | Criar → Confirmar → Cancelar, verificar estoque |
-| 4 | Upload de imagem | Testar rota com FormData mockado |
+| 4 | Upload de imagem | ✅ Testado na rota `POST /api/admin/products/image` |
 
 ### P2 — Incluir API routes no coverage
 
@@ -197,8 +200,8 @@ Considerar adicionar `app/api/` ao `include` do vitest.config.mts, ou criar suit
 
 | Métrica | Valor | Threshold | Status |
 |---------|-------|-----------|--------|
-| Test files | 39 | — | ✅ |
-| Tests | 315 | — | ✅ |
+| Test files | 40 | — | ✅ |
+| Tests | 324 | — | ✅ |
 | Stmts | 97.21% | 90% | ✅ |
 | Branch | 90.92% | 90% | ✅ (borderline) |
 | Funcs | 97.39% | 90% | ✅ |

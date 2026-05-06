@@ -1,10 +1,15 @@
 import { describe, expect, it } from "vitest";
 
 import {
+	bulkUpdateSchema,
 	forgotPasswordSchema,
 	loginSchema,
 	passwordSchema,
 	productSchema,
+	createOrderCustomerSchema,
+	createOrderItemSchema,
+	createOrderSchema,
+	orderFeedbackSchema,
 	registerApiSchema,
 	registerSchema,
 	resetPasswordSchema,
@@ -132,5 +137,92 @@ describe("schemas", () => {
 				confirmPassword: "dif",
 			}),
 		).toThrow();
+	});
+});
+
+describe("order schemas", () => {
+	const validItem = {
+		productId: "prod-1",
+		productCode: "P001",
+		productName: "Produto 1",
+		quantity: 2,
+		price: 19.9,
+	};
+
+	const validCustomer = {
+		name: "Maria",
+		email: "maria@example.com",
+		phone: "47999999999",
+		addressLine1: "Rua 1",
+		city: "Itapema",
+		state: "SC",
+		postalCode: "88220-000",
+	};
+
+	it("createOrderItemSchema valida item e rejeita quantidade inválida", () => {
+		expect(createOrderItemSchema.safeParse(validItem).success).toBe(true);
+		expect(
+			createOrderItemSchema.safeParse({
+				...validItem,
+				quantity: 0,
+			}).success,
+		).toBe(false);
+	});
+
+	it("createOrderCustomerSchema valida customer e rejeita telefone inválido", () => {
+		expect(createOrderCustomerSchema.safeParse(validCustomer).success).toBe(true);
+		expect(
+			createOrderCustomerSchema.safeParse({
+				...validCustomer,
+				phone: "123",
+			}).success,
+		).toBe(false);
+	});
+
+	it("createOrderSchema valida pedido completo", () => {
+		expect(
+			createOrderSchema.safeParse({
+				items: [validItem],
+				customer: validCustomer,
+				notes: "Entregar na portaria",
+				paymentMethod: "PIX",
+			}).success,
+		).toBe(true);
+		expect(
+			createOrderSchema.safeParse({
+				items: [],
+				customer: validCustomer,
+			}).success,
+		).toBe(false);
+	});
+
+	it("bulkUpdateSchema valida lote e rejeita lote vazio", () => {
+		expect(
+			bulkUpdateSchema.safeParse({
+				updates: [
+					{
+						id: "prod-1",
+						stockQuantity: 10,
+						minStockThreshold: 3,
+					},
+				],
+			}).success,
+		).toBe(true);
+		expect(bulkUpdateSchema.safeParse({ updates: [] }).success).toBe(false);
+	});
+
+	it("orderFeedbackSchema valida nota e comentário", () => {
+		expect(
+			orderFeedbackSchema.safeParse({
+				rating: 5,
+				comment: "Pedido ok",
+			}).success,
+		).toBe(true);
+		expect(
+			orderFeedbackSchema.safeParse({
+				rating: 6,
+				comment: "Nota inválida",
+			}).success,
+		).toBe(false);
 	});
 });

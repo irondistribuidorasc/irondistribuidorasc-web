@@ -27,6 +27,7 @@ const PUBLIC_PREFIXES = [
   "/_next",
   "/favicon.ico",
   "/logo-iron.png",
+  "/logo-iron.webp",
   "/favicons/",
   "/brands/",
 ];
